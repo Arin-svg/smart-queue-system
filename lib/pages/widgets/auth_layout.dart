@@ -16,8 +16,11 @@ class AuthLayout extends StatelessWidget {
       backgroundColor: authSurface,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final height = constraints.maxHeight < 640
-              ? 640.0
+          final minimumHeight =
+              640.0 +
+              (MediaQuery.textScalerOf(context).scale(160) - 160).clamp(0, 640);
+          final height = constraints.maxHeight < minimumHeight
+              ? minimumHeight
               : constraints.maxHeight;
           return SingleChildScrollView(
             child: ConstrainedBox(

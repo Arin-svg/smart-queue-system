@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../model/user.dart';
 import '../services/auth_service.dart';
+import '../services/api_service.dart';
 
 class AuthController extends ChangeNotifier {
   AuthController(this._service);
@@ -42,6 +43,8 @@ class AuthController extends ChangeNotifier {
       _resetSucceeded = true;
       _resetMessage =
           'If an account exists for this email, reset instructions have been sent.';
+    } on ApiException catch (error) {
+      _resetMessage = error.message;
     } catch (_) {
       _resetMessage = 'Password reset is unavailable. Please try again later.';
     } finally {
@@ -62,8 +65,28 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
     try {
       _user = await _service.login(userId: userId.trim(), password: password);
+    } on ApiException catch (error) {
+      _error = error.message;
     } catch (_) {
-      _error = 'Sign-in is unavailable. Authentication has not been connected.';
+      _error = 'Unable to sign in. Please try again.';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> logout() async {
+    if (_isLoading) return;
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _service.logout();
+      _user = null;
+    } on ApiException catch (error) {
+      _error = error.message;
+    } catch (_) {
+      _error = 'Unable to sign out. Please try again.';
     } finally {
       _isLoading = false;
       notifyListeners();

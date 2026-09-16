@@ -1,0 +1,3922 @@
+      BCC3012 UNDERGRADUATE PROJECT 1
+
+                        SEM II 2025/2026
+
+  PROJECT TITLE: SMART QUEUE SYSTEM FOR
+         UNIVERSITY HEALTH CENTRE (SQS)
+
+BACHELOR OF COMPUTER SCIENCE (SOFTWARE
+            ENGINEERING) WITH HONOURS
+
+           UNIVERSITI MALAYSIA PAHANG
+                  AL-SULTAN ABDULLAH
+
+                     ARINJA A/P AI KRIM
+
+                              CB23094
+UNIVERSITI MALAYSIA PAHANG AL-SULTAN ABDULLAH
+
+DECLARATION OF THESIS AND COPYRIGHT
+
+Author's Full Name : ARINJA A/P AI KRIM
+
+Date of Birth     : 2 DECEMBER 2003
+
+Title             : SMART QUEUE SYSTEM FOR UNIVERSITY
+Academic Session       HEALTH CENTRE (SQS)
+
+                  : SEM II 2025/2026
+
+I declare that this thesis is classified as:
+
+  CONFIDENTIAL (Contains confidential information under the Official Secret
+                                    Act 1997)*
+
+  RESTRICTED (Contains restricted information as specified by the
+                                    organization where research was done)*
+
+  OPEN ACCESS I agree that my thesis to be published as online open access
+                                    (Full Text)
+
+I acknowledge that Universiti Malaysia Pahang Al-Sultan Abdullah reserves the following
+rights:
+
+1. The Thesis is the Property of Universiti Malaysia Pahang Al-Sultan Abdullah
+2. The Library of Universiti Malaysia Pahang Al-Sultan Abdullah has the right to
+
+         make copies of the thesis for the purpose of research only.
+3. The Library has the right to make copies of the thesis for academic exchange.
+
+Certified by:
+
+_____________________   _______________________
+(Student's Signature)   (Supervisor's Signature)
+
+031202020512            _______________________
+_____________________   Name of Supervisor
+New IC/Passport Number  Date:
+Date:
+
+NOTE : * If the thesis is CONFIDENTIAL or RESTRICTED, please attach a thesis declaration
+         letter.
+                    THESIS DECLARATION LETTER (OPTIONAL)
+
+Librarian,
+Universiti Malaysia Pahang Al-Sultan Abdullah,
+Lebuh Persiaran Tun Khalil Yaakob,
+26300, Gambang, Kuantan, Pahang.
+
+Dear Sir,
+
+CLASSIFICATION OF THESIS AS RESTRICTED
+
+Please be informed that the following thesis is classified as RESTRICTED for a period of three
+(3) years from the date of this letter. The reasons for this classification are as listed below.
+
+      Author's Name
+      Thesis Title
+
+Reasons            (i)
+
+                   (ii)
+
+                   (iii)
+
+Thank you.
+Yours faithfully,
+
+_____________________________
+(Supervisor's Signature)
+
+Date:
+
+Stamp:
+
+Note: This letter should be written by the supervisor and addressed to the Librarian, Universiti
+Malaysia Pahang Al-Sultan Abdullah with its copy attached to the thesis.
+                              SUPERVISOR'S DECLARATION
+
+I/We* hereby declare that I/We* have checked this thesis/project* and in my/our*
+opinion, this thesis/project* is adequate in terms of scope and quality for the award of the
+degree of *Doctor of Philosophy/ Master of Science.
+
+_______________________________
+
+      (Supervisor's Signature)
+
+Full Name :
+
+Position  :
+
+Date      :
+
+_______________________________
+
+      (Co-supervisor's Signature)
+
+Full Name :
+
+Position  :
+
+Date      :
+                                 STUDENT'S DECLARATION
+
+I hereby declare that the work in this thesis is based on my original work except for
+quotations and citations which have been duly acknowledged. I also declare that it has
+not been previously or concurrently submitted for any other degree at Universiti Malaysia
+Pahang Al-Sultan Abdullah or any other institutions.
+
+_______________________________
+
+      (Student's Signature)
+
+Full Name : ARINJA A/P AI KRIM
+
+ID Number : CB23094
+
+Date  : 12/7/2026
+                  BCC3012 UNDERGRADUATE PROJECT 1
+                                    SEM II 2025/2026
+
+PROJECT TITLE: SMART QUEUE SYSTEM FOR UNIVERSITY HEALTH
+                                     CENTRE (SQS)
+
+                                 ARINJA A/P AI KRIM
+
+                 Thesis submitted in fulfillment of the requirements
+                             for the award of the degree of
+
+     Bachelor Of Computer Science (Software Engineering) With Honours
+
+                                  Faculty of Computing
+
+      UNIVERSITI MALAYSIA PAHANG AL-SULTAN ABDULLAH
+
+                                        JUNE 2026
+                                   ACKNOWLEDGEMENTS
+I would like to express my sincere thanks and heartfelt gratitude to Madam Ku Saimah
+Binti Ku Ibrahim, my supervisor, for her guidance, support, and encouragement
+throughout the completion of this project. I am truly grateful for her advice, feedback,
+and knowledge that helped me improve my project, especially in planning, designing,
+and documenting the Smart Queue System for University Health Centre (SQS).
+I am also very thankful to my family for their continuous support, patience, and
+motivation during this semester. Their encouragement has helped me stay strong and
+focused while completing this project. Without their support, it would have been more
+difficult for me to complete this work.
+I would also like to thank my friends who helped me directly and indirectly by giving
+advice, sharing ideas, and supporting me whenever I faced difficulties while preparing
+this project. Their help and motivation meant a lot to me throughout the process.
+Besides that, I would like to thank the staff and users related to UMPSA PKU Pekan who
+provided useful information and feedback about the current queue process. Their input
+helped me understand the real situation better and improve the proposed solution for this
+project.
+Finally, I would like to express my appreciation to everyone who assisted me in
+completing this thesis and project, either directly or indirectly. All the support, time, and
+effort given are sincerely appreciated.
+
+                                                         ii
+                                              ABSTRAK
+
+Pengurusan giliran merupakan aspek penting dalam perkhidmatan penjagaan kesihatan
+kerana ia mempengaruhi tempoh menunggu pesakit, kecekapan operasi, dan kepuasan
+pesakit. Proses pengurusan giliran sedia ada di pusat kesihatan universiti sering tidak
+menyediakan penjejakan giliran secara masa nyata, anggaran masa menunggu yang tepat,
+serta ciri sokongan keputusan pintar, sekali gus menyebabkan ketidakpastian kepada
+pesakit dan cabaran kepada kakitangan dalam menguruskan aliran pesakit.
+
+Projek ini mencadangkan pembangunan Smart Queue System for University Health
+Centre (SQS) bagi menambah baik pengurusan giliran di persekitaran pusat kesihatan
+universiti. Klinik Kesihatan Peramu Jaya, Pekan, Pahang digunakan sebagai kajian kes
+untuk pengumpulan keperluan sistem dan pengesahan sistem. Sistem yang dicadangkan
+menyediakan pendaftaran giliran berasaskan kod QR, tempahan janji temu, pemantauan
+giliran secara masa nyata, pemberitahuan pintar, dan pelaporan pentadbiran. Selain itu,
+sistem ini mengintegrasikan AI-based Dynamic Waiting Time Prediction dan Intelligent
+Queue Priority Recommendation bagi menyokong pengurusan giliran yang lebih cekap.
+
+Sistem ini akan dibangunkan menggunakan Waterfall Software Development Life Cycle
+(SDLC) dengan mengadaptasi seni bina Model­View­Controller (MVC) menggunakan
+Flutter, Laravel RESTful API, dan MySQL. Sistem yang dibangunkan akan dinilai
+melalui Ujian Fungsian (Functional Testing) dan Ujian Penerimaan Pengguna (User
+Acceptance Testing, UAT). Hasil yang dijangkakan ialah sebuah sistem pengurusan
+giliran yang pintar dan mesra pengguna yang dapat meningkatkan ketelusan giliran,
+menambah baik pengalaman pesakit, serta menyokong penyampaian perkhidmatan
+penjagaan kesihatan yang lebih cekap di pusat kesihatan universiti.
+
+                                                        iii
+                                             ABSTRACT
+
+Queue management is an important aspect of healthcare services as it affects patient
+waiting time, operational efficiency, and patient satisfaction. Existing queue management
+processes in university health centres often lack real-time queue tracking, accurate
+waiting time estimation, and intelligent decision-support features, leading to uncertainty
+for patients and challenges in managing patient flow.
+This project proposes the development of a Smart Queue System for University Health
+Centre (SQS) to improve queue management in university health centre environments.
+Klinik Kesihatan Peramu Jaya, Pekan, Pahang is used as the case study for requirement
+gathering and system validation. The proposed system provides QR code-based queue
+registration, appointment booking, real-time queue monitoring, smart notification
+updates, and administrative reporting. It also integrates AI-based Dynamic Waiting Time
+Prediction and Intelligent Queue Priority Recommendation to support more efficient
+queue management.
+The system will be developed using the Waterfall Software Development Life Cycle
+(SDLC), adopting the Model­View­Controller (MVC) architecture with Flutter, Laravel
+RESTful API, and MySQL. The completed system will be evaluated through Functional
+Testing and User Acceptance Testing (UAT). The expected outcome is an intelligent and
+user-friendly queue management system that improves queue transparency, enhances
+patient experience, and supports more efficient healthcare service delivery in university
+health centre environments.
+
+                                                         iv
+                         TABLE OF CONTENT
+
+DECLARATION
+
+TITLE PAGE
+
+ACKNOWLEDGEMENTS                           ii
+
+ABSTRAK                                    iii
+
+ABSTRACT                                   iv
+
+TABLE OF CONTENT                           v
+
+LIST OF TABLES                             viii
+
+LIST OF FIGURES                            ix
+
+LIST OF SYMBOLS                            xi
+
+LIST OF ABBREVIATIONS                      xii
+
+LIST OF APPENDICES                         xiii
+
+CHAPTER 1 INTRODUCTION                     14
+
+1.1 Introduction                           14
+
+1.2 Problem Statement                      15
+
+1.3 Objective                              17
+
+1.4 Scope                                  17
+
+1.5 Thesis Organization                    19
+
+CHAPTER 2 LITERATURE REVIEW                21
+
+2.1 Introduction                           21
+
+2.2 Existing Systems                       22
+
+2.2.1 JPJeQ                                23
+
+2.2.2 Queue Management System (QMS)        26
+
+2.2.3 Qmed Portal                          28
+
+2.2.4 Waitwhile                            31
+
+                             v
+2.3 Analysis and Comparison of Existing System                 33
+
+2.3.1 Analysis of Comparison on Existing Systems               35
+
+2.3.2 Relevance of the Comparison to the Proposed Smart Queue
+
+System for University Health Centre (SQS)                      37
+
+2.4 Summary                                                    40
+
+CHAPTER 3 METHODOLOGY                                          41
+
+3.1 Introduction                                               41
+
+3.2 Project Development Methodology                            42
+
+3.2.1 Requirements                                             43
+
+3.2.2 System Design                                            45
+
+3.2.3 Development                                              46
+
+3.2.4 Testing                                                  48
+
+3.2.5 Deployment                                               48
+
+3.2.6 Maintenance                                              49
+
+3.3 Project Requirements                                       50
+
+3.3.1 Functional Requirements                                  51
+
+3.3.2 Non-Functional Requirement                               53
+
+3.3.3 Constraints and Limitations                              55
+
+3.4 Proposed Design                                            56
+
+3.4.1 System Architecture                                      56
+
+3.4.2 Context Diagram                                          59
+
+3.4.3 Use Case Diagram                                         60
+
+3.4.4 Use Case Description                                     62
+
+3.4.5 Flowchart                                                77
+
+3.4.6 Activity Diagram                                         79
+
+3.5 Data Design                                                85
+
+                                     vi
+3.5.1 Data Involved in the System            86
+
+3.5.2 Entity Relationship Diagram            87
+
+3.5.3 Database Dictionary                    89
+
+3.6 Proof of Initial Concept                 97
+
+3.6.1 Prototype Overview                     97
+
+3.6.2 Patient Prototype                      98
+
+3.6.3 Registration Staff Prototype           105
+
+3.6.4 Doctor Prototype                       110
+
+3.6.5 Administrator Prototype                113
+
+3.7 Testing/Validation Plan                  118
+
+3.7.1 Functional Testing                     118
+
+3.7.2 User Acceptance Testing                123
+
+3.8 Potential Use of Proposal Solution       129
+
+3.9 Gantt Chart                              131
+
+CHAPTER 4 CONCLUSION                         132
+
+4.1 Introduction                             132
+
+REFERENCES                                   133
+
+APPENDICES                                   135
+
+                                        vii
+                         LIST OF TABLES
+
+Table 2.1 Analysis and Comparison of Existing System            34
+
+Table 2.2 Feature Adoption Summary for SQS                      38
+
+Table 3.1 Development Tools and Technologies                    47
+
+Table 3.2 Use case description for Login                        62
+
+Table 3.3 Use case description for Register Queue               64
+
+Table 3.4 Use case description for View Queue Information       66
+
+Table 3.5 Use case description for Manage Patient Registration  68
+
+Table 3.6 Use case description for Monitor Queue                71
+
+Table 3.7 Use case description for Manage Consultation          72
+
+Table 3.8 Use case description for Manage System                74
+
+Table 3.9 Use case description for Generate Reports             75
+
+Table 3.10 Flowchart explanation by user role                   78
+
+Table 3.12 Data entities description                            86
+
+Table 3.12 Relationship Definitions                             88
+
+Table 3.14 Roles Table                                          90
+
+Table 3.15 User Table                                           90
+
+Table 3.16 Departments Table                                    91
+
+Table 3.17 Rooms Table                                          91
+
+Table 3.18 Queues Table                                         92
+
+Table 3.19 Appointments Table                                   94
+
+Table 3.20 Consultations Table                                  95
+
+Table 3.21 Notifications Table                                  96
+
+Table 3.22 Functionality Testing                                118
+
+Table 3.23 User Acceptance Testing Table                        124
+
+                                      viii
+                                LIST OF FIGURES
+
+Figure 1.1 System architecture                                                  18
+
+Figure 2.1 JPJeQ Logo                                                           23
+
+Figure 2.2 JPJeQ Homepage                                                       24
+
+Figure 2.3 JPJeQ Waiting List                                                   25
+
+Figure 2.4 Queue Management System (QMS) Logo                                   26
+
+Figure 2.5 Queue Management System (QMS) Interface                              27
+
+Figure 2. 6 Qmed Portal Logo                                                    28
+
+Figure 2. 7 Qmed Portal Homepage                                                29
+
+Figure 2. 8 Qmed Portal Queue Details Interface                                 29
+
+Figure 2. 9 Waitwhile Logo                                                      31
+
+Figure 2. 10 Waitwhile User Interface                                           32
+
+Figure 2. 11 Waitwhile Staff Interface                                          32
+
+Figure 3. 1 Waterfall Software Development Life Cycle (SDLC)                    43
+
+Figure 3. 2 Requirements Analysis Process                                       44
+
+Figure 3. 3 System Design Components                                            46
+
+Figure 3. 4 Model­View­Controller (MVC) architecture in SQS                     57
+
+Figure 3. 5 Smart Queue System for University Health Centre (SQS) Context
+
+Diagram                                                                         59
+
+Figure 3. 6 Smart Queue System for University Health Centre (SQS) Use Case
+
+Diagram                                                                         61
+
+Figure 3. 7 Flowchart of the Smart Queue System for University Health Centre
+
+(SQS)                                                                           77
+
+Figure 3. 8 Patient Activity Diagram of the Smart Queue System for University
+
+Health Centre (SQS)                                                             79
+
+Figure 3. 9 Registration Staff Activity Diagram of the Smart Queue System for
+
+University Health Centre (SQS)                                                  81
+
+Figure 3. 10 Doctor Activity Diagram of the Smart Queue System for University
+
+Health Centre (SQS)                                                             83
+
+Figure 3. 11 Smart Queue System for University Health Centre (SQS) Activity
+
+Diagram for PKU Administrator                                                   84
+
+Figure 3. 12 Entity Relationship Diagram of the Smart Queue System for
+
+University Health Centre (SQS)                                                  88
+
+Figure 3. 13 Overall Prototype of the Smart Queue System for University Health
+
+Centre (SQS)                                                                    98
+
+Figure 3. 14 Login and Forgot Password page                                     99
+
+Figure 3. 15 Logout page                                                        100
+
+                                           ix
+Figure 3. 16 Queue Registration Page             101
+
+Figure 3. 17 My Queue page                       102
+
+Figure 3. 18 Appointment Booking page            103
+
+Figure 3. 19 Notification page                   104
+
+Figure 3. 20 Profile page for patient            104
+
+Figure 3. 21 Queue Monitor Page                  106
+
+Figure 3. 22 Verification page                   107
+
+Figure 3. 23 Assignment page                     108
+
+Figure 3. 24 Clinic QR Code page                 109
+
+Figure 3. 25 Registration Staff Profile page     109
+
+Figure 3. 26 Doctor Call Patient page            110
+
+Figure 3. 27 Doctor Consultation page            111
+
+Figure 3. 28 Doctor Profile page                 112
+
+Figure 3. 29 Administrator Dashboard page        113
+
+Figure 3. 30 User Management page                114
+
+Figure 3. 31 Department Management page          115
+
+Figure 3. 32 Rooms Management page               115
+
+Figure 3. 33 Report page                         116
+
+Figure 3. 34 PKU Administrator Profile page      117
+
+Figure 3. 35 Gantt Chart                         131
+
+                                              x
+LIST OF SYMBOLS
+             xi
+SQS              LIST OF ABBREVIATIONS
+UMPSA
+API    Smart Queue System for University Health Centre
+ERD    Universiti Malaysia Pahang Al-Sultan Abdullah
+FK     Application Programming Interface
+PK     Entity Relationship Diagram
+PKU    Foreign Key
+POC    Primary Key
+QR     Pusat Kesihatan Universiti
+UAT    Proof of Concept
+       Quick Response
+       User Acceptance Testing
+
+       xii
+                   LIST OF APPENDICES
+
+Appendix A: Title                      135
+
+Appendix B: Title                      135
+
+                   xiii
+                                             CHAPTER 1
+
+                                         INTRODUCTION
+
+1.1 Introduction
+
+         Queue management is an important part of healthcare services because it affects
+     how patients wait, how staff manage patient flow, and how smoothly daily clinic
+     operations run. In a university health centre, students and staff usually visit the clinic
+     for consultation, treatment, medical check-ups, or other health-related services.
+     When the number of patients increases, especially during busy hours, a manual queue
+     system can become difficult to manage. According to recent healthcare digitalization
+     trends, the use of computerized queue systems can reduce waiting time, improve
+     patient experience, and enhance staff productivity in healthcare environments.
+
+         Currently, many clinics still depend on traditional queue methods such as
+     physical number tickets, handwritten records, or verbal calling at the counter.
+     Although this method is simple, it can cause several problems. Patients may not know
+     how long they need to wait, what their current queue position is, or when their turn
+     is near. This can lead to confusion, overcrowding in the waiting area, and
+     dissatisfaction among patients.
+
+         Recent advances in mobile computing, cloud technologies, and artificial
+     intelligence (AI) have enabled the development of intelligent healthcare information
+     systems capable of supporting operational decision-making in addition to automating
+     routine administrative tasks. Rather than functioning solely as a queue numbering
+     application, a smart queue management system can analyse real-time operational
+     data to estimate waiting time, support queue prioritisation, and provide dynamic
+     notifications that improve communication between patients and healthcare providers.
+
+         Therefore, this project proposes a development of a Smart Queue System for
+     University Health Centre (SQS). The proposed system aims to enhance the digital
+     queue management by integrating intelligent decision-support capabilities, including
+
+                                                         14
+     AI-based waiting time prediction, intelligent queue priority recommendation for staff
+     review, and dynamic notification services. These features are intended to improve
+     queue transparency, reduce patient uncertainty, and assist staffs in managing patient
+     flow more effectively while ensuring that all clinical decisions remain under the
+     authority of authorised healthcare professionals.
+
+         Although the proposed system is designed for university health centre
+     environments, this project adopts Klinik Kesihatan Peramu Jaya, Pekan, Pahang as
+     the case study for requirement gathering, workflow analysis, and system validation.
+     The clinic was selected because its operational processes including patient
+     registration, consultation services, pharmacy services, and outpatient queue
+     management are closely resembled in university health centres. Using a real
+     healthcare environment enables the proposed system to be developed based on actual
+     operational requirements while ensuring that the resulting solution remains
+     applicable to university health centre settings.
+
+         The system will be developed using Flutter as the mobile application framework,
+     Laravel as the backend RESTful API, and MySQL as the database management
+     system within a three-tier architecture. Through the integration of intelligent
+     decision-support capabilities and modern mobile technologies, the Smart Queue
+     System is expected to improve healthcare service efficiency, enhance patient
+     experience, and support more effective queue management within university health
+     centre environments.
+
+1.2 Problem Statement
+
+              Efficient queue management is essential for ensuring the quality of healthcare
+     services, as it directly influences patient satisfaction, operational efficiency, and the
+     overall healthcare experience. Although many healthcare facilities have adopted
+     digital technologies to support patient registration and appointment management,
+     queue management remains a significant challenge, particularly during peak
+     operating hours. Patients frequently experience uncertainty while waiting for
+     consultation because existing queue processes provide limited information regarding
+
+                                                         15
+queue progress and expected waiting time. This lack of transparency often leads to
+repeated enquiries at registration counters, increased waiting area congestion, and
+reduced patient satisfaction.
+
+   Another challenge is the limited capability of conventional queue management
+systems to assist healthcare staff in monitoring and coordinating patient flow
+efficiently. Registration staff are often required to manually monitor queue
+progression, consultation room availability, and patient movement throughout the
+consultation process. As the number of patients increases, manual coordination
+becomes more difficult, potentially affecting operational efficiency and delaying
+service delivery. Furthermore, administrators have limited access to analytical
+information that could support service planning, queue performance evaluation, and
+resource allocation.
+
+   In addition, many existing queue management systems primarily focus on
+generating queue numbers without providing intelligent features that enhance
+decision-making or improve the patient experience. Most systems do not estimate
+waiting time based on actual service conditions, making it difficult for patients to
+plan their waiting period effectively. The absence of intelligent waiting time
+prediction reduces the usefulness of digital queue systems, as patients continue to
+experience uncertainty despite using electronic queue management.
+
+   To address these issues, this project proposes the development of a Smart Queue
+System for University Health Centre (SQS). The proposed system integrates QR
+code-based registration, appointment scheduling, real-time queue monitoring,
+automated notifications, and Dynamic Waiting Time Prediction (AI-based) to
+improve queue visibility and operational efficiency. Although the proposed solution
+is intended for university health centre environments, Klinik Kesihatan Peramu Jaya,
+Pekan, Pahang, is selected as the case study for requirement gathering, workflow
+analysis, and system validation. The proposed system is expected to provide a more
+transparent, efficient, and patient-centred queue management solution that can be
+adapted for university health centre environments.
+
+                                                   16
+1.3 Objective
+The objectives of this Smart Queue System for University Health Centre System are:
+
+    1. To study the existing queue management systems and identify their limitations
+         and suitable features for a university health centre environment through a case
+         study at Klinik Kesihatan Peramu Jaya, Pekan, Pahang.
+
+    2. To develop a Smart Queue System for University Health Centre (SQS) using
+         Flutter, Laravel API, and MySQL QR code-based registration, appointment
+         scheduling, real-time queue monitoring, automated notifications, and AI-based
+         waiting time prediction.
+
+    3. To evaluate the usability and functionality of the Smart Queue System through
+         Functional Testing and User Acceptance Testing (UAT) to determine its
+         effectiveness in improving queue management and user experience.
+
+1.4 Scope
+    The scope of this project is defined to ensure that the development of the Smart Queue
+    System for University Health Centre (SQS) remains focused and achievable within
+    the project timeline. The project covers the following aspects:
+
+         1. Target Environment
+             This project uses Klinik Kesihatan Peramu Jaya, Pekan, Pahang, as the case
+             study for requirement gathering, workflow analysis, and system validation.
+             The clinic is selected because its operational workflow closely resembles that
+             of a university health centre, including patient registration, consultation
+             services, queue management, and healthcare administration. The findings
+             obtained from the case study are used to design and validate a Smart Queue
+             System that can be adapted for university health centre environments.
+
+                                                         17
+2. Technology Stack
+    The system is built using the following technology stack:
+         - Frontend: Flutter framework using the Dart programming language.
+             No other frontend language such as JavaScript etc. will be used.
+         - Backend: Laravel API, which will handle all the business logic, queue
+             generation and user authentication.
+         - Database: MySQL, managed through the Laravel Eloquent ORM.
+         - The system will follow a three-tier architecture:
+
+                                    Figure 1.1 System architecture
+
+3. User Roles
+    The proposed system is designed for four categories of users:
+         · Patients: Register for appointments or walk-in visits, monitor queue
+             status, view estimated waiting time, and receive notification updates.
+         · Registration Staff: Register patients, manage queues, review queue
+             priority recommendations, and monitor queue progress.
+         · Doctors: View patient queues, update consultation status, and
+             complete patient consultations.
+         · Clinic Administrator: Manage users, monitor queue performance,
+             generate reports, and oversee system operations.
+
+4. Core Features
+    The Smart Queue System includes the following main functions:
+
+                                               18
+                  · User authentication and role-based access.
+                  · QR code registration and walk-in patient registration.
+                  · Appointment booking and management.
+                  · Real-time queue monitoring.
+                  · Dynamic waiting time prediction.
+                  · Intelligent queue priority recommendation for staff approval.
+                  · Smart notification updates.
+                  · Queue reports and analytics dashboard
+
+         5. Hardware
+         The SQS is accessible through devices include desktop computers, laptops, tablets
+         and smartphones. It is to ensure that the system is flexible for users to use
+         whichever devices they want to use. This project does not include physical
+         hardware such as a button device, IoT button, or electronic queue display board.
+         The Call Next Patient function will be provided as a software button in the doctor
+         dashboard.
+
+         6. Limitations
+             The proposed system focuses only on queue management and does not
+             include the following:
+                  · Electronic Medical Record (EMR) management.
+                  · Pharmacy inventory management.
+                  · Laboratory management.
+                  · Financial or payment processing.
+                  · Automatic clinical diagnosis or medical decision-making.
+
+1.5 Thesis Organization
+
+         This thesis is organised into four chapters to present the development of the
+proposed Smart Queue System for University Health Centre (SQS) in a structured and
+systematic manner.
+
+                                                         19
+         Chapter 1: Introduction presents the background of the study, problem statement,
+project objectives, project scope, and thesis organisation. It introduces the motivation for
+developing the Smart Queue System and explains the use of Klinik Kesihatan Peramu
+Jaya, Pekan, Pahang, as the case study for requirement gathering and system validation.
+
+         Chapter 2: Literature Review reviews previous studies, existing queue
+management systems, and related technologies relevant to healthcare queue management.
+This chapter also analyses and compares existing systems, identifies their strengths and
+limitations and establishes the research gap that justifies the development of the proposed
+Smart Queue System.
+
+         Chapter 3: Methodology explains the project management methodology, system
+requirements, proposed system architecture, system design, database design, proof of
+concept, testing and validation plan and project schedule. This chapter describes the
+overall development process, from requirement analysis to system implementation and
+evaluation.
+
+         Chapter 4: Conclusion summarises the overall project, highlights the expected
+contributions of the proposed system and discusses recommendations for future
+improvements and further research.
+
+                                                         20
+                                             CHAPTER 2
+
+                                    LITERATURE REVIEW
+
+2.1 Introduction
+
+         This chapter reviews existing queue management systems, healthcare
+applications, and related technologies that are relevant to the development of the
+proposed Smart Queue System for University Health Centre (SQS). The purpose of this
+review is to examine the features, strengths, and limitations of existing systems in order
+to identify suitable approaches and determine opportunities for improvement in the
+proposed system.
+
+         Since the proposed SQS is developed as a mobile application using the Flutter
+framework with Laravel API and MySQL database, this review focuses on digital queue
+management systems and healthcare applications that support functionalities such as
+digital queue registration, appointment booking, real-time queue monitoring, notification
+services, and queue management. The selected systems also provide valuable references
+for designing the user interface, system workflow, and queue management processes.
+
+         Four existing systems have been selected for comparison: JPJeQ, Queue
+Management System (QMS), Qmed Portal and Waitwhile. These systems were selected
+because they represent different approaches to digital queue management across
+government agencies, healthcare institutions, and commercial service organisations.
+Each system provides useful features and implementation strategies that can be analysed
+and adapted for the proposed Smart Queue System.
+
+         The comparison of these systems helps identify the strengths and limitations of
+current queue management solutions. Although the reviewed systems provide useful
+functionalities such as digital queue registration, appointment scheduling, real-time
+queue tracking, notification services, and queue analytics, they do not fully support the
+operational requirements of a university health centre. In particular, existing systems
+
+                                                         21
+generally lack the integration of AI-based waiting time prediction, intelligent queue
+priority recommendation, and a comprehensive healthcare workflow within a single
+mobile application. These identified gaps provide the motivation for developing the
+proposed Smart Queue System for University Health Centre (SQS).
+
+2.2 Existing Systems
+         In order to develop a functional and user-friendly Smart Queue System for
+
+University Health Centre (SQS), it is important to review existing queue management
+systems that provide services related to digital queue management, appointment
+scheduling, real-time queue monitoring, and customer flow management. Studying
+existing systems helps identify useful features, user interface designs, and system
+workflows that can be adapted and improved in the proposed system.
+
+         Four existing systems have been selected for this review, which are JPJeQ, Queue
+Management System (QMS), Qmed Portal and Waitwhile. These systems were selected
+because they represent different implementations of digital queue management across
+government agencies, healthcare institutions, and commercial organisations. Each system
+offers unique features that provide valuable insights into queue management, user
+experience, and service efficiency.
+
+         The review of these systems also helps identify the limitations of current queue
+management solutions. The findings obtained from this review will be used as references
+in designing the proposed Smart Queue System for University Health Centre (SQS) by
+incorporating suitable features while addressing the limitations identified in the existing
+systems.
+
+                                                         22
+2.2.1 JPJeQ
+         JPJeQ is a mobile queue management application developed by the Road
+
+Transport Department (JPJ) Malaysia to improve customer service efficiency at JPJ
+branches nationwide. The application allows users to obtain a digital queue number
+before visiting a JPJ branch, reducing physical crowding and improving the overall
+service experience. By enabling users to join the queue remotely, JPJeQ helps minimise
+waiting time at service counters and provides a more organised queue management
+process.
+
+         Figure 2.1 shows the official logo of the JPJeQ mobile application.
+
+                                            Figure 2.1 JPJeQ Logo
+         One of the main features provided by JPJeQ is digital queue registration. Users
+can select their preferred JPJ branch, choose the required service, and obtain a queue
+number directly through the mobile application before arriving at the service centre. The
+application also provides real-time queue status, allowing users to monitor the queue
+progress and estimate when they should arrive at the selected branch.
+         Figure 2.2 shows the homepage of the JPJeQ mobile application.
+
+                                                         23
+                                        Figure 2.2 JPJeQ Homepage
+         As shown in Figure 2.2, the homepage provides users with easy access to queue
+registration, branch selection, and service information. The interface is designed to be
+simple and user-friendly, enabling users to navigate the application with minimal
+difficulty. The application also displays the current queue status and service information,
+helping users manage their visits more efficiently.
+         Figure 2.3 shows the waiting time displayed by the JPJeQ application together
+with its real-time queue monitoring capability.
+
+                                                         24
+                                       Figure 2.3 JPJeQ Waiting List
+
+         Another useful feature of JPJeQ is its real-time queue monitoring capability as
+shown in the Figure 2.3. Users are able to check the progress of their queue number
+through the application without continuously waiting at the service centre. This improves
+user convenience while reducing congestion at waiting areas.
+
+         The main strength of JPJeQ is its ability to digitalise the conventional queue
+management process by allowing users to obtain queue numbers remotely. The
+application improves service efficiency through real-time queue monitoring and reduces
+unnecessary waiting time. Its simple user interface also enhances user experience by
+making queue registration quick and convenient.
+
+         Despite its effectiveness, JPJeQ is specifically designed for JPJ services and
+cannot be adapted directly to healthcare environments. The application does not support
+healthcare-specific functions such as patient registration, appointment scheduling,
+consultation management, or pharmacy services. In addition, JPJeQ does not provide AI-
+based waiting time prediction, intelligent queue priority recommendation, or role-based
+management for different healthcare users.
+
+                                                         25
+2.2.2 Queue Management System (QMS)
+         A Queue Management System (QMS) is a digital solution designed to organise
+
+customer flow and reduce waiting time in service-oriented organisations. It is commonly
+implemented in government agencies, hospitals, banks, retail stores, and customer service
+centres to improve service efficiency and enhance customer satisfaction. Unlike
+traditional manual queue systems, a QMS automates queue generation, customer calling,
+and service monitoring, enabling organisations to manage customer flow more effectively
+
+         Figure 2.4 shows the logo of a Queue Management System (QMS).
+
+                          Figure 2.4 Queue Management System (QMS) Logo
+         One of the main functions of a Queue Management System is to generate digital
+queue numbers and assign customers to the appropriate service counters. Most queue
+management systems also provide queue displays, counter management, reporting
+functions, and service performance monitoring. These features help organisations reduce
+congestion, optimise staff allocation, and improve overall operational efficiency.
+         Figure 2.5 shows an example of a Queue Management System (QMS) interface.
+
+                                                         26
+                       Figure 2.5 Queue Management System (QMS) Interface
+
+         Figure 2.5 shows the homepage of the Queue Management System (QMS) mobile
+application. The application provides several functions that enable users to access queue-
+related services conveniently through their mobile devices. These functions include QR
+code scanning, NFC support, appointment management, visit history, service provider
+information, and recent visit records. The user-friendly interface allows users to navigate
+different services efficiently while reducing the need for manual registration and
+enquiries at the service counter.
+
+         The Queue Management System provides a convenient digital platform for users
+to access queue-related services through their mobile devices. Features such as QR code
+support, appointment management, and visit history improve user convenience and
+reduce the need for manual registration. The simple and organised interface also enhances
+user experience by allowing users to navigate the application with ease.
+
+         Although the Queue Management System provides useful digital queue
+management features, it is designed for general service management rather than
+healthcare-specific environments. The application does not provide healthcare functions
+such as doctor consultation management, AI-based waiting time prediction, intelligent
+
+                                                         27
+queue priority recommendation, or integrated healthcare workflows. These limitations
+reduce its suitability for managing the complete patient journey within a university health
+centre.
+
+2.2.3 Qmed Portal
+         Qmed Portal is a digital healthcare platform developed to improve patient access
+
+to healthcare services through online appointment booking and queue management. The
+platform enables patients to book medical appointments, monitor appointment schedules,
+and receive healthcare service information through a digital platform. By providing
+online healthcare services, Qmed Portal helps reduce manual registration processes and
+improves the overall patient experience.
+
+         Figure 2.6 shows the official logo of the Qmed Portal application.
+
+                                       Figure 2. 6 Qmed Portal Logo
+         Figure 2.6 shows a Qmed Portal Logo. One of the key features provided by Qmed
+Portal is online appointment booking. Patients can select their preferred healthcare
+facility, choose an available appointment slot, and manage their bookings through the
+application. In addition, the platform provides queue monitoring and appointment status
+information, allowing patients to plan their visit more efficiently.
+         Figure 2.7 shows the homepage of the Qmed Portal application.
+
+                                                         28
+                                    Figure 2. 7 Qmed Portal Homepage
+         As shown in Figure 2.7, the homepage of the Qmed Portal mobile application
+features a simple and structured dashboard layout that provides users with quick access
+to healthcare services. At the top of the screen, a personalized greeting displays the user's
+name, creating a more user-centered experience. This is followed by a "Health
+Parameters" section, which highlights basic health information such as heart rate.
+         Figure 2.8 shows the queue status screen of the queue details.
+
+                            Figure 2. 8 Qmed Portal Queue Details Interface
+
+                                                         29
+         Figure 2.8 shows the queue status interface provided by the Qmed Portal
+application. The application displays the patient's assigned queue number together with
+useful queue information, including the number of patients ahead, estimated waiting time,
+current live queue status, and consultation room details. This allows patients to monitor
+their queue progress remotely and better estimate their waiting time before receiving
+healthcare services.
+
+         The interface also separates different service categories, including special care,
+appointment services, and walk-in services. By presenting queue information in a clear
+and organised manner, the application improves transparency and helps reduce
+uncertainty while patients are waiting for their turn.
+
+         Qmed Portal provides a convenient digital platform for patients to manage their
+healthcare appointments and monitor their queue status through a mobile application. The
+system displays useful information such as queue number, the number of patients ahead,
+estimated waiting time, and live queue status, allowing patients to better plan their visit
+and reduce uncertainty while waiting. In addition, the application supports different
+service categories, including appointment, walk-in, and special care services, making the
+queue management process more organised and user-friendly.
+
+         Although Qmed Portal provides effective appointment booking and queue
+tracking features, the system mainly focuses on displaying queue information rather than
+providing intelligent decision support. The estimated waiting time is presented to users,
+but the system does not indicate the use of AI-based waiting time prediction or dynamic
+queue analysis. Furthermore, the application does not provide intelligent queue priority
+recommendations to assist healthcare staff in managing patient priorities. These
+limitations create opportunities for the proposed Smart Queue System for University
+Health Centre (SQS) to incorporate AI-based waiting time prediction and intelligent
+queue priority recommendation to further improve queue management efficiency.
+
+                                                         30
+2.2.4 Waitwhile
+         Waitwhile is a digital queue management and appointment scheduling application
+
+that enables users to join virtual queues, book appointments, and receive real-time queue
+updates through their mobile devices. The application is designed to improve customer
+flow by allowing users to register remotely, monitor their queue status, and receive
+notifications when their turn is approaching. Waitwhile is widely used across various
+industries, including healthcare, government services, retail, and customer service
+centres.
+
+         Figure 2.9 shows the official Waitwhile application logo
+
+                                    Figure 2. 9 Waitwhile Logo
+         One of the key features provided by Waitwhile is virtual queue registration. Users
+are able to register for a queue directly through the application, view their current position
+in the queue, monitor the estimated waiting time, and manage their reservations without
+physically waiting at the service location.
+         Figure 2.10 shows the Waitwhile user interface.
+
+                                                         31
+                                    Figure 2. 10 Waitwhile User Interface
+         As shown in Figure 2.10, the application displays important queue information
+such as the user's position in the queue, estimated waiting time, registration options, and
+available services. The interface is simple and user-friendly, allowing users to access
+queue services conveniently through their mobile devices.
+         Figure 2.11 shows the Waitwhile staff interface.
+
+                                    Figure 2. 11 Waitwhile Staff Interface
+                                                         32
+         Figure 2.11 shows the staff interface used to monitor the waiting list, manage
+customer queues and view estimated waiting times. The application provides a
+centralised interface that assists staff in managing queue progression more efficiently
+while keeping queue information updated in real time.
+
+         Waitwhile provides a convenient digital platform for queue registration,
+appointment scheduling, and real-time queue monitoring. Features such as estimated
+waiting time, virtual queue management, and reservation services improve customer
+convenience while reducing physical waiting. The application also offers separate
+interfaces for users and staff, allowing queue management to be handled more efficiently.
+
+         Although Waitwhile provides comprehensive queue management features, it is
+designed as a general-purpose queue management application rather than a healthcare-
+specific solution. The application does not support healthcare workflows such as patient
+consultation management, medical service coordination, or pharmacy management. In
+addition, Waitwhile does not provide AI-based waiting time prediction or intelligent
+queue priority recommendation, which are proposed features of the Smart Queue System
+for University Health Centre (SQS).
+
+2.3 Analysis and Comparison of Existing System
+
+         The existing systems reviewed in the previous section provide different
+approaches to digital queue management and appointment services. Although each
+system offers useful functionalities, their features vary depending on their intended users
+and service environments. Some systems are designed for government agencies, while
+others focus on healthcare institutions or general customer service management.
+Therefore, a comparison is conducted to identify the similarities, strengths, and
+limitations of these systems.
+
+         The comparison focuses on the core functionalities that are relevant to the
+development of the proposed Smart Queue System for University Health Centre (SQS).
+These functionalities include mobile application support, QR code registration,
+appointment booking, walk-in registration, real-time queue monitoring, estimated
+
+                                                         33
+waiting time, notification services, healthcare workflow support, AI-based waiting time
+prediction, and intelligent queue priority recommendation.
+
+         Table 2.1 presents the comparison of the selected existing systems and the
+proposed Smart Queue System. The comparison helps identify the gaps in current queue
+management solutions and provides justification for the features implemented in the
+proposed system
+
+Table 2.1 Analysis and Comparison of Existing System
+
+Features              JPJeQ QMS    Qmed               Waitwhile Proposed
+                                   Portal                            SQS
+
+Mobile Application                                      
+
+QR Code Registration                                    
+
+Appointment Booking                                     
+
+Walk-in Registration                                    
+
+Real-time   Queue                                       
+
+Monitoring
+
+Estimated Waiting                                       
+
+Time                                                      (AI-
+                                                        assisted)
+
+Queue Notifications                                     
+
+                        34
+Healthcare Workflow                                        
+
+Dynamic Waiting                                            
+
+Time Prediction (AI-
+
+based)
+
+Intelligent Queue                                          
+
+Priority
+
+Recommendation
+
+Note:  = Feature available,  = Feature not available.
+
+2.3.1 Analysis of Comparison on Existing Systems
+
+         Based on the comparison presented in Table 2.1, all four existing systems support
+mobile applications, allowing users to conveniently access queue-related services
+through their smartphones. In addition, all reviewed systems provide real-time queue
+monitoring, enabling users to check their queue status without continuously waiting at
+the service location. These features improve service efficiency and enhance the overall
+user experience by providing greater transparency during the waiting process.
+
+         JPJeQ focuses on digital queue registration and queue monitoring for government
+services. The application enables users to obtain queue numbers remotely and monitor
+queue progress before arriving at the service centre. However, it does not support
+appointment booking or healthcare-specific workflows as it is designed exclusively for
+JPJ services.
+
+         The Queue Management System (QMS) provides digital queue registration, QR
+code scanning, appointment management, and walk-in registration. These features help
+organisations improve customer flow and reduce manual registration. However, the
+
+                        35
+system is developed for general service environments and does not provide healthcare-
+specific functionalities or estimated waiting time information.
+
+         Among the reviewed systems, Qmed Portal offers the most comprehensive
+healthcare-related features. Besides appointment booking and walk-in registration, the
+application provides estimated waiting time, real-time queue monitoring, queue
+notifications, and healthcare service management. These features allow patients to better
+plan their visits and improve the overall healthcare experience. However, the application
+focuses on displaying queue information and does not provide intelligent decision-
+support capabilities.
+
+         Waitwhile also provides comprehensive queue management features, including
+appointment booking, virtual queue registration, real-time queue monitoring, estimated
+waiting time, and notification services. The application improves customer convenience
+by allowing users to join queues remotely and receive updates before their turn.
+Nevertheless, Waitwhile is designed as a general queue management application rather
+than a healthcare-specific solution.
+
+         Although each of the reviewed systems provides useful queue management
+functionalities, none of them incorporates intelligent features such as Dynamic Waiting
+Time Prediction (AI-based) and Intelligent Queue Priority Recommendation. Existing
+systems mainly display queue information based on the current queue status without
+analysing multiple operational factors to improve waiting time estimation or assist staff
+in managing patient priorities. These limitations highlight the need for a smarter queue
+management solution that integrates artificial intelligence to improve queue prediction
+accuracy, support healthcare staff in decision-making, and enhance the overall efficiency
+of queue management within a university health centre.
+
+                                                         36
+2.3.2 Relevance of the Comparison to the Proposed Smart Queue System for
+         University Health Centre (SQS)
+
+         The comparison of the existing systems provides valuable insights into the design
+and development of the proposed Smart Queue System for University Health Centre
+(SQS). Each reviewed system contributes useful functionalities that can be adapted to
+improve queue management while also revealing limitations that should be addressed in
+the proposed system.
+
+         JPJeQ demonstrates the effectiveness of digital queue registration and real-time
+queue monitoring in reducing physical congestion and improving service efficiency.
+Similarly, the Queue Management System (QMS) highlights the benefits of QR code
+registration and digital queue management in simplifying the registration process and
+improving customer flow. These features are incorporated into the proposed SQS to
+provide a more efficient and user-friendly queue registration experience.
+
+         Qmed Portal serves as an important reference for healthcare queue management
+by providing appointment booking, queue monitoring, estimated waiting time, and
+healthcare workflow support. These features are relevant to the operational requirements
+of a university health centre, where both appointment-based and walk-in patients need to
+be managed efficiently. Meanwhile, Waitwhile demonstrates how virtual queue
+management, appointment scheduling, and notification services can improve user
+convenience by allowing users to monitor their queue status remotely.
+
+         Although the reviewed systems provide useful queue management functionalities,
+none of them integrates intelligent decision-support features within a healthcare queue
+management application. Existing systems mainly focus on displaying queue information
+rather than analysing queue conditions to improve operational efficiency. Therefore, the
+proposed Smart Queue System introduces Dynamic Waiting Time Prediction (AI-based)
+to provide more accurate waiting time estimation based on real-time queue conditions,
+and Intelligent Queue Priority Recommendation to assist registration staff in identifying
+patients who may require priority attention based on predefined criteria.
+
+                                                         37
+         By combining the strengths of the reviewed systems with intelligent queue
+management capabilities, the proposed Smart Queue System aims to provide a more
+comprehensive solution that improves queue efficiency, reduces patient waiting
+uncertainty, and enhances healthcare service delivery within a university health centre.
+The comparison therefore provides a strong foundation for the design, implementation,
+and feature selection of the proposed system.
+
+         Table 2.2 Feature Adoption Summary for SQS
+
+Feature               Decision Reason
+
+Appointment Booking   Adopted Enables patients to schedule clinic visits in advance,
+                                    reducing congestion and improving service planning.
+
+Real-time Queue       Adopted Allows patients to monitor their current queue status
+Monitoring                          and reduces uncertainty while waiting.
+
+Queue Notifications   Adopted Provides timely notifications to patients when their
+                                    queue status changes or their turn is approaching.
+
+User-friendly Mobile  Adopted Provides a simple and intuitive interface that
+Interface                           improves system usability for all users.
+
+QR Code Registration  Added  Supports faster and contactless registration for walk-
+                             in patients at the clinic.
+
+Dynamic Waiting Time Added   Provides more accurate waiting time estimation by
+Prediction (AI-based)        analysing real-time queue conditions and historical
+                             consultation data.
+
+                             38
+Intelligent Queue    Added     Assists registration staff in identifying patients who
+Priority                       may require priority service based on predefined
+Recommendation                 criteria while allowing staff to make the final
+                               decision.
+
+Doctor Dashboard     Added     Enables doctors to view patient queues, call the next
+                               patient, and update consultation status efficiently.
+
+Administrator Dashboard Added  Allows administrators to monitor queue performance,
+                               manage users, and generate operational reports.
+
+Medical Record       Excluded The proposed system focuses on queue management
+Management                         and does not replace Electronic Medical Record
+                                   (EMR) systems.
+
+Pharmacy Management Excluded Pharmacy operations are outside the scope of the
+                                               proposed Smart Queue System.
+
+Payment Integration  Excluded Payment processing is not required because the
+                                   system focuses solely on queue management services.
+
+             The proposed Smart Queue System differs from existing queue management
+applications through the integration of intelligent decision-support features. While
+existing systems primarily provide digital queue registration and monitoring, the
+proposed system enhances queue management by incorporating Dynamic Waiting Time
+Prediction (AI-based), Intelligent Queue Priority Recommendation, and Smart
+Notification Updates. These intelligent features are designed to support operational
+decision-making, improve waiting time estimation, provide timely notifications based on
+real-time queue conditions, and assist healthcare staff in managing patient queues more
+effectively while maintaining human oversight during clinical operations.
+
+                                                         39
+2.4 Summary
+         This chapter reviewed and analysed existing queue management systems that are
+
+relevant to the development of the proposed Smart Queue System for University Health
+Centre (SQS). Four existing systems, namely JPJeQ, Queue Management System (QMS),
+Qmed Portal and Waitwhile, were examined to understand their functionalities, strengths,
+and limitations. The review focused on key features such as mobile application support,
+QR code registration, appointment booking, walk-in registration, real-time queue
+monitoring, estimated waiting time, notification services, and healthcare workflow
+support.
+
+         The comparison and analysis revealed that although the reviewed systems provide
+effective digital queue management and appointment services, none of them integrates
+intelligent queue management features such as Dynamic Waiting Time Prediction (AI-
+based), Intelligent Queue Priority Recommendation, and Smart Notification Updates
+within a single healthcare queue management application. These identified gaps provide
+the motivation for developing the proposed Smart Queue System for University Health
+Centre (SQS), which aims to enhance queue management efficiency and improve the
+overall patient experience through intelligent decision-support capabilities.
+
+         The findings presented in this chapter serve as the foundation for the design and
+development of the proposed system. The next chapter describes the project
+methodology, system requirements, proposed system design, database design, proof of
+concept, and testing plan that will be used to develop and evaluate the Smart Queue
+System for University Health Centre (SQS).
+
+                                                         40
+                                             CHAPTER 3
+
+                                         METHODOLOGY
+
+3.1 Introduction
+
+         This chapter discusses the methodology used for the development of the proposed
+Smart Queue System for University Health Centre (SQS). The methodology describes
+the overall process that will be followed to design, develop, test, and evaluate the
+proposed system in a systematic and organised manner. This chapter also presents the
+project development methodology, project requirements, proposed system design, data
+design, proof of initial concept, testing and validation plan, potential use of the proposed
+solution, and project schedule that will be used throughout the development of the system.
+
+         The proposed Smart Queue System for University Health Centre (SQS) will be
+developed using the Waterfall Software Development Life Cycle (SDLC). The Waterfall
+model is a structured software development methodology that divides the development
+process into a series of sequential phases. Each phase must be completed before
+proceeding to the next phase, ensuring that every stage of the project is carefully planned,
+documented, and validated. The methodology consists of six main phases, namely
+Requirements Analysis, System Design, Development, Testing, Deployment, and
+Maintenance.
+
+         The Waterfall methodology is selected because the proposed project has clearly
+defined objectives, scope, and expected system functionalities identified through the
+problem statement, literature review, and analysis of existing queue management
+systems. Additional system requirements will be obtained through discussions with
+relevant stakeholders and by studying the operational workflow of Klinik Kesihatan
+Peramu Jaya, Pekan, Pahang, which serves as the case study for this project. Since the
+proposed system focuses on developing a complete mobile-based queue management
+solution with predefined functionalities, the sequential nature of the Waterfall model
+
+                                                         41
+provides a suitable approach for managing each stage of the project in a structured and
+systematic manner.
+
+         Throughout the development process, each phase of the Waterfall Software
+Development Life Cycle will produce specific deliverables that serve as the foundation
+for the next phase. The requirements identified during the analysis phase will be
+translated into system design, followed by system development, testing, deployment, and
+maintenance planning. This structured development approach helps ensure that the
+proposed system meets the project objectives, fulfils the identified functional and non-
+functional requirements, and supports the successful implementation of the Smart Queue
+System for University Health Centre (SQS).
+
+         The following sections describe each phase of the Waterfall Software
+Development Life Cycle in detail, together with the project requirements, proposed
+system design, data design, proof of initial concept, testing and validation plan, potential
+use of the proposed solution, and project schedule that will be used throughout the
+development of the Smart Queue System for University Health Centre (SQS).
+
+3.2 Project Development Methodology
+
+High-quality software development requires a systematic approach to ensure that the
+proposed system is developed efficiently and achieves its intended objectives. For this
+project, the Waterfall Software Development Life Cycle (SDLC) is adopted as the project
+development methodology. The Waterfall model is a structured software development
+approach that divides the project into a sequence of well-defined phases, where each
+phase must be completed before progressing to the next phase. This systematic process
+helps ensure that project requirements are clearly identified, the system design is carefully
+prepared, and the implementation is carried out in an organised manner.
+
+The Waterfall Software Development Life Cycle consists of six main phases:
+Requirements Analysis, System Design, Development, Testing, Deployment, and
+Maintenance. Each phase produces specific outputs that serve as the foundation for the
+
+                                                         42
+following phase. This structured methodology is suitable for the proposed Smart Queue
+System for University Health Centre (SQS) because the project has clearly defined
+objectives, scope, and expected functionalities. Furthermore, the sequential nature of the
+Waterfall model promotes comprehensive documentation and systematic project
+management throughout the development process.
+Figure 3.1 illustrates the Waterfall Software Development Life Cycle adopted for the
+development of the proposed Smart Queue System for University Health Centre (SQS).
+
+                  Figure 3. 1 Waterfall Software Development Life Cycle (SDLC)
+
+3.2.1 Requirements
+         The Requirements Analysis phase is the first phase of the Waterfall Software
+
+Development Life Cycle. This phase aims to identify, analyse, and document the
+requirements needed for the development of the proposed Smart Queue System for
+University Health Centre (SQS). A clear understanding of the system requirements is
+essential to ensure that the proposed solution addresses the identified problems and fulfils
+the project objectives.
+
+                                                         43
+         The system requirements will be gathered through several activities, including a
+review of relevant literature, analysis of existing queue management systems, discussions
+with the project supervisor, and the study of operational workflows at Klinik Kesihatan
+Peramu Jaya, Pekan, Pahang, which serves as the case study for this project. These
+activities will help identify the current queue management process, existing challenges,
+and opportunities for improvement that can be incorporated into the proposed system.
+
+         During this phase, both functional requirements and non-functional requirements
+will be identified. Functional requirements describe the services and functions that the
+system must provide, such as user authentication, appointment booking, QR code
+registration, walk-in patient registration, real-time queue monitoring, Dynamic Waiting
+Time Prediction (AI-based), Intelligent Queue Priority Recommendation, Smart
+Notification Updates, and report generation. Non-functional requirements define the
+quality attributes of the system, including usability, security, performance, reliability,
+scalability, and maintainability.
+
+         The information collected during this phase will serve as the foundation for the
+subsequent design and development phases. Well-defined requirements will help ensure
+that the proposed Smart Queue System is developed systematically and meets the needs
+of its intended users while achieving the objectives of the project.
+
+         Figure 3.2 shows the Waterfall Software Development Life Cycle for the
+Requirement Analysis Process.
+
+                               Figure 3. 2 Requirements Analysis Process
+
+                                                         44
+3.2.2 System Design
+
+         The System Design phase is the second phase of the Waterfall Software
+Development Life Cycle. During this phase, the system requirements identified in the
+previous phase will be translated into a detailed system design that serves as the blueprint
+for system development. The objective of this phase is to define the overall system
+architecture, user interactions, process flow, and database structure before the
+implementation process begins.
+
+         Several design models will be prepared to represent different aspects of the
+proposed Smart Queue System for University Health Centre (SQS). These include the
+Context Diagram, Use Case Diagram, Use Case Descriptions, Flowcharts, and Activity
+Diagrams, which illustrate the interactions between users and the system, system
+functionalities, and the workflow of each major process. In addition, an Entity
+Relationship Diagram (ERD) and Database Dictionary will be designed to define the
+database structure, relationships between entities, and the data required to support the
+system.
+
+         The user interface (UI) design will also be prepared during this phase to provide
+a clear visual representation of the application's layout and navigation. The interface will
+be designed with emphasis on simplicity, usability, and accessibility to ensure that
+patients, registration staff, doctors, and administrators can perform their respective tasks
+efficiently. The design will also consider responsive layouts suitable for mobile devices
+developed using the Flutter framework.
+
+         The outputs produced during the System Design phase will serve as the
+foundation for the Development phase. A well-prepared system design helps minimise
+development errors, improves consistency throughout the implementation process, and
+ensures that the developed system satisfies the identified functional and non-functional
+requirements.
+
+         Figure 3.3 shows the Waterfall Software Development Life Cycle for the System
+Design Components
+
+                                                         45
+                             Figure 3. 3 System Design Components
+
+3.2.3 Development
+
+         The Development phase is the third phase of the Waterfall Software Development
+Life Cycle. During this phase, the proposed Smart Queue System for University Health
+Centre (SQS) will be implemented based on the system design produced in the previous
+phase. The system functionalities, user interfaces, and database structure will be
+developed according to the identified functional and non-functional requirements. Each
+system module will be implemented systematically to ensure that the developed
+application operates correctly and meets the project objectives.
+
+         The proposed system will be developed as a mobile application using the Flutter
+framework with the Dart programming language, while Laravel will be used as the
+backend framework to provide RESTful API services and manage the application's
+business logic. MySQL will be be used as the database management system to store user
+information, appointment records, queue data, and other system-related information.
+Communication between the Flutter mobile application and the Laravel backend will be
+performed through RESTful APIs to ensure secure and efficient data exchange.
+
+                                                         46
+         Several core modules will be developed during this phase, including user
+authentication, QR code registration, appointment booking, walk-in patient registration,
+real-time queue monitoring, doctor consultation management, queue reporting, and
+administration functions. In addition, the system will incorporate intelligent queue
+management capabilities, namely Dynamic Waiting Time Prediction (AI-based),
+Intelligent Queue Priority Recommendation, and Smart Notification Updates, to improve
+queue management efficiency and enhance the overall user experience.
+
+         Version control and source code management will be carried out using GitHub
+throughout the development process to facilitate systematic code management, version
+tracking, and project documentation. GitHub will also support collaboration with the
+project supervisor by maintaining a complete development history and enabling
+systematic management of source code throughout the implementation process.
+
+         The completed system developed during this phase will serve as the input for the
+System Testing phase, where all implemented functionalities will be verified to makes
+sure that the proposed Smart Queue System satisfies the specified requirements and
+performs as expected.
+
+Table 3.1 Development Tools and Technologies
+
+Component Technology      Purpose
+
+Frontend  Flutter (Dart)  Develop the mobile application interface.
+
+Backend   Laravel         Develop RESTful API and business logic.
+
+Database  MySQL           Store system data and queue information.
+
+Version Control GitHub    Manage source code and version history.
+
+IDE       Visual Studio Code Develop and maintain the application.
+
+                          47
+3.2.4 Testing
+
+         Testing phase is the fourth phase of the Waterfall Software Development Life
+Cycle. During this phase, the developed Smart Queue System for University Health
+Centre (SQS) will be tested to verify that all implemented functionalities operate
+correctly and satisfy the specified system requirements. The objective of this phase is to
+identify and resolve any defects or errors before the system is deployed for user
+evaluation.
+
+         Several testing activities will be carried out to ensure the quality and reliability of
+the proposed system. Functional Testing will be performed to verify that each system
+function, including user authentication, QR code registration, appointment booking,
+walk-in patient registration, real-time queue monitoring, Dynamic Waiting Time
+Prediction (AI-based), Intelligent Queue Priority Recommendation, Smart Notification
+Updates, and report generation, operates according to the specified requirements. Any
+identified defects will be corrected before proceeding to the next stage of development.
+
+         Following Functional Testing, User Acceptance Testing (UAT) will be conducted
+with selected users to evaluate whether the proposed system satisfies user requirements
+and performs as expected in a practical environment. The feedback obtained during this
+phase will be used to identify areas for improvement before the system is deployed.
+
+         The results obtained during the Testing phase will ensure that the proposed Smart
+Queue System functions correctly, achieves the project objectives, and is ready for
+deployment. A detailed testing strategy, including Functional Testing procedures and
+User Acceptance Testing.
+
+3.2.5 Deployment
+
+         Deployment phase is the fifth phase of the Waterfall Software Development Life
+Cycle. During this phase, the developed Smart Queue System for University Health
+Centre (SQS) will be prepared for implementation and made available for use by its
+intended users. Before deployment, the system will be verified to make sure that all
+
+                                                         48
+functionalities have successfully passed the testing phase and are operating according to
+the specified requirements.
+
+         The mobile application developed using the Flutter framework will be installed
+on supported Android devices, while the Laravel backend and MySQL database will be
+configured to support system operations. The deployment process will include database
+configuration, API integration, user account setup, and verification of communication
+between the mobile application and the backend server to make sure that the system
+functions correctly in the intended environment.
+
+         Following deployment, the system will be evaluated to make sure that all major
+functions, including queue registration, appointment booking, real-time queue
+monitoring, intelligent queue management, and notification services operate as expected.
+Any minor issues identified during deployment will be documented and addressed before
+the system is considered ready for operational use.
+
+3.2.6 Maintenance
+
+         The Maintenance phase is the final phase of the Waterfall Software Development
+Life Cycle. During this phase, the Smart Queue System for University Health Centre
+(SQS) will be monitored after deployment to identify any issues that may affect its
+performance or usability. Any errors or defects discovered after implementation will be
+corrected to make sure that the system continues to operate properly and reliably.
+
+         Besides correcting system issues, this phase also allows improvements and
+enhancements to be introduced based on user feedback and future requirements.
+Suggestions obtained during User Acceptance Testing (UAT) and system evaluation may
+be considered for future versions of the system. These improvements may include
+enhancing the user interface, improving system performance, expanding queue
+management features, or integrating additional healthcare services when required.
+
+                                                         49
+         Although the current project focuses on developing a functional Smart Queue
+System for University Health Centre (SQS), the Maintenance phase provides
+opportunities for future system enhancements and continuous improvement. This helps
+make sure that the proposed system remains relevant, efficient, and capable of supporting
+future operational requirements.
+
+3.3 Project Requirements
+
+         Project requirements define the functions, characteristics, and limitations that
+guide the development of the proposed Smart Queue System for University Health Centre
+(SQS). Identifying the project requirements is important because they provide a clear
+understanding of what the system is expected to accomplish and serve as a reference
+throughout the system development process. These requirements are identified based on
+the project objectives, literature review, analysis of existing queue management systems,
+and the operational workflow of the selected case study.
+
+         The project requirements are divided into three categories: functional
+requirements, non-functional requirements, and constraints and limitations. Functional
+requirements describe the features and services that the proposed system must provide to
+support patients, registration staff, doctors, and administrators. Non-functional
+requirements define the quality attributes of the system, such as usability, performance,
+security, reliability, and maintainability. Constraints and limitations describe the
+boundaries of the project and identify the functions that are beyond the scope of the
+proposed system.
+
+         The identified project requirements will serve as the foundation for the design,
+development, testing, and evaluation of the proposed Smart Queue System. By clearly
+defining these requirements, the project development process can be carried out
+systematically while making sure that the proposed solution achieves the project
+objectives and satisfies the needs of its intended users.
+
+         .
+
+                                                         50
+3.3.1 Functional Requirements
+         The functional requirements describe the functions and services that the proposed
+
+Smart Queue System for University Health Centre (SQS) must provide to support the
+daily operations of the health centre. The functional requirements are categorised
+according to the different user roles within the system, namely Patient, Registration Staff,
+Doctor, Administrator, and System.
+Patient
+The patient shall be able to:
+
+    · Log in using Student ID or Staff ID.
+    · Register for a queue by scanning a QR code.
+    · Book an appointment.
+    · View queue number, queue status, and estimated waiting time.
+    · Receive Smart Notification Updates when their turn is approaching or has been
+
+         called.
+    · Update personal profile information.
+
+Registration Staff
+The registration staff shall be able to:
+
+    · Log in using staff credentials.
+    · Register walk-in patients.
+    · Verify patient information.
+
+                                                         51
+    · Monitor the waiting queue.
+    · View Dynamic Waiting Time Prediction (AI-based).
+    · View Intelligent Queue Priority Recommendations before approving queue
+
+         arrangements.
+    · Assign patients to doctors or consultation rooms.
+    · Assist patients who are unable to use QR code registration.
+
+Doctor
+The doctor shall be able to:
+
+    · Log in using doctor credentials.
+    · View assigned patients.
+    · View patient queue information.
+    · Call the next patient.
+    · Update consultation status.
+    · Mark patient status as Called, In Consultation, Completed, Skipped, or Absent.
+
+Administrator
+The administrator shall be able to:
+
+    · Log in using administrator credentials.
+    · Manage patient, staff, and doctor accounts.
+    · Manage departments and consultation rooms.
+
+                                                         52
+    · Configure queue settings.
+    · Generate queue reports.
+    · View queue analytics and system logs.
+
+System
+The system shall:
+
+    · Support role-based authentication for Patients, Registration Staff, Doctors, and
+         Administrators.
+
+    · Synchronise real-time queue information between the mobile application and
+         staff dashboard.
+
+    · Generate Dynamic Waiting Time Prediction (AI-based).
+    · Generate Intelligent Queue Priority Recommendations to support queue
+
+         management.
+    · Send Smart Notification Updates to patients regarding queue progress.
+    · Be accessible through desktop computers, laptops, tablets, and smartphones.
+
+3.3.2 Non-Functional Requirement
+         The characteristics of the proposed Smart Queue System for University Health
+
+Centre (SQS). Unlike functional requirements, which define what the system should do,
+non-functional requirements specify how the system should perform. These requirements
+help make sure that the proposed system is reliable, secure, user-friendly, and capable of
+supporting the operational needs of a university health centre.
+
+                                                         53
+Usability:
+The system shall provide a simple, user-friendly, and intuitive interface that enables
+patients, registration staff, doctors, and administrators to use the system with minimal
+training. The user interface shall be designed to support efficient navigation and improve
+the overall user experience.
+
+Performance:
+The system shall provide fast response times and support multiple users simultaneously
+during clinic operating hours. Real-time queue updates and notification services shall be
+delivered with minimal delay to improve queue management efficiency.
+
+Security:
+The system shall implement secure user authentication, password encryption, and role-
+based access control to protect user information and prevent unauthorised access to
+system functions.
+
+Reliability:
+The system shall operate consistently during clinic operating hours and maintain accurate
+queue information throughout daily operations. The system shall also minimise data loss
+and maintain stable communication between the mobile application and the backend
+server.
+
+Platform Compatibility:
+The proposed system shall support Android mobile devices for patients and web browsers
+for registration staff, doctors, and administrators. The application shall provide a
+consistent user experience across supported platforms.
+
+Maintainability:
+The system shall be developed using a modular architecture to facilitate future
+maintenance, bug fixes, and feature enhancements without significantly affecting
+existing system functionalities
+
+                                                         54
+3.3.3 Constraints and Limitations
+
+         The proposed Smart Queue System for University Health Centre (SQS) has
+several constraints and limitations that define the scope of the project. These constraints
+help maintain a realistic project scope. The constraints and limitations of the proposed
+system are as follows:
+
+    · The proposed system is intended for university health centre environments, with
+         Klinik Kesihatan Peramu Jaya, Pekan, Pahang serving as the case study for
+         requirement gathering, workflow analysis, and system validation.
+
+    · The system focuses only on queue management and related operational processes.
+         It does not include Electronic Medical Record (EMR) management, diagnosis
+         records, or treatment history.
+
+    · The proposed system does not include pharmacy inventory management,
+         laboratory management, or financial and payment processing.
+
+    · The system does not provide automatic medical diagnosis or replace clinical
+         decision-making. The intelligent features, including Dynamic Waiting Time
+         Prediction (AI-based) and Intelligent Queue Priority Recommendation, are
+         designed only to support queue management and operational decision-making.
+         Final decisions will remain under the responsibility of authorised healthcare
+         professionals.
+
+    · The proposed system does not include physical queue display boards, IoT devices,
+         or electronic queue calling hardware. Queue management will be performed
+         through the mobile application and web dashboard.
+
+    · The system requires a stable internet connection to support real-time queue
+         synchronisation, notification services, and communication between the mobile
+         application and the backend server.
+
+                                                         55
+         These constraints would define the boundaries of the proposed Smart Queue
+System while allowing future enhancements to be incorporated in subsequent versions of
+the system based on user requirements and technological advancements
+
+3.4 Proposed Design
+         The proposed design describes the overall structure and operation of the Smart
+
+Queue System for University Health Centre (SQS). This section presents the design
+models that illustrate how users interact with the proposed system, how information flows
+between different system components, and how major business processes are performed.
+These design models serve to provide a clear understanding of the SQS before
+implementation begins.
+
+         The proposed design is developed based on the functional and non-functional
+requirements identified in the previous section. Several design models are included in
+this section which are Context Diagram, Use Case Diagram, Use Case Descriptions,
+Flowcharts, and Activity Diagrams. Each diagram represents a different perspective of
+the proposed system and together they provide a comprehensive overview of the Smart
+Queue System for University Health Centre (SQS).
+
+         The proposed design also illustrates how the intelligent queue management
+features, including Dynamic Waiting Time Prediction (AI-based), Intelligent Queue
+Priority Recommendation, and Smart Notification Updates, are integrated into the overall
+system workflow. These design models will guide the implementation process and help
+make sure that the developed system satisfies the project objectives and user requirements
+
+3.4.1 System Architecture
+The proposed Smart Queue System (SQS) adopts the Model­View­Controller (MVC)
+architecture to separate the user interface, business logic, and data management into
+
+                                                         56
+independent components. This architecture improves maintainability, scalability, and
+code reusability while supporting the Flutter frontend and Laravel backend.
+
+              Figure 3. 4 Model­View­Controller (MVC) architecture in SQS
+         Figure 3.4 shows the Model­View­Controller (MVC) architecture by the
+proposed Smart Queue System for University Health Centre (SQS). The architecture
+separates the application into five main components, namely config, pages, controller,
+model, and services, to improve modularity, maintainability, and scalability. The
+application is developed using Flutter, where the main.dart file serves as the entry point
+that initializes the application and coordinates communication among the different
+components.
+         The config package stores the application's configuration files, including API
+endpoints, authentication settings, and application configuration. These files provide the
+necessary configuration for communication between the Flutter application and the
+Laravel RESTful API.
+
+                                                         57
+         The pages package represents the View layer of the MVC architecture. It contains
+all user interface screens for the four user roles: Patient, Registration Staff, Doctor, and
+PKU Administrator. These pages include login, queue management, appointment
+booking, consultation management, user management, report generation, and profile
+management interfaces. The pages receive user input and display information but do not
+contain business logic.
+
+         The controller package represents the Controller layer and contains the business
+logic of the application. Each controller processes user requests, validates input,
+coordinates system operations, and communicates with the model and services. In
+addition to the core controllers such as authentication, queue, appointment, and
+consultation, the architecture also includes the AI Waiting Time Controller and AI
+Priority Controller, which support the intelligent waiting time prediction and queue
+priority recommendation features proposed in this project.
+
+         The model package represents the Model layer and contains the data entities used
+by the system. These entities correspond to the database tables designed in the Entity
+Relationship Diagram (ERD), including User, Role, Queue, Appointment, Consultation,
+Department, Room, and Notification. The models define the data structure used
+throughout the application.
+
+         The services package manages communication with external services,
+particularly the Laravel RESTful API. It handles API requests, user authentication, and
+notification services, enabling secure data exchange between the Flutter application and
+the backend server.
+
+         Overall, the MVC architecture separates the presentation layer, business logic,
+data model, and service communication into independent components. This improves
+code organization, simplifies future maintenance and feature enhancement, and supports
+the implementation of intelligent queue management features within the Smart Queue
+System for University Health Centre (SQS)
+
+                                                         58
+3.4.2 Context Diagram
+         The Context Diagram illustrates the overall interaction between the proposed
+
+Smart Queue System for University Health Centre (SQS) and its external users. It
+identifies the main user groups that interact with the system and shows the flow of
+information exchanged between each user and the proposed system. The Context
+Diagram provides a high-level overview of the system boundary without describing the
+internal processes.
+
+         Figure 3.5 shows the Context Diagram of the proposed Smart Queue System for
+University Health Centre (SQS).
+
+         Figure 3. 5 Smart Queue System for University Health Centre (SQS) Context
+Diagram
+
+                                                         59
+         As shown in Figure 3.5, the proposed Smart Queue System interacts with four
+external entities, namely Patient, Registration Staff, Doctor, and Administrator. Patients
+use the mobile application to log in, register for appointments or walk-in queues, view
+queue status, receive queue information, and obtain Smart Notification Updates.
+Registration Staff are responsible for verifying patient information, managing patient
+registration, assigning patients to consultation rooms or doctors, monitoring the waiting
+queue, and viewing intelligent queue management information such as Dynamic Waiting
+Time Prediction and Intelligent Queue Priority Recommendation. Doctors access
+assigned patient queues, call the next patient, and update consultation status throughout
+the consultation process. Administrators manage user accounts, departments,
+consultation rooms, queue settings, reports, system logs, and analytics through the
+administration dashboard.
+
+         The Smart Queue System processes all requests received from the external entities
+and returns the corresponding information based on each user's role and permissions. By
+centralising queue management within a single system, the proposed solution facilitates
+efficient communication between patients and healthcare staff while supporting
+intelligent queue management to improve waiting time estimation, queue prioritisation,
+and overall operational efficiency within the university health centre.
+
+3.4.3 Use Case Diagram
+
+         The Use Case Diagram shows the functional interactions between the users and
+the proposed Smart Queue System for University Health Centre (SQS). It identifies the
+main user roles that interact with the system and the services available to each user. The
+Use Case Diagram focus the specific functions that each user can perform within the
+system. It also shows the relationship between the different user roles and the services
+provided by the proposed system.
+
+         Figure 3.6 shows the Use Case Diagram of the Smart Queue System for
+University Health Centre (SQS).
+
+                                                         60
+    Figure 3. 6 Smart Queue System for University Health Centre (SQS) Use Case Diagram
+
+         As shown in Figure 3.6, the proposed system consists of four main user roles:
+Patient, Registration Staff, Doctor, and Administrator. Each user interacts with the system
+based on their assigned responsibilities and access privileges. Patients are able to log in,
+register for a queue, and view queue information through the mobile application.
+Registration Staff are responsible for managing patient registration, monitoring the
+queue, and managing consultation activities to support daily clinic operations. Doctors
+can log in to the system and manage patient consultations, including viewing assigned
+
+                                                         61
+patients and updating consultation status. Administrators are responsible for managing
+the overall system, including user management and report generation.
+
+         The Use Case Diagram provides a high-level overview of the main system
+functionalities and the interactions between users and the proposed Smart Queue System.
+It serves as a reference for the subsequent Use Case Descriptions and supports the
+implementation of the system based on the identified functional requirements.
+
+3.4.4 Use Case Description
+3.4.4.1 Use Case Login
+Table 3.2 Use case description for Login
+
+Element      Description
+
+Use      Case Login
+
+Name
+
+Actors       Patient, Registration Staff, Doctor, Administrator
+
+Description  Allows registered users to authenticate using their Student ID or Staff ID and
+             password. The system identifies the user's role and grants access to the
+             corresponding dashboard.
+
+Pre-Condition The user must have a registered account.
+
+                          62
+Basic Flow   1. The use case starts when the user opens the Smart Queue System (SQS).
+             2. The user enters their Student ID or Staff ID and password. [A1: Forgot
+             Password]
+             3. The system validates the login credentials. [E1: Invalid Credentials]
+             4. The system identifies the user's role.
+             5. The system redirects the user to the appropriate dashboard based on their
+             role.
+             6. The use case ends.
+
+Alternative  A1: Forgot Password
+Flow         1. At Step 2 of the Basic Flow, the user selects the Forgot Password option.
+             2. The user enters the registered email address.
+             3. The system sends a password reset link to the registered email.
+             4. The user resets the password.
+             5. The use case continues from Step 2 of the Basic Flow.
+
+Exception    E1: Invalid Credentials
+Flow         1. The system detects that the Student ID/Staff ID or password is incorrect.
+             2. The system displays an error message.
+             3. The user remains on the login page and may try again.
+
+Post-        The user successfully logs in and can access the system functions according
+Condition    to their assigned role.
+
+             63
+Constraints 1. Only registered users are allowed to log in.
+
+                     2. Users can only access functions and information permitted for their assigned
+                     role.
+
+3.4.4.2 Use Case Register Queue
+Table 3.3 Use case description for Register Queue
+
+Element      Description
+
+Use Case Register Queue
+Name
+
+Actors       Patient
+
+Description  Allows patients to register for a queue either by scanning a QR code for walk-in
+             services or by booking an appointment through the Smart Queue System (SQS).
+             After successful registration, the system generates a queue number or confirms
+             the appointment.
+
+Pre-         The patient must be logged in.
+Condition
+
+Basic Flow   1. The use case starts when the patient selects Register Queue from the main
+             menu.
+             2. The system displays the available registration options.
+             3. The patient selects QR Code Registration. [A1: Appointment Booking]
+             4. The patient scans the QR code displayed at the university health centre.
+             5. The system validates the QR code. [E1: Invalid QR Code]
+             6. The patient selects the required service or department.
+             7. The system checks whether the patient already has an active queue. [E2:
+             Duplicate Queue Registration]
+
+                          64
+             8. The system generates a queue number.
+             9. The system saves the queue registration record.
+             10. The system displays the queue number and registration confirmation.
+             11. The use case ends.
+
+Alternative  A1: Appointment Booking
+Flow         1. At Step 3 of the Basic Flow, the patient selects Appointment Booking.
+             2. The system displays the appointment booking form.
+             3. The patient selects the preferred date, time, and service.
+             4. The system checks the availability of the selected appointment slot. [E3:
+             Appointment Slot Unavailable]
+             5. The patient confirms the appointment.
+             6. The system saves the appointment record.
+             7. The system displays the appointment confirmation.
+             8. The use case ends.
+
+Exception    E1: Invalid QR Code
+Flow         1. The system detects that the scanned QR code is invalid.
+             2. The system displays an error message and requests the patient to scan again.
+
+             E2: Duplicate Queue Registration
+             1. The system detects that the patient already has an active queue.
+             2. The system displays the existing queue information.
+
+             E3: Appointment Slot Unavailable
+             1. The system detects that the selected appointment slot is unavailable.
+             2. The system prompts the patient to select another available date or time.
+
+             65
+Post-        The patient is successfully registered for a walk-in queue or an appointment, and
+Condition    the corresponding queue number or appointment confirmation is recorded in the
+             system.
+
+Constraints  1. QR code registration can only be performed by scanning a valid QR code
+             provided at the university health centre.
+             2. A patient can only have one active queue at a time.
+             3. Appointment booking is subject to the availability of appointment slots.
+
+3.4.4.3 Use Case View Queue Information
+Table 3.4 Use case description for View Queue Information
+
+Element      Description
+
+Use Case View Queue Information
+Name
+
+Actors       Patient, Registration Staff
+
+Description  Allows patients to view their queue number, queue status, estimated waiting
+             time, and Smart Notification Updates. Registration Staff can monitor the overall
+             waiting queue, patient flow, and intelligent queue management information,
+             including Dynamic Waiting Time Prediction and Intelligent Queue Priority
+             Recommendation.
+
+Pre-         The user must be logged in. Patients must have an active queue to view their
+Condition    queue information.
+
+Basic Flow   1. The use case starts when the user selects View Queue Information.
+             2. If the user is a patient, the system retrieves the patient's queue information.
+             [E1: No Active Queue]
+
+                                          66
+           3. The system retrieves the latest queue information and calculates the estimated
+           waiting time based on the current queue conditions. [E3: Waiting Time
+           Unavailable]
+           4. If the user is Registration Staff, the system retrieves the overall waiting queue
+           and intelligent queue management information. [E2: No Patient in Queue]
+           5. The system displays the queue information according to the user's role.
+           6. The patient can view the queue number, queue position, queue status,
+           estimated waiting time, and Smart Notification Updates.
+           7. Registration Staff can monitor the waiting queue, Dynamic Waiting Time
+           Prediction, and Intelligent Queue Priority Recommendation.
+           8. The use case ends.
+
+Alternative Not available.
+Flow
+
+Exception  E1: No Active Queue
+Flow       1. The system detects that the patient does not have an active queue.
+           2. The system displays a message requesting the patient to register for a queue
+           first.
+
+           E2: No Patient in Queue
+           1. The system detects that there are no patients waiting.
+           2. The system displays "No patient in queue."
+
+           E3: Waiting Time Unavailable
+           1. The system is unable to calculate the estimated waiting time because the
+           available queue data is insufficient or outdated.
+           2. The system displays "Estimated waiting time is currently unavailable."
+
+Post-      The appropriate queue information is displayed according to the user's role.
+Condition
+
+                            67
+Constraints  1. Patients can only view their own queue information.
+             2. Registration Staff can only monitor queue information and cannot update
+             consultation status.
+             3. Real-time queue updates require an active internet connection.
+             4. Estimated waiting time is generated based on current queue conditions and
+             may vary as the queue progresses.
+
+3.4.4.4 Use Case Manage Patient Registration
+Table 3.5 Use case description for Manage Patient Registration
+
+Element      Description
+
+Use Case Manage Patient Registration
+Name
+
+Actors       Registration Staff
+
+Description  Allows Registration Staff to verify patient registration, assist patients with
+             manual registration when required, and assign verified patients to the
+             appropriate doctor or consultation room before consultation.
+
+Pre-         Registration Staff must be logged in, and the patient must have completed queue
+Condition    registration or appointment booking.
+
+                                 68
+Basic Flow   1. The use case starts when the Registration Staff selects Manage Patient
+             Registration from the dashboard.
+             2. The system displays the list of registered patients. [E1: No Registration
+             Record Found]
+             3. The Registration Staff selects a patient record.
+             4. The Registration Staff verifies the patient's registration information. [E2:
+             Incomplete Patient Information]
+             5. The Registration Staff confirms the patient's registration or appointment
+             arrival.
+             6. The Registration Staff assigns the patient to the appropriate doctor or
+             consultation room. [E3: Doctor or Consultation Room Unavailable]
+             7. The system updates the patient's registration and queue records.
+             8. The use case ends.
+
+Alternative  A1: Manual Patient Registration
+Flow         1. The patient is unable to complete registration using the mobile application.
+             2. The Registration Staff manually enters the patient's information.
+             3. The system saves the registration record.
+             4. The use case continues from Step 6 of the Basic Flow.
+
+Exception    E1: No Registration Record Found
+Flow         1. The system detects that no registration record exists for the selected patient.
+             2. The system displays an error message.
+
+             E2: Incomplete Patient Information
+             1. The system detects incomplete or missing patient information.
+             2. The Registration Staff updates the required information before continuing.
+
+             E3: Doctor or Consultation Room Unavailable
+             1. The selected doctor or consultation room is unavailable.
+             2. The system prompts the Registration Staff to select another available doctor
+             or consultation room.
+
+             69
+Post-        The patient's registration is verified, and the patient is successfully assigned to
+Condition    the appropriate doctor or consultation room.
+
+Constraints  1. Only Registration Staff are authorised to manage patient registration and
+             assignment.
+             2. Patient assignment depends on the availability of doctors and consultation
+             rooms.
+             3. Registration Staff cannot access diagnosis or treatment records.
+
+             70
+3.4.4.5 Use Case Monitor Queue
+Table 3.6 Use case description for Monitor Queue
+
+Element      Description
+
+Use Case Monitor Queue
+Name
+
+Actors       Registration Staff
+
+Description  Allows Registration Staff to monitor the current waiting queue, view patient
+             queue progression, monitor Dynamic Waiting Time Prediction, and review
+             Intelligent Queue Priority Recommendations before managing patient flow.
+
+Pre-         Registration Staff must be logged in, and there must be active queue records in
+Condition    the system.
+
+Basic Flow   1. The use case starts when the Registration Staff selects Monitor Queue from
+             the dashboard.
+             2. The system retrieves the current waiting queue. [E1: No Active Queue]
+             3. The system displays the waiting queue, patient queue status, and queue
+             progression.
+             4. The system generates Dynamic Waiting Time Prediction based on the current
+             queue conditions.
+             5. The system generates Intelligent Queue Priority Recommendations for staff
+             review.
+             6. The Registration Staff reviews the queue information and recommendations.
+             7. The Registration Staff continues managing the queue based on operational
+             requirements.
+             8. The use case ends.
+
+Alternative Not available.
+Flow
+
+                                 71
+Exception    E1: No Active Queue
+Flow         1. The system detects that there are no active patients in the queue.
+             2. The system displays "No active queue available."
+
+Post-        The current queue information, Dynamic Waiting Time Prediction, and
+Condition    Intelligent Queue Priority Recommendations are displayed for the Registration
+             Staff to support queue management.
+
+Constraints  1. Only Registration Staff are authorised to monitor and manage the waiting
+             queue.
+             2. Dynamic Waiting Time Prediction and Intelligent Queue Priority
+             Recommendation are provided as decision-support features and do not
+             automatically modify the queue order.
+             3. Real-time queue monitoring requires an active internet connection.
+
+3.4.4.6 Use Case Manage Consultation
+Table 3.7 Use case description for Manage Consultation
+
+Element      Description
+
+Use Case Manage Consultation
+Name
+
+Actors       Doctor
+
+Description  Allows the doctor to manage the assigned consultation queue by viewing
+             assigned patients, calling the next patient, updating consultation status, and
+             completing the consultation process.
+
+Pre-         The doctor must be logged in, and at least one patient must be assigned to the
+Condition    doctor or consultation room.
+
+                              72
+Basic Flow   1. The use case starts when the doctor selects Manage Consultation from the
+             dashboard.
+             2. The system displays the list of assigned patients. [E1: No Assigned Patient]
+             3. The doctor reviews the assigned queue.
+             4. The doctor selects Call Next Patient.
+             5. The system retrieves the next patient from the assigned queue.
+             6. The system updates the patient's status to Called and sends a Smart
+             Notification Update to the patient. [A1: Patient Skipped or Absent]
+             7. The doctor updates the patient's status to In Consultation.
+             8. After completing the consultation, the doctor updates the patient's status to
+             Completed. [E2: Status Update Failed]
+             9. The system updates the live queue information.
+             10. The use case ends.
+
+Alternative  A1: Patient Skipped or Absent
+Flow         1. The patient does not arrive after being called.
+             2. The doctor updates the patient's status to Skipped or Absent.
+             3. The system updates the queue information and proceeds to the next patient.
+
+Exception    E1: No Assigned Patient
+Flow         1. The system detects that no patients are assigned to the doctor.
+             2. The system displays "No assigned patients available."
+
+Post-        E2: Status Update Failed
+Condition    1. The system fails to update the consultation status.
+             2. The system displays an error message.
+             3. The doctor retries the update.
+
+             The patient's consultation status is updated, and the consultation queue reflects
+             the latest queue progression.
+
+             73
+Constraints  1. Doctors can only manage patients assigned to their consultation room.
+             2. Doctors can only update consultation-related queue statuses and cannot
+             modify patient registration information or administrative settings.
+             3. The system does not record diagnosis or treatment details as part of this
+             project.
+
+3.4.4.7 Use Case Manage System
+Table 3.8 Use case description for Manage System
+
+Element      Description
+
+Use Case Manage System
+Name
+
+Actors       Administrator
+
+Description  Allows the Administrator to manage the overall system, including user
+             accounts, departments, consultation rooms, and queue settings to support the
+             operation of the Smart Queue System (SQS).
+
+Pre-         The Administrator must be logged in.
+Condition
+
+Basic Flow   1. The use case starts when the Administrator selects Manage System from the
+             dashboard.
+             2. The system displays the available system management functions.
+             3. The Administrator selects the required function, such as managing user
+             accounts, departments, consultation rooms, or queue settings.
+             4. The Administrator adds, updates, or disables the selected information. [E1:
+             Invalid Information]
+             5. The system validates the entered information.
+             6. The system saves the changes successfully.
+
+                            74
+             7. The use case ends.
+
+Alternative Not available.
+Flow
+
+Exception    E1: Invalid Information
+Flow         1. The system detects incomplete, duplicate, or invalid information.
+             2. The system displays an error message.
+             3. The Administrator corrects the information and submits it again.
+
+Post-        The selected system information is successfully created, updated, or disabled.
+Condition
+
+Constraints  1. Only the Administrator is authorised to manage system information.
+             2. Changes to departments, consultation rooms, and queue settings may affect
+             daily queue operations.
+             3. The Administrator cannot modify consultation records or diagnosis
+             information.
+
+3.4.4.8 Use Case Generate Reports
+Table 3.9 Use case description for Generate Reports
+
+Element      Description
+
+Use Case Generate Reports
+Name
+
+Actors       Administrator
+
+Description  Allows the Administrator to generate queue management reports based on
+             selected criteria, such as queue records, completed consultations, skipped
+             patients, absent patients, and overall queue performance.
+
+                                    75
+Pre-         The Administrator must be logged in, and queue records must exist in the
+Condition    database.
+
+Basic Flow   1. The use case starts when the Administrator selects Generate Reports from
+             the dashboard.
+             2. The system displays the available report filters.
+             3. The Administrator selects the required filter, such as date range, department,
+             doctor, consultation room, or queue status.
+             4. The system retrieves the corresponding queue records from the database.
+             [E1: No Records Found]
+             5. The system generates the report summary.
+             6. The system displays the generated report.
+             7. The use case ends.
+
+Alternative Not available.
+Flow
+
+Exception    E1: No Records Found
+Flow         1. The system detects that no records match the selected filter criteria.
+             2. The system displays the message "No records found."
+             3. The Administrator may select another filter and generate the report again.
+
+Post-        The requested report is successfully generated and displayed to the
+Condition    Administrator.
+
+Constraints  1. Only the Administrator is authorised to generate reports.
+             2. Reports contain only queue management information and system statistics.
+             3. Reports do not include Electronic Medical Records (EMR), diagnosis
+             information, or treatment details.
+
+                            76
+3.4.5 Flowchart
+         The flowchart illustrates the overall workflow of the proposed Smart Queue
+
+System for University Health Centre (SQS). It describes the sequence of activities
+performed by each user, beginning with user authentication and ending when the selected
+task is completed. The flowchart provides a visual representation of the major system
+processes and decision points for each user role.
+
+         Figure 3.7 shows the flowchart of the proposed Smart Queue System for
+University Health Centre (SQS)
+
+Figure 3. 7 Flowchart of the Smart Queue System for University Health Centre (SQS)
+         As shown in Figure 3.7, the process begins when a user opens the Smart Queue
+
+System and logs in using their registered credentials. The system validates the login
+information and identifies the user's role before redirecting the user to the appropriate
+dashboard. If the login credentials are invalid, an error message is displayed and the user
+is returned to the login page. After successful authentication, the workflow is divided into
+four user roles: Patient, Registration Staff, Doctor and Administrator, each performing
+different functions according to their responsibilities within the system.
+
+                                                         77
+Table 3.10 Flowchart explanation by user role
+ User Role Explanation
+
+Patient       Patients can register for a queue by scanning a QR code at the university
+              health centre or book an appointment through the mobile application.
+              During walk-in registration, the system validates the QR code before
+              generating a queue number. Patients can also view queue information,
+              including queue status, estimated waiting time, and Smart Notification
+              Updates.
+
+Registration  Registration Staff manage patient registration by verifying patient
+Staff         information, confirming appointment arrivals, assigning patients to the
+              appropriate doctor or consultation room, and monitoring the waiting queue.
+              The system provides Dynamic Waiting Time Prediction (AI-based) and
+              Intelligent Queue Priority Recommendation (AI-based) to assist staff in
+              monitoring queue progression and supporting operational decision-making.
+
+Doctor        Doctors manage the consultation process by viewing assigned patients,
+              calling the next patient, updating consultation status, and marking patients
+              as Completed, Skipped, or Absent. The system updates the queue status and
+              sends Smart Notification Updates to patients during the consultation
+              process.
+
+Administrator Administrators manage the overall operation of the system by maintaining
+                   user accounts, departments, consultation rooms, and queue settings.
+                   Administrators can also generate reports based on selected criteria to
+                   evaluate queue performance and support administrative decision-making.
+
+              78
+3.4.6 Activity Diagram
+3.4.6.1 Patient Activity Diagram
+
+         The Patient Activity Diagram shows the sequence of activities performed by a
+patient when using the proposed Smart Queue System for University Health Centre
+(SQS). It demonstrates how the patient interacts with the system, Registration Staff, and
+Doctor during queue registration, appointment booking, consultation preparation, and
+queue monitoring.
+
+         Figure 3.8 shows the Patient Activity Diagram of the proposed Smart Queue
+System for University Health Centre (SQS)
+
+         Figure 3. 8 Patient Activity Diagram of the Smart Queue System for University
+Health Centre (SQS)
+
+                                                         79
+         As shown in Figure 3.8, the process begins when the patient logs in to the Smart
+Queue System using their registered credentials. After successful authentication, the
+patient may either register for a walk-in consultation by scanning the QR code available
+at the university health centre or book an appointment by selecting the preferred date,
+time, and service. The system then generates a queue number for walk-in registration or
+confirms the appointment booking.
+
+         Once the patient arrives at the health centre and the Registration Staff would
+verifies the patient's registration or appointment arrival before assigning the patient to the
+appropriate doctor or consultation room. The doctor then calls the next patient for
+consultation, while the system sends a Smart Notification Update to inform the patient
+that their turn is approaching. Finally, the patient can view the latest queue information,
+including the queue status and estimated waiting time, before proceeding to the
+consultation session.
+
+3.4.6.2 Registration Staff Activity Diagram
+         The Registration Staff Activity Diagram illustrates the sequence of activities
+
+performed by the Registration Staff when managing patient registration in the proposed
+Smart Queue System for University Health Centre (SQS). It describes the workflow from
+staff authentication, patient registration verification, and patient assignment until the
+patient is successfully added to the doctor's consultation queue. The activity diagram also
+illustrates the interaction between the Registration Staff, Patient, Doctor, and the Smart
+Queue System throughout the registration process.
+
+         Figure 3.9 shows the Registration Staff Activity Diagram of the proposed Smart
+Queue System for University Health Centre (SQS).
+
+                                                         80
+Figure 3. 9 Registration Staff Activity Diagram of the Smart Queue System for University
+Health Centre (SQS)
+
+         As shown in Figure 3.9, the process begins when the Registration Staff logs in to
+the Smart Queue System using their registered credentials. After successful
+authentication, the system displays the patient registration list for review. The
+Registration Staff checks the patient's registration details to determine whether the
+submitted information is valid. If the registration information is incomplete or invalid,
+the patient is requested to provide or correct the required information before the
+verification process continues.
+
+         Once the patient's registration has been successfully verified, the Registration
+Staff confirms the patient's registration or appointment arrival and assigns the patient to
+the appropriate doctor or consultation room. The system then updates the assigned queue
+and generates Dynamic Waiting Time Prediction (AI-based) followed by Intelligent
+Queue Priority Recommendation (AI-based). The Registration Staff reviews the
+
+                                                         81
+generated queue information and recommendations before the system sends a Smart
+Notification Update to the patient. At the same time, the patient is added to the doctor's
+waiting queue, allowing the doctor to proceed with the consultation process. This
+workflow improves queue visibility and supports more efficient queue management
+while maintaining human oversight during operational decision-making.
+
+3.4.6.3 Doctor Activity Diagram
+         The Doctor Activity Diagram shows the sequence of activities performed by the
+
+doctor when managing the consultation process in the proposed Smart Queue System for
+University Health Centre (SQS). It describes the workflow from doctor authentication
+until the consultation status is updated after each patient visit. The activity diagram also
+demonstrates the interaction between the doctor and the Smart Queue System throughout
+the consultation process.
+
+         Figure 3.10 shows the Doctor Activity Diagram of the proposed Smart Queue
+System for University Health Centre (SQS).
+
+                                                         82
+Figure 3. 10 Doctor Activity Diagram of the Smart Queue System for University Health
+Centre (SQS)
+
+         As shown in Figure 3.10, the process begins when the doctor logs in to the Smart
+Queue System using their registered credentials. After successful authentication, the
+system validates the login information. Once a patient has been assigned by the
+Registration Staff, the doctor can view the assigned patient list and call the next patient
+for consultation. The system updates the patient's queue status to Called and sends a
+Smart Notification Update to inform the patient that it is their turn. After receiving the
+notification, the patient proceeds to the consultation room.
+
+         During the consultation, the doctor updates the patient's status to In Consultation.
+Upon completion of the consultation, the doctor determines whether the consultation has
+been completed successfully. If the consultation is completed, the patient is marked as
+Completed. Otherwise, if the patient does not attend the consultation or the consultation
+
+                                                         83
+cannot proceed, the doctor marks the patient as Skipped or Absent. Finally, the system
+updates the queue status and consultation record, completing the consultation process.
+
+3.4.6.4 Administrator Activity Diagram
+         The Administrator Activity Diagram illustrates the sequence of activities
+
+performed by the Administrator when managing the proposed Smart Queue System for
+University Health Centre (SQS). It describes the workflow from administrator
+authentication until system management tasks are completed. The activity diagram
+focuses on administrative functions such as managing user accounts, maintaining
+departments and consultation rooms, and generating queue management reports.
+
+         Figure 3.11 shows the Administrator Activity Diagram of the proposed Smart
+Queue System for University Health Centre (SQS).
+
+Figure 3. 11 Smart Queue System for University Health Centre (SQS) Activity Diagram
+for PKU Administrator
+
+                                                         84
+         As shown in Figure 3.11, the process begins when the Administrator logs in to
+the Smart Queue System using their registered credentials. The system validates the login
+information before granting access to the administrator functions. After successful
+authentication, the Administrator may choose to manage user accounts, manage
+departments and consultation rooms, or generate queue management reports.
+
+         When managing user accounts, the Administrator can create, update, or disable
+user information, and the system saves the corresponding changes. Similarly, the
+Administrator can maintain department and consultation room information, with the
+system recording any updates made. If the Administrator selects the report generation
+function, the system generates queue reports and system logs based on the available
+queue data. Finally, the Administrator reviews the confirmation message or generated
+report before the process ends.
+
+3.5 Data Design
+
+         The data design focuses on the structure and organization of the data used in the
+proposed Smart Queue System for University Health Centre (SQS). It defines how data
+is stored, managed, and related within the database to support the system's functional
+requirements. This section presents the data involved in the system, the Entity
+Relationship Diagram (ERD), and the database dictionary, including the primary keys
+and foreign keys used to maintain data integrity.
+
+         The proposed database is designed to support the main functionalities of the Smart
+Queue System, including user authentication, QR code queue registration, appointment
+booking, patient registration management, queue monitoring, consultation management,
+Smart Notification Updates, Dynamic Waiting Time Prediction (AI-based), Intelligent
+Queue Priority Recommendation (AI-based), and report generation.
+
+         The database consists of eight main entities: Roles, Users, Departments,
+Consultation Rooms, Queues, Appointments, Consultations, and Notifications. Reports
+are not stored as separate records because they can be generated dynamically from the
+operational data stored in the queue, appointment, and consultation tables.
+
+                                                         85
+3.5.1 Data Involved in the System
+
+         The Smart Queue System for University Health Centre (SQS) stores data related
+to users, queue management, appointments, consultation services, notifications, and
+administrative operations. These data entities support the daily operation of the system
+and enable efficient management of patient flow within the university health centre.
+
+Table 3.11 Data entities description
+
+No. Data         Description
+
+1 User Data      Stores information for all registered users, including Patients,
+                 Registration Staff, Doctors, and Administrators.
+2 Role Data
+                 Stores user roles used for role-based access control within the
+3 Department     system.
+      Data
+                 Stores information about clinic departments or services
+4 Consultation   available for queue registration and appointment booking.
+      Room Data
+                 Stores consultation room information used when assigning
+5 Queue Data     patients to doctors.
+
+6 Appointment    Stores queue number, queue type, queue status, registration
+      Data       time, estimated waiting time, assigned doctor, assigned
+                 consultation room, and queue progression details.
+7 Consultation
+      Data       Stores appointment date, appointment time, selected
+                 department, and appointment status.
+
+                 Stores consultation status, assigned doctor, consultation room,
+                 consultation start time, consultation end time, and
+                 consultation outcome.
+
+                              86
+No. Data  Description
+
+8 Notification Stores Smart Notification Updates sent to patients regarding
+
+Data      queue status, appointment confirmation, and consultation
+
+          progress.
+
+3.5.2 Entity Relationship Diagram
+
+         The Entity Relationship Diagram (ERD) illustrates the logical structure of the
+database used by the Smart Queue System for University Health Centre (SQS). It
+identifies the main entities within the system and the relationships between them. The
+ERD provides a clear representation of how data is organised and how different entities
+interact to support queue registration, appointment management, consultation processes,
+notification services, and administrative functions.
+
+         Figure 3.12 shows the Entity Relationship Diagram (ERD) of the proposed Smart
+Queue System for University Health Centre (SQS).
+
+                       87
+Figure 3. 12 Entity Relationship Diagram of the Smart Queue System for University
+Health Centre (SQS)
+
+         As shown in Figure 3.12, the database consists of eight main entities that are
+interconnected through primary and foreign key relationships. The relationships ensure
+data consistency and support the operational workflow of the proposed system.
+
+Table 3.12 Relationship Definitions
+
+From    To Entity Relationship  Description
+Entity
+
+Role    User      One role to many One role can be assigned to multiple
+
+                  users         users. For example, the Patient role
+
+                                can be assigned to many patient
+
+                                accounts.
+
+User    Queue     One user to many One patient can have multiple queue
+
+                  queues        records. Each queue record belongs
+
+                                to one patient.
+
+User    Appointment One user to many One patient can have multiple
+
+                  appointments  appointment records. Each
+
+                                appointment belongs to one patient.
+
+Department Queue  One department One department can receive multiple
+                  to many queues queue registrations.
+
+Department Appointment One department One department can have multiple
+
+                  to      many appointment bookings.
+
+                  appointments
+
+Department Room   One department One department can contain multiple
+                  to many rooms consultation rooms.
+
+                          88
+From    To Entity Relationship           Description
+Entity
+Room    Queue         One room           to One consultation room can be
+Queue                 many queues            assigned to multiple queue records
+User                                         over time.
+
+Room    Consultation One queue to one Each queue record is associated with
+Queue
+                      consultation       one consultation record.
+User
+        Consultation One user to many One doctor can manage multiple
+
+                      consultations      consultation records. Each
+
+                                         consultation is handled by one
+
+                                         doctor.
+
+        Consultation One room            to One consultation room can be used
+                          many               for multiple consultation records
+                          consultations      over time.
+
+        Notification  One queue          to One queue record can generate
+                      many
+                      notifications      multiple notification records, such as
+
+                                         queue registration, queue call, or
+
+                                         consultation              completion
+
+                                         notifications.
+
+        Notification  One user to many One user can receive multiple
+
+                      notifications      notification records generated by the
+
+                                         system.
+
+3.5.3 Database Dictionary
+
+         The database dictionary describes the structure of each table used in the proposed
+Smart Queue System for University Health Centre (SQS). Each table includes the field
+
+                                     89
+name, data type, key type (Primary Key or Foreign Key), and a brief description of each
+attribute.
+
+3.5.3.1 Roles Table
+
+Table 3.13 Roles Table
+
+Field Name Data Type         Key       Description
+
+role_id   INT                PK        Unique ID for each role.
+
+role_name VARCHAR(50)                  Name of the role such as Patient,
+                                       Registration Staff, Doctor, and
+                                       Administrator.
+
+3.5.3.2 User Table
+
+Table 3.14 User Table
+
+Field Name Data Type              Key     Description
+
+user_id   INT                     PK      Unique ID for each user.
+
+role_id   INT                     FK      Refer role_id in the roles
+
+                                          table.
+
+user_identifier VARCHAR(50)       UNIQUE  Student ID, Staff ID,
+                                          Doctor ID, or Admin ID
+                                          used for login.
+
+name      VARCHAR(100)                    User's full name
+email     VARCHAR(100)
+password  VARCHAR(255)            UNIQUE User's email address.
+
+                                          Encrypted password
+
+                                  90
+Field Name Data Type                Key       Description
+                                              User contact number
+phone_no        VARCHAR(20)
+                                                       Account status such
+        status       VARCHAR(20)              as active or inactive
+
+3.5.3.3 Departments Table
+
+Table 3.15 Departments Table
+
+Field Name      Data Type       Key      Description
+
+department_id INT               PK       Unique ID for each department
+                                         based on its service.
+department_name VARCHAR(100)
+                                         Name of the department.
+description     VARCHAR(255)
+                                         Short description of the
+status          VARCHAR(20)              department or service.
+
+                                         Department status such as active
+                                         or inactive.
+
+3.5.3.4 Rooms Table
+
+Table 3.16 Rooms Table
+
+Field Name           Data Type           Key  Description
+
+room_id              INT                 PK   Unique ID for each
+
+                                              consultation room.
+
+                                  91
+         Field Name       Data Type           Key          Description
+
+department_id        INT                 FK        Refers             to
+
+                                                   department_id in the
+
+                                                   department table.
+
+room_name            VARCHAR(100)                  Name or number of
+                                                   the consultation
+                                                   room
+
+status               VARCHAR(20)                   Room status, such as
+
+                                                   available,
+
+                                                   unavailable,       or
+
+                                                   inactive.
+
+3.5.3.5 Queues Table
+         Table 3.17 Queues Table
+
+Field Name                Data Type      Key       Description
+
+queue_id                  INT            PK        Unique ID for each
+
+                                                   queue record.
+
+user_id                   INT            FK        Refers to user_id in the
+
+                                                   users table. In this
+
+                                                   table, it represents the
+
+                                                   patient who registers
+
+                                                   for the queue.
+
+                                     92
+Field Name     Data Type      Key             Description
+department_id
+room_id        INT            FK              Refers       to
+queue_number
+queue_type                            department_id in the
+queue_status
+                                      departments table.
+registered_at
+called_at      INT            FK              Refers       to
+
+                                      room_id in the rooms
+
+                                      table.
+
+               VARCHAR(20)    UNIQUE           Queue number
+                                      generated by the
+                                      system.
+
+               VARCHAR(30)                     Type of queue,
+                                      such as QR walk-in or
+                                      appointment.
+
+               VARCHAR(30)                     Queue status,
+                                      such as waiting,
+                                      called, in consultation,
+                                      completed, skipped, or
+                                      absent.
+
+               DATETIME                        Date and time
+                                      the queue was
+                                      registered.
+
+               DATETIME                        Date and time
+                                      the patient was called.
+
+                          93
+Field Name             Data Type            Key    Description
+completed_at           DATETIME
+                                                            Date and time
+estimated_waiting_time INT                         the queue process was
+                                                   completed.
+
+                                                            Estimated
+                                                   waiting time in
+                                                   minutes.
+
+3.5.3.6 Appointments Table
+         Table 3.18 Appointments Table
+
+Field Name        Data Type       Key Description
+
+appointment_id    INT             PK Unique ID for each appointment
+                                           record.
+
+user_id           INT             FK Refers to user_id in the users table. In
+
+                                            this table, it represents the patient
+
+                                            who books the appointment.
+
+department_id     INT             FK Refers to department_id in the
+                                           departments table.
+
+appointment_date DATE                       Date of the appointment.
+
+appointment_time       TIME                 Time of the appointment.
+
+                                        94
+Field Name  Data Type            Key Description
+
+appointment_status VARCHAR(30)               Appointment status, such as pending,
+                                             confirmed, cancelled, or completed.
+
+3.5.3.7 Consultations Table
+         Table 3.19 Consultations Table
+
+Field Name  Data Type            Key Description
+
+consultation_id INT              PK Unique ID for each consultation record.
+
+queue_id    INT                  FK Refers to queue_id in the queues table.
+
+user_id     INT                  FK Refers to user_id in the users table. In
+
+                                             this table, it represents the doctor who
+
+                                             handles the consultation.
+
+room_id     INT                  FK Refers to room_id in the rooms table.
+
+consultation_status VARCHAR(30)              Consultation status, such as called, in
+                                             consultation, completed, skipped, or
+                                             absent.
+
+started_at  DATETIME                         Date and time the consultation started.
+
+ended_at    DATETIME                         Date and time the consultation ended.
+
+                                         95
+3.5.3.8 Notifications Table
+         Table 3.20 Notifications Table
+
+Field Name          Data Type            Key Description
+
+notification_id     INT                  PK Unique ID for each notification
+                                                record.
+
+user_id             INT                  FK Refers to user_id in the users table.
+
+                                             In this table, it represents the user
+
+                                             who receives the notification.
+
+queue_id            INT                  FK Refers to queue_id in the queues
+                                                table.
+
+notification_title  VARCHAR(100)             Title of the notification.
+
+notification_message TEXT                    Message content of the notification.
+
+notification_status VARCHAR(30)              Notification status, such as sent,
+                                             read, or failed.
+
+sent_at             DATETIME                 Date and time the notification was
+                                             sent.
+
+                                         96
+3.6 Proof of Initial Concept
+         The Proof of Initial Concept (POC) demonstrates the feasibility of the proposed
+
+Smart Queue System for University Health Centre (SQS) before the full development
+phase begins. The objective of the POC is to validate that the proposed system
+architecture, user interface design, and core functionalities can be implemented using the
+selected technologies. Developing an early prototype also allows the proposed workflows
+and user interactions to be evaluated before implementation.
+
+         For this project, the proof of concept is presented as a high-fidelity mobile and
+web application prototype. The prototype illustrates the primary interfaces and navigation
+flow for the four user roles, namely Patient, Registration Staff, Doctor, and
+Administrator. It also demonstrates the intelligent queue management features, including
+Dynamic Waiting Time Prediction (AI-based), Intelligent Queue Priority
+Recommendation, and Smart Notification Updates
+3.6.1 Prototype Overview
+
+         The prototype provides an overview of the proposed Smart Queue System and
+demonstrates the interaction between users and the system. It includes the major
+functional modules identified during the system analysis and design phase, such as user
+authentication, queue registration, appointment booking, patient registration
+management, consultation management, queue monitoring, and administrative
+management.
+
+         Figure 3.13 shows the overall prototype of the proposed Smart Queue System for
+University Health Centre (SQS).
+
+                                                         97
+         Figure 3. 13 Overall Prototype of the Smart Queue System for University Health
+                                             Centre (SQS)
+
+         As shown in Figure 3.13, the prototype consists of interfaces for the Patient,
+Registration Staff, Doctor, and Administrator. Each interface has been designed
+according to the functional requirements and use cases presented earlier in this chapter.
+
+3.6.2 Patient Prototype
+         The Patient prototype demonstrates the main functions available to patients within
+
+the Smart Queue System. These include user authentication, QR code queue registration,
+appointment booking, viewing queue information, receiving Smart Notification Updates,
+and managing personal profile information. The interfaces are designed to provide a
+simple and user-friendly experience while allowing patients to monitor their queue
+progress and estimated waiting time conveniently through the mobile application.
+
+                                                         98
+                              Figure 3. 14 Login and Forgot Password page
+         Figure 3.14 shows the Login and Forgot Password interfaces of the proposed
+Smart Queue System for University Health Centre (SQS). The Login page allows users
+to authenticate themselves by entering their registered User ID and password. The system
+supports role-based authentication, enabling Patients, Registration Staff, Doctors, and
+Administrators to access their respective dashboards after successful login.
+         The Forgot Password page allows users to recover their accounts by entering their
+registered email address. After the email address is submitted, the system sends password
+reset instructions to the user, allowing them to create a new password and regain access
+to the system. These interfaces are designed to provide a simple, secure, and user-friendly
+authentication process while ensuring that only authorised users can access the Smart
+Queue System.
+
+                                                         99
+                                          Figure 3. 15 Logout page
+         Figure 3.15 shows the Logout interface of the proposed Smart Queue System for
+University Health Centre (SQS). The menu is displayed when the user taps the profile
+icon located at the top-right corner of the application. It provides a summary of the user's
+account information, including the user's name, registered email address, and contact
+number.
+         The menu also provides two main options: My Profile and Sign Out. The My
+Profile option allows users to view and manage their personal account information, while
+the Sign Out option enables users to securely log out of the system. This interface
+provides a convenient way for users to access account-related functions while helping to
+maintain account security by allowing users to end their session safely after using the
+application.
+
+                                                        100
+                                   Figure 3. 16 Queue Registration Page
+
+         Figure 3.16 shows the Queue Registration interfaces of the proposed Smart Queue
+System for University Health Centre (SQS). The queue registration process begins when
+the patient selects Get Queue Number and scans the QR code displayed at the entrance
+of the University Health Centre. The QR code verification helps make sure that only
+patients who are physically present at the health centre can register for a walk-in queue.
+
+         After the QR code is successfully scanned, the patient selects the required
+department or healthcare service, such as Dental Clinic, General Consultation, Health
+Screening, or Pharmacy. The patient then selects the reason for the visit before submitting
+the registration request. Once the required information has been provided, the system
+generates a queue number and registers the patient in the selected department's waiting
+queue. This interface is designed to provide a fast and convenient queue registration
+process while reducing manual registration and improving the efficiency of patient queue
+management.
+
+                                                        101
+                                        Figure 3. 17 My Queue page
+         Figure 3.17 shows the My Queue interface of the proposed Smart Queue System
+for University Health Centre (SQS). This interface allows patients to monitor their current
+queue information after successfully registering for a queue or confirming their
+appointment. The page displays important details such as the queue number, selected
+department, assigned doctor, consultation room, registration time, and current queue
+status.
+         In addition, the interface provides an AI-based predicted waiting time, the elapsed
+waiting time since registration, and the patient's queue progress to help patients estimate
+when they will be called for consultation. Quick access buttons are also provided to allow
+patients to scan a QR code, book an appointment, view queue history, or request
+assistance. This interface improves queue transparency by enabling patients to monitor
+their queue status in real time, reducing uncertainty while waiting for consultation.
+
+                                                        102
+                                 Figure 3. 18 Appointment Booking page
+         Figure 3.18 shows the Appointment Booking interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface allows patients to
+schedule an appointment before visiting the University Health Centre. Patients can select
+the required department, choose a preferred doctor (if applicable), and specify the desired
+appointment date and time based on the available appointment slots.
+         After completing the required information, the patient submits the appointment
+request by selecting the Book Appointment button. The system validates the appointment
+details and records the booking if the selected time slot is available. This interface
+provides patients with a convenient way to schedule healthcare services in advance,
+helping to reduce waiting time and improve the management of patient appointments
+within the health centre.
+
+                                                        103
+                                       Figure 3. 19 Notification page
+         Figure 3.19 shows the Notification interface of the proposed Smart Queue System
+for University Health Centre (SQS). This interface provides patients with Smart
+Notification Updates regarding important events throughout the queue and appointment
+process. Notifications include queue status updates, AI-based estimated waiting time
+predictions, appointment reminders, queue call announcements, and other healthcare
+service notifications.
+
+                                    Figure 3. 20 Profile page for patient
+                                                        104
+         Figure 3.20 shows the Patient Profile interface of the proposed Smart Queue
+System for University Health Centre (SQS). This interface allows patients to view and
+manage their personal account information. The profile page displays essential details
+such as the patient's name, registered email address, user role, identification number, and
+contact number. It also provides a Change Password function, allowing patients to update
+their account password securely by entering their current password and a new password.
+In addition, patients can update editable personal information, such as their contact
+number, to keep their account information accurate and up to date. This interface supports
+secure account management while providing patients with convenient access to their
+personal information.
+
+3.6.3 Registration Staff Prototype
+         The Registration Staff Prototype illustrates the interfaces used by Registration
+
+Staff to manage patient registration and monitor queue operations in the proposed Smart
+Queue System for University Health Centre (SQS). The prototype includes functions
+such as monitoring the waiting queue, verifying patient registration, assigning patients to
+doctors or consultation rooms, managing QR code registration, and viewing personal
+profile information. In addition, the queue monitoring interface supports Dynamic
+Waiting Time Prediction (AI-based) and Intelligent Queue Priority Recommendation,
+providing decision-support information to assist Registration Staff in managing patient
+flow more efficiently while maintaining human oversight.
+
+                                                        105
+                                    Figure 3. 21 Queue Monitor Page
+
+         Figure 3.21 shows the Queue Monitor interface used by the Registration Staff in
+the proposed Smart Queue System for University Health Centre (SQS). This interface
+provides an overview of the current patient queue by displaying the number of patients
+according to their queue status, including Waiting, Verified, Active, and Appointment.
+Registration Staff can refresh the queue information and apply filters based on
+department and queue status to monitor patient flow more efficiently. The interface also
+displays essential patient information, such as the queue number, patient name, selected
+department, assigned doctor, consultation room, registration time, and verification status.
+This enables Registration Staff to monitor queue operations in real time and manage
+patient flow effectively within the University Health Centre.
+
+                                                        106
+                                       Figure 3. 22 Verification page
+
+         Figure 3.22 shows the Verification interface used by the Registration Staff in the
+proposed Smart Queue System for University Health Centre (SQS). This interface
+enables Registration Staff to verify patients who have registered for a queue before they
+proceed to the consultation process. The system displays the list of patients waiting for
+verification together with important information such as the queue number, patient name,
+selected department, registration time, and current queue status. After the Registration
+Staff selects Verify Patient, the system updates the patient's status to Verified and
+displays a confirmation message. Once all waiting patients have been verified, the
+interface indicates that no further patients are awaiting verification. This verification
+process helps make sure that only confirmed patients continue to the next stage of the
+queue management process.
+
+                                                        107
+                                       Figure 3. 23 Assignment page
+         Figure 3.23 shows the Assignment interface used by the Registration Staff in the
+proposed Smart Queue System for University Health Centre (SQS). This interface
+enables Registration Staff to assign verified patients to the appropriate doctor and
+consultation room after the registration process has been completed. Before making the
+assignment, the system provides Dynamic Waiting Time Prediction (AI-based) and
+Intelligent Queue Priority Recommendation (AI-based) as decision-support information
+to assist Registration Staff in selecting the most appropriate assignment based on the
+current queue conditions. The Registration Staff reviews the available doctors and
+consultation rooms before confirming the assignment. Once the assignment is completed
+successfully, the system displays a confirmation message and updates the patient's queue
+record. Although AI-generated recommendations are provided, the final assignment
+decision remains under the responsibility of the Registration Staff.
+
+                                                        108
+                                     Figure 3. 24 Clinic QR Code page
+         Figure 3.24 shows the Clinic QR Code interface used by the Registration Staff in
+the proposed Smart Queue System for University Health Centre (SQS). This interface
+enables Registration Staff to manage the QR code used for walk-in queue registration at
+the University Health Centre. The staff can refresh, print, or download the QR code to
+make sure that patients can easily access the queue registration service upon arrival. After
+the QR code is downloaded successfully, the system displays a confirmation message.
+This interface supports an efficient QR code-based registration process by allowing
+patients to register for a queue quickly while reducing manual registration at the
+registration counter.
+
+                               Figure 3. 25 Registration Staff Profile page
+                                                        109
+         Figure 3.25 shows the Registration Staff Profile interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface allows Registration
+Staff to view their personal account information, including their full name, registered
+email address, phone number, and user role. Important account details are displayed as
+read-only to prevent unauthorized modifications, while the Change Password function
+enables staff to update their account password securely. This interface supports secure
+account management and helps maintain the accuracy and integrity of staff account
+information within the system
+
+3.6.4 Doctor Prototype
+         The Doctor Prototype illustrates the interfaces used by doctors to manage the
+
+consultation process in the proposed Smart Queue System for University Health Centre
+(SQS). The prototype enables doctors to view their assigned patients, call the next patient,
+update consultation status, and complete the consultation process. It also supports Smart
+Notification Updates, allowing patients to receive notifications when they are called for
+consultation. These interfaces are designed to help doctors manage the consultation queue
+efficiently while maintaining an organised patient flow throughout the consultation
+process
+
+                                   Figure 3. 26 Doctor Call Patient page
+
+                                                        110
+         Figure 3.26 shows the Doctor Call Patient interface of the proposed Smart Queue
+System for University Health Centre (SQS). This interface enables doctors to view the
+list of assigned patients and manage the consultation queue efficiently. The dashboard
+displays a summary of patient statuses, including the number of patients who are Waiting,
+Called, In Consultation, and Completed. The Next Up section highlights the next patient
+in the queue, displaying information such as the queue number, patient name,
+consultation room, service, and waiting time. By selecting the Call Patient button, the
+doctor calls the next patient for consultation, after which the system updates the patient's
+queue status and sends a Smart Notification Update to inform the patient that it is their
+turn for consultation.
+
+                              Figure 3. 27 Doctor Consultation page
+         Figure Figure 3.27 shows the Doctor Consultation interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface supports doctors
+throughout the consultation process, beginning with Start Consultation after the patient
+has entered the consultation room. During the consultation, the patient's status is updated
+to Now Consulting. Once the consultation is completed, the doctor can mark the patient
+as Completed, and the system updates the queue record accordingly. If the patient does
+not respond after being called or fails to attend the consultation, the doctor can mark the
+
+                                                        111
+patient as Absent or Skipped. These functions help ensure that the consultation queue
+remains accurate and up to date while supporting efficient patient flow within the
+University Health Centre.
+
+                                      Figure 3. 28 Doctor Profile page
+         Figure 3.28 Doctor Profile page shows the profile page for the doctor. This screen
+displays the doctor's basic information such as name, email, phone number, and role.
+Some details are shown as read-only to prevent unauthorized changes, while the doctor
+can still view their account information through the profile page and also change their
+password.
+
+                                                        112
+3.6.5 Administrator Prototype
+         The Administrator Prototype demonstrates the interfaces used to manage and
+
+maintain the proposed Smart Queue System for University Health Centre (SQS). The
+prototype enables administrators to monitor queue performance, manage user accounts,
+maintain departments and consultation rooms, configure queue settings, generate reports,
+and manage personal account information. These interfaces support the efficient
+administration of the system while ensuring that queue operations and system data are
+properly maintained.
+
+                               Figure 3. 29 Administrator Dashboard page
+         Figure 3.29 shows the Administrator Dashboard interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface provides
+administrators with an overview of the system by displaying key operational statistics,
+including the total number of queues, active queues, completed consultations, average
+waiting time, total registered users, and active departments. The dashboard enables
+administrators to monitor the overall performance of the queue management system and
+access the main administrative modules, including User Management, Department
+Management, Room Management, Report Generation, and Profile Management. This
+
+                                                        113
+interface supports effective system administration by providing important operational
+information in a clear and organised manner.
+
+                                   Figure 3. 30 User Management page
+
+         Figure 3.30 shows the User Management interface of the proposed Smart Queue
+System for University Health Centre (SQS). This interface enables the Administrator to
+manage user accounts for all system users, including patients, Registration Staff, doctors,
+and administrators. The administrator can search and filter users by role, view user
+information, and perform account management functions such as adding, editing, and
+disabling user accounts. The Create User form allows the administrator to enter user
+details, including the user's name, email address, role, identification number, and phone
+number before creating a new account. This interface supports efficient user
+administration while ensuring that only authorised users have access to the appropriate
+system functions.
+
+                                                        114
+                               Figure 3. 31 Department Management page
+         Figure 3.31 shows the Department Management interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface enables the
+Administrator to manage the departments or healthcare services available within the
+system. The administrator can add, edit, and enable or disable department records as
+required. The Add Department and Edit Department forms allow the administrator to
+enter or update the department name and department code, while the enable or disable
+function controls whether a department is available for queue registration and
+appointment booking. This interface helps maintain accurate department information and
+ensures that only active departments are available for use within the system.
+
+                                  Figure 3. 32 Rooms Management page
+                                                        115
+         Figure 3.32 shows the Room Management interface of the proposed Smart Queue
+System for University Health Centre (SQS). This interface enables the Administrator to
+manage consultation rooms used during the patient assignment process. The
+administrator can add, edit, and enable or disable consultation rooms as required. The
+Add Room form allows the administrator to specify the room name, room number,
+associated department, and assigned doctor. The enable or disable function ensures that
+only active consultation rooms are available for patient assignment. This interface helps
+maintain accurate consultation room information and supports the efficient allocation of
+patients to the appropriate consultation rooms
+
+                                          Figure 3. 33 Report page
+
+         Figure 3.33 shows the Report interface of the proposed Smart Queue System for
+University Health Centre (SQS). This interface enables the Administrator to generate
+reports on queue performance by applying filters such as start date, end date, and
+department. The generated report provides a summary of key performance indicators,
+including the total number of queues, active queues, completed consultations, and the
+
+                                                        116
+average waiting time. In addition, the system presents a graphical visualization of queue
+distribution by department to support data analysis. The Download Report function
+allows administrators to export the generated report for record-keeping and further
+evaluation of the health centre's queue management performance.
+
+                              Figure 3. 34 PKU Administrator Profile page
+
+         Figure 3.34 shows the Administrator Profile interface of the proposed Smart
+Queue System for University Health Centre (SQS). This interface allows the
+Administrator to view and manage personal account information, including the full name,
+registered email address, and user role. Essential account details are displayed as read-
+only to protect the integrity of user information, while the Change Password function
+enables the administrator to update the account password securely. This interface
+supports secure account management and ensures that administrator account information
+remains accurate while preventing unauthorized modifications/
+
+                                                        117
+3.7 Testing/Validation Plan
+
+         The testing and validation plan describes the approach that will be used to
+evaluate the proposed Smart Queue System for University Health Centre (SQS). The
+purpose of testing is to make sure that the system satisfies the specified functional and
+non-functional requirements before deployment. The proposed testing activities focus on
+verifying that the system functions correctly and meets the operational requirements of
+its intended users. The testing process consists of Functional Testing and User
+Acceptance Testing (UAT).
+
+3.7.1 Functional Testing
+
+         Functional Testing will be done to verify that each function of the Smart Queue
+System operates according to the specified functional requirements. Each module will be
+tested individually using valid and invalid inputs to make sure that the expected outputs
+are produced correctly. The testing will cover the major system functions, including user
+login, QR code queue registration, appointment booking, queue information viewing,
+patient registration management, consultation management, administrator management,
+report generation, and Smart Notification Updates. Any defects identified during testing
+will be corrected before the system proceeds to the next development stage.
+
+Table 3.21 Functionality Testing
+
+Test Case           Expected Result                            Pass/Fail
+Application Launch
+Launch application  The application launches successfully and
+                    displays the login page.
+
+                                  118
+Login                 and
+
+Authentication
+
+User logs in with valid ID User successfully logs in and is redirected to
+
+and password               the correct dashboard based on the assigned
+
+                           role.
+
+User logs in with invalid The system displays an error message
+
+ID or password             indicating invalid login credentials.
+
+Forgot password            The system allows the user to enter a registered
+                           email address and sends password reset
+                           instructions.
+
+User logs out from the User is successfully logged out and redirected
+
+system                     to the login page.
+
+Patient Module
+
+Patient opens Queue The Queue Registration page loads
+
+Registration page          successfully and displays the QR code
+
+                           scanning option.
+
+Patient scans a valid QR The system validates the QR code and allows
+
+code                       the patient to continue with queue registration.
+
+Patient selects department The selected department and visit reason are
+
+and reason for visit       saved before queue number generation.
+
+Patient registers for a The system generates and displays a queue
+
+queue                      number successfully.
+
+Patient views My Queue The system displays the queue number,
+
+page                       department, assigned doctor, consultation
+
+                           room, queue status, and estimated waiting
+
+                           time.
+
+                                  119
+Patient books an The appointment is successfully saved and a
+appointment with valid confirmation message is displayed.
+information
+
+Patient views Notification The system displays Smart Notification
+
+page                         Updates related to the patient's queue and
+
+                             appointment status.
+
+Patient views Profile page The system displays the patient's profile
+                                  information successfully.
+
+Registration          Staff
+Module
+
+Registration Staff opens The system displays the queue summary and
+
+Queue Monitor page           current patient queue list.
+
+Registration Staff views The system displays the AI-based estimated
+Dynamic Waiting Time waiting time for the current queue.
+Prediction
+
+Registration Staff views The system displays AI-based queue priority
+
+Intelligent Queue Priority recommendations to support patient
+
+Recommendation               assignment.
+
+Registration Staff verifies The patient's queue status is updated to
+
+patient registration         Verified successfully.
+
+Registration Staff assigns The system updates the patient assignment
+patient to doctor and successfully.
+consultation room
+
+Registration Staff views The system displays the clinic QR code
+
+Clinic QR Code               successfully.
+
+                                            120
+Registration   Staff The system allows the QR code to be
+
+downloads or prints the downloaded or printed successfully.
+
+QR code
+
+Registration Staff views The system displays the Registration Staff
+
+Profile page   profile information successfully.
+
+Doctor Module
+
+Doctor opens Call Patient The system displays the assigned patient list
+
+page           and consultation queue summary.
+
+Doctor calls the next The system updates the patient's status to
+
+patient        Called and sends a Smart Notification Update
+
+               to the patient.
+
+Doctor starts consultation The system updates the patient's status to In
+                                  Consultation.
+
+Doctor        completes The system updates the patient's status to
+
+consultation   Completed.
+
+Doctor marks patient as The system updates the patient's status to
+
+absent         Absent.
+
+Doctor marks patient as The system updates the patient's status to
+
+skipped        Skipped.
+
+Doctor views Profile page The system displays the doctor's profile
+                                  information successfully.
+
+                           121
+Administrator Module
+
+Administrator      opens The dashboard displays the total queues, active
+Dashboard                   queues, completed consultations, average
+                            waiting time, total registered users, and active
+                            departments.
+
+Administrator adds a new The system saves the new user account
+
+user                  successfully.
+
+Administrator edits a user The system updates the selected user
+
+account               information successfully.
+
+Administrator disables a The selected user account is disabled
+
+user account          successfully.
+
+Administrator adds a The system saves the new department
+
+department            information successfully.
+
+Administrator edits a The system updates the selected department
+
+department            information successfully.
+
+Administrator disables a The selected department is disabled
+
+department            successfully.
+
+Administrator adds a The system saves the new consultation room
+
+consultation room     information successfully.
+
+Administrator edits a The system updates the selected consultation
+
+consultation room     room information successfully.
+
+Administrator disables a The selected consultation room is disabled
+
+consultation room     successfully.
+
+                                     122
+Administrator generates a The system displays queue statistics, summary
+
+report         information, and graphical reports based on
+
+               the selected filters.
+
+Administrator downloads The system allows the generated report to be
+
+a report       downloaded successfully.
+
+Administrator  views The system displays the administrator's profile
+Profile page            information successfully.
+
+3.7.2 User Acceptance Testing
+
+         User Acceptance Testing (UAT) will be conducted to evaluate whether the
+proposed Smart Queue System for University Health Centre (SQS) meets the operational
+requirements and user needs of the University Health Centre. The testing will involve
+representative users from the four main user roles in the system, namely Patient,
+Registration Staff, Doctor, and Administrator.
+
+         During UAT, each participant will perform a series of predefined tasks based on
+their assigned role. The outcome of each test case will be recorded as Pass if the expected
+result is achieved successfully or Fail if the expected result is not achieved. Table 3.23
+presents the proposed User Acceptance Testing (UAT) test cases, including the test case
+description, preconditions, test steps, and expected results.
+
+               123
+Table 3.22 User Acceptance Testing Table
+
+Case ID Test Case Preconditions Test Steps                  Expected Result Pass Fail
+             Description
+
+UAT001 User accesses Application is 1. Tap the              Application
+                                                            opens
+the                          installed.  application icon.  successfully.
+
+application.
+
+UAT002 User logs in User account         1. Open the Login User is redirected
+             with valid ID exists.
+             and                         page.              to the correct
+             password.
+                                         2. Enter a valid dashboard based
+
+                                         ID and password. on the assigned
+
+                                         3. Tap Login.      role.
+
+UAT003 User logs in          Application is 1. Open the Login The system
+             with invalid
+             ID or           running.    page.              displays an error
+             password.
+                                         2. Enter an        message
+
+                                         invalid ID or      indicating invalid
+
+                                         password.          login credentials.
+
+                                         3. Tap Login.
+
+UAT004 Patient scans         Patient is  1. Open the        The QR code is
+             a QR code to    logged in.
+             register for a              Queue              validated
+             queue.
+                                         Registration page. successfully, and
+
+                                         2. Tap Scan QR the patient can
+
+                                         Code.              continue the
+
+                                         3. Scan the clinic queue
+
+                                         QR code.           registration
+
+                                                            process.
+
+                                         124
+UAT005 Patient             QR code has     1. Select a         A queue number
+             selects a     been scanned
+             department    successfully.   department.         is generated
+             and reason
+             for visit.                    2. Select a reason successfully.
+
+                                           for visit.
+
+                                           3. Tap Get Queue
+
+                                           Number.
+
+UAT006 Patient views       Patient has an  1. Open the My      Queue number,
+             queue         active queue.   Queue page.         department,
+             information.                                      consultation
+                                                               room, assigned
+                                                               doctor, queue
+                                                               status, and
+                                                               estimated
+                                                               waiting time are
+                                                               displayed.
+
+UAT007 Patient books Patient is            1. Open the         Appointment is
+                                           Appointment         saved
+an                         logged in.      page.               successfully.
+                                           2. Select
+appointment.                               department,
+                                           doctor (if
+                                           applicable), date,
+                                           and time.
+                                           3. Tap Book
+                                           Appointment.
+
+UAT008 Patient views Queue status          1. Open the         Smart
+             notifications. has been
+                                updated.   Notification page. Notification
+
+                                                               Updates are
+
+                                                               displayed
+
+                                                               successfully.
+
+                                           125
+UAT009 Registration          Registration 1. Open the            Queue summary,
+             Staff                                               patient queue
+             monitors the    Staff is logged Queue Monitor       list, Dynamic
+             queue.                                              Waiting Time
+                             in.             page.               Prediction, and
+                                                                 Intelligent Queue
+                                                                 Priority
+                                                                 Recommendation
+                                                                 are displayed.
+
+UAT010 Registration          Patient is      1. Open the         Patient status
+             Staff verifies  waiting for
+             a patient.      verification.   Verification page. changes to
+
+                                             2. Select a patient. Verified.
+
+                                             3. Tap Verify
+
+                                             Patient.
+
+UAT011 Registration          Patient has     1. Open the         Patient is
+             Staff assigns   been verified.
+             a patient to a                  Assignment page. assigned
+             doctor and
+             consultation                    2. Select a patient. successfully.
+             room.
+                                             3. Review AI
+
+                                             recommendations.
+
+                                             4. Select a doctor
+
+                                             and consultation
+
+                                             room.
+
+                                             5. Tap Confirm.
+
+UAT012 Registration Registration 1. Open the Clinic The clinic QR
+
+Staff views Staff is logged QR Code page. code is displayed
+
+the clinic QR in.                                                successfully.
+
+code.
+
+UAT013 Doctor views Patient has 1. Open the Call Assigned patient
+
+the assigned been assigned. Patient page.                        list is displayed
+
+                                             126
+patient list.                                                successfully.
+
+UAT014 Doctor calls         Doctor has an  1. Tap Call       Patient status
+             the next       assigned       Patient.          changes to
+             patient.       patient.                         Called, and a
+                                                             Smart
+                                                             Notification
+                                                             Update is sent to
+                                                             the patient.
+
+UAT015 Doctor starts        Patient has    1. Open the       Patient status
+             a              been called.   Consultation      changes to In
+             consultation.                 page.             Consultation.
+                                           2. Tap Start
+                                           Consultation.
+
+UAT016 Doctor               Consultation   1. Tap Complete.  Patient status
+             completes a    has started.   2. Confirm the    changes to
+             consultation.                 action.           Completed.
+
+UAT017 Doctor marks Patient is             1. Select Absent  Patient status is
+                                           or Skipped.       updated
+a patient as waiting in the                2. Confirm the    successfully.
+                                           action.
+absent or                   queue.
+
+skipped.
+
+UAT018 Administrator Administrator 1. Open the               Queue statistics
+                                                             and system
+views the                   is logged in. Dashboard page.    summary
+                                                             information are
+dashboard.                                                   displayed
+                                                             successfully.
+
+                                           127
+UAT019 Administrator Administrator 1. Open the User   User information
+                                                      is updated
+manages user is logged in. Management                 successfully.
+
+accounts.                         page.
+
+                                  2. Add, edit, or
+
+                                  disable a user
+
+                                  account.
+
+UAT020 Administrator Administrator 1. Open the        Department
+                                                      information is
+manages       is logged in. Department                updated
+                                                      successfully.
+departments.                      Management
+
+                                  page.
+
+                                  2. Add, edit, or
+
+                                  disable a
+
+                                  department.
+
+UAT021 Administrator Administrator 1. Open the Room Consultation
+
+manages       is logged in. Management                room
+
+consultation                      page.               information is
+
+rooms.                            2. Add, edit, or updated
+
+                                  disable a           successfully.
+
+                                  consultation
+
+                                  room.
+
+UAT022 Administrator Queue data   1. Open the         Report summary
+             generates a exists.  Report page.        and graphical
+             report.              2. Select the date  analysis are
+                                  range and           displayed
+                                  department filter.  successfully.
+                                  3. Generate the
+                                  report.
+
+                                  128
+UAT023 User views         User is logged 1. Open the  User profile
+             the profile                              information is
+             page.        in.  Profile page.          displayed
+                                                      successfully.
+
+UAT024 User changes User is logged 1. Open the        Password is
+
+the account in.                Profile page.          updated
+
+password.                      2. Select Change successfully.
+
+                               Password.
+
+                               3. Enter the
+
+                               required password
+
+                               information.
+
+UAT025 User logs out User is logged 1. Open the       User is logged
+                                                      out successfully
+of the system. in.             profile menu.          and redirected to
+                                                      the Login page.
+                               2. Tap Sign Out.
+
+3.8 Potential Use of Proposal Solution
+
+         The proposed Smart Queue System for University Health Centre (SQS) has the
+potential to improve the current patient registration and queue management process at the
+UMPSA University Health Centre. Currently, patients register for a queue by scanning a
+QR code at the health centre entrance and completing a registration form. Although this
+process enables staff to receive patient registration information, it does not provide
+patients with a dedicated application to monitor their queue status, estimated waiting
+time, or receive real-time notifications regarding their consultation progress.
+
+         For patients, the proposed system provides a mobile application that enables them
+to scan a QR code to register for a queue, book appointments, view queue information,
+and receive Smart Notification Updates throughout the consultation process. In addition,
+patients can view their AI-based estimated waiting time, allowing them to better manage
+their waiting time and reduce uncertainty while waiting for consultation.
+
+                                                        129
+         For Registration Staff, the proposed system supports patient verification, queue
+monitoring, and patient assignment through a centralized dashboard. The system also
+provides Dynamic Waiting Time Prediction (AI-based) and Intelligent Queue Priority
+Recommendation (AI-based) as decision-support features to assist Registration Staff in
+managing patient flow more efficiently. However, the final assignment decision remains
+under the responsibility of the Registration Staff.
+
+         For doctors, the proposed system enables them to view assigned patients, call the
+next patient, and update consultation status throughout the consultation process. The
+consultation status is updated in real time, allowing queue information to remain accurate
+while Smart Notification Updates are automatically sent to patients when their queue
+status changes.
+
+         For Administrators, the proposed system provides facilities for managing user
+accounts, departments, consultation rooms, and system reports. The administrator can
+monitor important operational information, including the total number of queues, active
+queues, completed consultations, average waiting time, and department-based queue
+statistics. These functions support effective system administration and assist in
+monitoring the overall performance of the queue management process.
+
+         Overall, the proposed Smart Queue System has the potential to enhance the
+existing QR code-based registration process by integrating queue number generation,
+real-time queue monitoring, appointment booking, AI-based waiting time prediction,
+intelligent queue priority recommendations, Smart Notification Updates, and
+comprehensive administrative functions. By digitalising and improving the queue
+management workflow, the system is expected to reduce manual processes, improve
+communication between patients and healthcare staff, and enhance the overall efficiency
+of healthcare services at the University Health Centre.
+
+                                                        130
+3.9 Gantt Chart
+         Figure 3.35 shows the Gantt Chart for the proposed Smart Queue System for
+
+University Health Centre (SQS) project. The Gantt Chart is prepared based on the
+PSM1/PTA1 academic schedule and serves as a project planning tool to organize the
+project activities from Week 1 to Week 17.
+
+         During the early stages of the project, the activities focus on subject registration,
+supervisor confirmation, project title confirmation, proposal briefing, and the preparation
+of Chapter 1. The project then proceeds with the literature review, methodology design,
+proposed system design, data design, prototype development, testing and validation
+planning, and the potential use of the proposed solution.
+
+         The Gantt Chart also includes important academic milestones, including the pre-
+proposal submission, proposal submission, presentation preparation, proposal
+presentation, proposal correction, and final proposal submission. Overall, the Gantt Chart
+provides a structured timeline to ensure that each project activity is completed according
+to the planned schedule and within the allocated duration
+
+                                      Figure 3. 35 Gantt Chart
+
+                                                        131
+                                             CHAPTER 4
+
+                                           CONCLUSION
+
+4.1 Introduction
+
+         In conclusion, the proposed Smart Queue System for University Health Centre
+(SQS) aims to improve the current queue management process at the UMPSA University
+Health Centre by providing a more systematic and efficient digital solution. The proposed
+system enables patients to register for a queue using QR code, book appointments,
+monitor queue status, receive Smart Notification Updates, and view AI-based estimated
+waiting time through a mobile application.
+
+         The proposed system supports four main user roles, namely Patient, Registration
+Staff, Doctor, and Administrator. Registration Staff can verify patient registration,
+monitor queues, assign patients to doctors or consultation rooms, and utilize AI-based
+waiting time prediction and queue priority recommendations to support queue
+management. Doctors can manage consultations by updating patient status throughout
+the consultation process, while Administrators can manage users, departments,
+consultation rooms, and system reports. The system is proposed to be developed using
+Flutter, Laravel API, and MySQL, with the overall design supported by UML diagrams,
+database design, prototype development, and testing plans.
+
+         Finally, the proposed Smart Queue System will be evaluated using Functional
+Testing and User Acceptance Testing (UAT) to ensure that the developed system meets
+the specified requirements and user needs. Overall, the proposed solution is expected to
+improve operational efficiency, enhance communication between patients and healthcare
+staff, and provide a more transparent, convenient, and intelligent queue management
+system for the University Health Centre
+
+         .
+
+                                                        132
+                                           REFERENCES
+
+Baballe, M. A., Muhammad, A. S., Abdullahi, J. Y., Ibrahim Idris Giwa, A. Y., Abubakar, M.
+         H., & Abdulkadir, Z. (2022). The impact of hospital queue management
+         systems. Global Journal of Research in Medical Sciences, 2(5), 88­91.
+         https://doi.org/10.5281/zenodo.7117651
+
+Lye, G. (2021, April 8). JPJeQ system to be launched in Malaysia on April 12. Paul
+         Tan's Automotive News. https://paultan.org/2021/04/08/jpjeq-system-to-be-
+         launched-in-malaysia-on-april-12/
+
+The Star. (2022, July 11). JPJeQ makes for smoother operations at the counter.
+         https://www.thestar.com.my/news/nation/2022/07/11/jpjeq-makes-for-
+         smoother-operations-at-the-counter
+
+Smart Queue. (2023). Introduction to Queue Management Systems (QMS): What they
+         are and why businesses need them. Retrieved July 12, 2026, from
+         https://www.smartqueue.com.au/introduction-to-queue-management-systems-
+         qms-what-they-are-and-why-businesses-need-them/
+
+Qmed. (2023). Qmed portal: Digital queue management for healthcare.
+         https://qmed.asia
+
+Creately. (2026, May 28). Activity diagram tutorial: Definition, symbols, examples, and
+         how to draw one. https://creately.com/guides/activity-diagram-tutorial/
+
+Moqups. (n.d.). ERD templates: ER diagram examples.
+         https://moqups.com/templates/mapping-and-diagramming/erd/
+
+Waitwhile. (2023). What is Waitwhile? Retrieved July 12, 2026, from
+         https://help.waitwhile.com/en/articles/7872924-what-is-waitwhile
+
+Adenowo, A. A. A., & Adenowo, B. A. (2013). Software engineering methodologies: A
+         review of the waterfall model and object-oriented approach. International
+         Journal of Scientific & Engineering Research, 4(7), 427­434.
+
+                                                        133
+Leung, H. K. N., & Wong, P. W. L. (1997). A study of user acceptance tests. Software
+         Quality Journal, 6, 137­149.
+         https://link.springer.com/content/pdf/10.1023/a:1018503800709.pdf
+
+Rhm, F. (2023, July 3). Understanding MVC architecture in Flutter: A comprehensive
+         guide with examples. Medium. https://medium.com/@Faiz_Rhm/understanding-
+         mvc-architecture-in-flutter-a-comprehensive-guide-with-examples-
+         5d1a372c7eaf
+
+Stack Overflow. (2009, November 11). Database design: Four-level parent-child
+         relationships. https://stackoverflow.com/questions/1717959/database-design-
+         four-level-parent-child-relationships
+
+                                                        134
+                   APPENDICES
+
+Appendix A: Title
+
+Appendix B: Title
+
+                   135
+

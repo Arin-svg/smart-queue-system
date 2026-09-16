@@ -1,30 +1,20 @@
-﻿# Smart Queue System
+# Smart Queue System
 
-Flutter MVC foundation for UMPSA PKU Pekan, based on the supplied diagram.
+Flutter MVC app for UMPSA PKU Pekan with a Laravel API in `backend/`.
 
 - `lib/config/`: app, authentication routes and API configuration.
 - `lib/model/`: data entities and status enums.
-- `lib/pages/`: views; all 17 screens from the diagram are present.
+- `lib/pages/`: login, password recovery, signed-in landing page and feature placeholders.
 - `lib/controller/`: presentation state and feature controller foundations.
-- `lib/services/`: API, authentication and notification boundaries.
-- `lib/main.dart`: app setup, dependency creation and routes.
+- `lib/services/`: HTTP API and authentication.
+- `database/smart_queue_system.sql`: initial eight-table MySQL schema.
+- `backend/`: Laravel API using the imported database.
 
-Views delegate actions to controllers. Controllers use services and expose models
-to views. Services will encapsulate Laravel communication.
+See [backend setup](backend/README.md) to start the API and create your first account.
 
-## Current scope
+Login uses User ID and password, supports all four roles and has token-based logout.
+Tokens are in memory for now; app restart requires a new login.
+Password reset email, business workflows and AI features are not implemented.
 
-The app opens a basic login view with input validation and a password recovery
-route. Other pages are named placeholders. Authentication is unconfigured;
-no credentials are accepted and no backend requests are made.
-API and notification services and both AI controllers are contracts only.
-Feature controllers and models are starting structures, not completed workflows.
-
-Next work includes Laravel integration, JSON mapping, session storage, role-based
-route protection, feature screens, QR scanning and notifications.
-AI priority and waiting-time features require an agreed implementation and validation.
-
-## Verification
-
-Run `flutter analyze` and `flutter test`.
-
+Run `flutter analyze` and `flutter test` from this folder.
+Run `php artisan test` from `backend/` for isolated API tests.

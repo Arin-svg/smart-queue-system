@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'config/app_config.dart';
+import 'config/api.dart';
 import 'config/auth_config.dart';
 import 'controller/auth_controller.dart';
 import 'services/auth_service.dart';
+import 'services/api_service.dart';
+import 'pages/session_page.dart';
 import 'pages/login_page.dart';
 import 'pages/forgot_password.dart';
 import 'pages/notification_page.dart';
@@ -24,17 +27,22 @@ import 'pages/profile_page.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.authService});
+  final AuthService? authService;
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late final AuthController _auth = AuthController(UnconfiguredAuthService());
+  late final HttpApiService _api = HttpApiService(baseUrl: ApiConfig.baseUrl);
+  late final AuthController _auth = AuthController(
+    widget.authService ?? LaravelAuthService(_api),
+  );
 
   @override
   void dispose() {
     _auth.dispose();
+    _api.close();
     super.dispose();
   }
 
@@ -49,7 +57,12 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: AuthConfig.loginRoute,
       routes: {
-        AuthConfig.loginRoute: (_) => LoginPage(controller: _auth),
+        AuthConfig.loginRoute: (_) => ListenableBuilder(
+          listenable: _auth,
+          builder: (context, child) => _auth.user == null
+              ? LoginPage(controller: _auth)
+              : SessionPage(controller: _auth),
+        ),
         AuthConfig.forgotPasswordRoute: (_) =>
             ForgotPassword(controller: _auth),
         '/notification': (_) => const NotificationPage(),
