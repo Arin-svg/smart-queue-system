@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -64,11 +66,13 @@ class AuthTest extends TestCase
         $this->getJson('/api/me', ['Authorization' => 'Bearer '.$token])->assertForbidden();
     }
 
-    public function test_validation_throttling_and_reset_unavailability(): void
+    public function test_validation_throttling_and_reset_request(): void
     {
         $this->postJson('/api/login', [])->assertUnprocessable();
         $this->postJson('/api/forgot-password', ['email' => 'bad'])->assertUnprocessable();
-        $this->postJson('/api/forgot-password', ['email' => 'patient@example.test'])->assertStatus(503);
+        Notification::fake();
+        $this->postJson('/api/forgot-password', ['email' => 'patient@example.test'])->assertOk();
+        Notification::assertSentTo(User::first(), ResetPassword::class);
         for ($i = 0; $i < 5; $i++) {
             $this->postJson('/api/login', ['user_identifier' => 'bad', 'password' => 'bad'])->assertUnauthorized();
         }

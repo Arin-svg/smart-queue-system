@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QueueController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\WorkspaceController;
 use App\Http\Middleware\EnsureActiveUser;
 use Illuminate\Support\Facades\Route;
 
@@ -9,4 +15,20 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->midd
 Route::middleware(['auth:sanctum', EnsureActiveUser::class])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/workspace', [WorkspaceController::class, 'index']);
+    Route::post('/notifications/{id}/read', [WorkspaceController::class, 'readNotification']);
+    Route::post('/clinic/qr', [QueueController::class, 'qr']);
+    Route::post('/clinic/qr/validate', [QueueController::class, 'validateQr']);
+    Route::post('/queues', [QueueController::class, 'store']);
+    Route::post('/queues/{id}', [QueueController::class, 'update']);
+    Route::get('/appointments/slots', [AppointmentController::class, 'slots']);
+    Route::post('/appointments', [AppointmentController::class, 'store']);
+    Route::post('/appointments/{id}/cancel', [AppointmentController::class, 'cancel']);
+    Route::post('/admin/users/{id?}', [AdminController::class, 'user']);
+    Route::post('/admin/departments/{id?}', [AdminController::class, 'department']);
+    Route::post('/admin/rooms/{id?}', [AdminController::class, 'room']);
+    Route::post('/admin/settings', [AdminController::class, 'settings']);
+    Route::get('/reports', [ReportController::class, 'index']);
+    Route::post('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/password', [ProfileController::class, 'password']);
 });

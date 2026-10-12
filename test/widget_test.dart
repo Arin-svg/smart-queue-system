@@ -4,20 +4,25 @@ import 'package:smart_queue_system/main.dart';
 import 'package:smart_queue_system/services/auth_service.dart';
 import 'package:smart_queue_system/model/user.dart';
 import 'package:smart_queue_system/model/role.dart';
+import 'package:smart_queue_system/services/api_service.dart';
 
 void main() {
   testWidgets('Successful login shows role and logout returns to login', (
     tester,
   ) async {
-    await tester.pumpWidget(MyApp(authService: _SuccessfulAuthService()));
+    await tester.pumpWidget(
+      MyApp(authService: _SuccessfulAuthService(), apiService: _WorkspaceApi()),
+    );
     await tester.enterText(find.byType(TextField).first, 'CB23094');
     await tester.enterText(find.byType(TextField).last, 'test-password');
     await tester.ensureVisible(find.widgetWithText(FilledButton, 'Log in'));
     await tester.tap(find.widgetWithText(FilledButton, 'Log in'));
     await tester.pumpAndSettle();
-    expect(find.text('Welcome, Test Patient'), findsOneWidget);
-    expect(find.text('Patient'), findsOneWidget);
-    await tester.tap(find.widgetWithText(FilledButton, 'Sign out'));
+    expect(find.text('Get Queue Number'), findsOneWidget);
+    await tester.tap(find.byTooltip('Account menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('Test Patient'), findsOneWidget);
+    await tester.tap(find.text('Sign Out'));
     await tester.pumpAndSettle();
     expect(find.widgetWithText(FilledButton, 'Log in'), findsOneWidget);
   });
@@ -104,4 +109,17 @@ class _SuccessfulAuthService extends _UnavailableAuthService {
     email: 'p@example.test',
     role: Role.patient,
   );
+}
+
+class _WorkspaceApi implements ApiService {
+  @override
+  Future<Map<String, dynamic>> get(String path) async => {
+    'user': {'name': 'Test Patient', 'email': 'p@example.test'},
+    'departments': [],
+  };
+  @override
+  Future<Map<String, dynamic>> post(
+    String path,
+    Map<String, dynamic> body,
+  ) async => {};
 }

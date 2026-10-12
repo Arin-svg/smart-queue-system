@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -48,6 +49,11 @@ class AuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email', 'max:100']]);
 
-        return response()->json(['message' => 'Password reset email is not configured yet. Contact the clinic administrator.'], 503);
+        if (in_array(config('mail.default'), ['log', 'array']) && ! app()->environment('testing')) {
+            return response()->json(['message' => 'Password reset email is not configured. Contact the clinic administrator.'], 503);
+        }
+        Password::sendResetLink(['email' => $request->input('email'), 'status' => 'active']);
+
+        return response()->json(['message' => 'If an account exists for this email, reset instructions have been sent.']);
     }
 }

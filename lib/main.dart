@@ -8,79 +8,51 @@ import 'services/api_service.dart';
 import 'pages/session_page.dart';
 import 'pages/login_page.dart';
 import 'pages/forgot_password.dart';
-import 'pages/notification_page.dart';
-import 'pages/qr_code_page.dart';
-import 'pages/queue_page.dart';
-import 'pages/appointment_page.dart';
-import 'pages/assign_page.dart';
-import 'pages/reports_page.dart';
-import 'pages/monitor_page.dart';
-import 'pages/verify_page.dart';
-import 'pages/dashboard_page.dart';
-import 'pages/call_patient_page.dart';
-import 'pages/consultation_page.dart';
-import 'pages/rooms_page.dart';
-import 'pages/users_page.dart';
-import 'pages/departments_page.dart';
-import 'pages/profile_page.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, this.authService});
+  const MyApp({super.key, this.authService, this.apiService});
   final AuthService? authService;
+  final ApiService? apiService;
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late final HttpApiService _api = HttpApiService(baseUrl: ApiConfig.baseUrl);
+  late final HttpApiService _http = HttpApiService(baseUrl: ApiConfig.baseUrl);
+  late final ApiService _api = widget.apiService ?? _http;
   late final AuthController _auth = AuthController(
-    widget.authService ?? LaravelAuthService(_api),
+    widget.authService ?? LaravelAuthService(_http),
   );
-
   @override
   void dispose() {
     _auth.dispose();
-    _api.close();
+    _http.close();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConfig.name,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
+  Widget build(BuildContext context) => MaterialApp(
+    title: AppConfig.name,
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+      useMaterial3: true,
+    ),
+    initialRoute: AuthConfig.loginRoute,
+    routes: {
+      AuthConfig.loginRoute: (_) => ListenableBuilder(
+        listenable: _auth,
+        builder: (context, _) => _auth.user == null
+            ? LoginPage(controller: _auth)
+            : SessionPage(
+                key: ValueKey(_auth.user!.id),
+                controller: _auth,
+                api: _api,
+              ),
       ),
-      initialRoute: AuthConfig.loginRoute,
-      routes: {
-        AuthConfig.loginRoute: (_) => ListenableBuilder(
-          listenable: _auth,
-          builder: (context, child) => _auth.user == null
-              ? LoginPage(controller: _auth)
-              : SessionPage(controller: _auth),
-        ),
-        AuthConfig.forgotPasswordRoute: (_) =>
-            ForgotPassword(controller: _auth),
-        '/notification': (_) => const NotificationPage(),
-        '/qr-code': (_) => const QrCodePage(),
-        '/queue': (_) => const QueuePage(),
-        '/appointment': (_) => const AppointmentPage(),
-        '/assign': (_) => const AssignPage(),
-        '/reports': (_) => const ReportsPage(),
-        '/monitor': (_) => const MonitorPage(),
-        '/verify': (_) => const VerifyPage(),
-        '/dashboard': (_) => const DashboardPage(),
-        '/call-patient': (_) => const CallPatientPage(),
-        '/consultation': (_) => const ConsultationPage(),
-        '/rooms': (_) => const RoomsPage(),
-        '/users': (_) => const UsersPage(),
-        '/departments': (_) => const DepartmentsPage(),
-        '/profile': (_) => const ProfilePage(),
-      },
-    );
-  }
+      AuthConfig.forgotPasswordRoute: (_) => ForgotPassword(controller: _auth),
+    },
+  );
 }

@@ -1,82 +1,96 @@
-# SQS Laravel API
+﻿# SQS Laravel API
 
-Uses the existing MySQL database imported through phpMyAdmin.
-Laravel 12 is installed for the local PHP 8.2 runtime.
+Laravel 12 API for the Flutter application. It uses the eight existing domain tables
+from `database/smart_queue_system.sql`, plus additive migrations for access tokens,
+clinic settings, audit logs, password resets, room numbers and priority training data.
 
-## Run locally
+The supplied `smart_queue_system (1).sql` is a current export of this database,
+including all three applied migrations. Its 14 tables and column names match the
+configured live `smart_queue_system` database. No re-import is needed for the
+current workspace. The SQL file under `database/` is the original new-installation
+baseline, not a replacement for the current database export.
 
-Start MySQL in XAMPP. From this folder:
+## Setup
+
+Start MySQL in XAMPP, configure `.env`, then run:
 
 ```powershell
+php artisan migrate
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-The configured database is `smart_queue_system`, with local XAMPP root credentials.
-Edit `.env` if your MySQL credentials differ. Never commit that file.
+The local migrations have been applied without dropping existing tables. On a new
+machine, import the initial SQL once, then run migrations. Do not use `migrate:fresh`
+or `db:wipe` on an existing clinic database.
 
-## Create your first account
+Create a first account using `php artisan sqs:create-user`. Administrators can then
+manage users, departments and room/doctor assignments through the app. The four roles
+are `patient`, `staff`, `doctor`, and `administrator`.
 
-In another terminal in this folder:
+Run `php artisan schedule:work` in a separate local terminal for appointment reminders
+and waiting-time updates. Production hosting must run `php artisan schedule:run`
+every minute. `php artisan sqs:notifications` performs one notification update.
 
-```powershell
-php artisan sqs:create-user
-```
+Use `APP_TIMEZONE=Asia/Kuala_Lumpur` for clinic slot dates and operating hours.
+`SESSION_DRIVER=file` and `CACHE_STORE=file` are suitable for local setup.
 
-Enter a User ID, name, email, role and password. Password entry is hidden and
-Laravel hashes it before insertion. No shared default accounts are created.
+## Authentication and email
 
-## Database ownership
+All business endpoints require `Authorization: Bearer <token>`. Tokens expire after
+12 hours. Disabled accounts cannot use existing sessions. Logout revokes the current
+token. Password changes revoke other sessions; password resets revoke every session.
 
-The eight domain tables are owned by the imported SQL schema. Do not rerun the
-initial import over existing data. Laravel migrations only add its API token
-table (and migration tracking). The initial token migration has been applied locally.
-On another machine, import the SQL, configure .env, then run `php artisan migrate`.
-Do not use `migrate:fresh` or `db:wipe` on your imported database.
+Configure a real SMTP/mail transport and an externally reachable `APP_URL` for
+password-reset emails. The default log transport does not claim delivery. The reset
+form is `/reset-password/{token}?email=...`; tokens expire after 60 minutes and are
+single use. Login and reset requests are rate-limited.
 
-The user model uses the custom `user_id` key and maps the `roles` relationship.
-The generated Laravel user migration and default account seeder were replaced
-so they do not conflict with the imported schema.
+Never commit `.env`. HTTPS is required for deployed mobile connections and browser
+camera access, except supported localhost development.
 
 ## API
 
-- POST /api/login: user_identifier, password; returns token and user.
-- GET /api/me: authenticated account.
-- POST /api/logout: revokes the current token.
-- POST /api/forgot-password: validates email, returns 503 until mail is implemented.
+| Method and path (under `/api`) | Access and purpose |
+| --- | --- |
+| `POST /login` | User identifier and password |
+| `POST /forgot-password` | Email reset request |
+| `GET /me`, `POST /logout` | Current account/session |
+| `GET /workspace` | Role-scoped queues, bookings, notifications, and reference data |
+| `POST /notifications/{id}/read` | Notification owner only |
+| `POST /clinic/qr` | Staff/admin: refresh a 15-minute clinic registration code |
+| `POST /clinic/qr/validate` | Patient: validate scanned code |
+| `POST /queues` | Patient with QR or staff assisting an existing patient |
+| `POST /queues/{id}` | Role-checked verify/assign/priority/call/start/complete/skip/absent/requeue/cancel |
+| `GET /appointments/slots` | Available slots for department/date/optional doctor |
+| `POST /appointments`, `POST /appointments/{id}/cancel` | Patient bookings |
+| `POST /admin/users/{id?}` | Administrator account creation/edit/status |
+| `POST /admin/departments/{id?}` | Administrator department management |
+| `POST /admin/rooms/{id?}` | Administrator room/doctor management |
+| `POST /admin/settings` | Opening hours, slot length/capacity, registration and fallback duration |
+| `GET /reports?start=YYYY-MM-DD&end=YYYY-MM-DD&department_id=...` | Administrator report aggregates |
+| `POST /profile` | Patient phone-number update |
+| `POST /profile/password` | Current account password change |
 
-Use `Authorization: Bearer <token>`. Tokens expire after 12 hours.
-Inactive accounts cannot sign in or use an existing token.
-Login has per-account/IP and per-IP rate limits.
+Queue writes and booking checks run inside serialized clinic transactions to avoid
+competing allocations. A patient can have only one active queue. Doctor actions
+require assignment and valid transitions. Room/doctor changes and deactivation are
+blocked while dependent work remains active. Existing records are not hard-deleted.
 
-Flutter keeps tokens in memory, so restarting the app requires signing in again.
-Business feature endpoints and persistent secure session storage are not implemented.
-The successful-login screen is a temporary role-labelled landing page.
+Workspace lists currently cap queue history at 250, appointments at 150 and
+notifications/logs at 100. Administrator summary/report counts do not use these caps.
 
-## Flutter connections
+## Prediction models
 
-From the Flutter project root:
+`QueueIntelligence` provides nearest-neighbour consultation-duration regression with
+chronological validation, and staff-labelled priority classification with abstention.
+`Clinic` calculates queue-ahead counts and room capacity. `ClinicNotifications`
+generates scheduled reminders and changed-wait estimates. No diagnosis/treatment data
+or automatic clinical priority changes are implemented.
 
-```powershell
-flutter run -d chrome
-```
-
-Web and desktop default to http://127.0.0.1:8000/api.
-Android emulator defaults to http://10.0.2.2:8000/api.
-Local HTTP is enabled only in the Android debug manifest.
-
-For a physical device, run the API on 0.0.0.0 and set the host computer's LAN IP:
-
-```powershell
-flutter run --dart-define=API_BASE_URL=http://YOUR_PC_LAN_IP:8000/api
-```
-
-Use HTTPS for deployment. Local web CORS permits localhost and 127.0.0.1 ports.
-Set CORS_ALLOWED_ORIGINS to a comma-separated origin list for a deployed web client.
+See the root README for sample requirements, fallbacks and deployment limitations.
 
 ## Tests
 
-`php artisan test` uses forced SQLite :memory:, never the imported MySQL database.
-Auth feature tests cover login, validation, rate limits, inactive users and revocation.
-Flutter tests are run from the project root using `flutter test`.
-
-API token implementation: https://laravel.com/docs/12.x/sanctum
+`php artisan test` forces SQLite `:memory:`. Tests never reset the imported MySQL
+database. The suite covers auth, the complete queue lifecycle, role isolation,
+booking capacity, QR expiry, reminder deduplication, password reset and model behavior.
