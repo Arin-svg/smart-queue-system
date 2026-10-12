@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -40,13 +39,8 @@ class Clinic
     public static function validateQr(string $token): void
     {
         $settings = self::settings();
-        if (! $settings->qr_token || ! hash_equals($settings->qr_token, $token) || ! $settings->qr_expires_at || now()->gte(Carbon::parse($settings->qr_expires_at))) {
-            self::fail('This clinic QR code is invalid or expired. Please scan the latest code at reception.');
-        }
-        try {
-            Crypt::decryptString($token);
-        } catch (\Throwable $e) {
-            self::fail('Invalid clinic QR code.');
+        if (! $settings->qr_token || ! hash_equals($settings->qr_token, $token)) {
+            self::fail('This clinic QR code is no longer valid. Please scan the current code at reception.');
         }
     }
 

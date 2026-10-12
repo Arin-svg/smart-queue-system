@@ -222,6 +222,11 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     ),
                     const SizedBox(height: 8),
                     StatusBadge('${a['appointment_status']}'),
+                    if (a['appointment_status'] == 'pending')
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text('Awaiting staff verification.'),
+                      ),
                     InfoLine(
                       Icons.calendar_month,
                       '${a['appointment_date']}  ${a['appointment_time']}',
@@ -237,8 +242,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       Wrap(
                         spacing: 8,
                         children: [
-                          if (a['appointment_date'] ==
-                              DateTime.now().toIso8601String().substring(0, 10))
+                          if (a['appointment_status'] == 'confirmed' &&
+                              a['appointment_date'] ==
+                                  DateTime.now().toIso8601String().substring(
+                                    0,
+                                    10,
+                                  ))
                             TextButton.icon(
                               onPressed: () => openClinicPage(
                                 context,

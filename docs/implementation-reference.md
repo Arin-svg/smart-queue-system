@@ -39,7 +39,7 @@ into documentation or test fixtures.
 | 3.21 | Staff totals, filters and queue cards | `monitor_page.dart` |
 | 3.22 | Identity verification and empty state | `verify_page.dart` |
 | 3.23 | Prediction panels, priority review, doctor/room assignment | `assign_page.dart`, `widgets/prediction_panels.dart` |
-| 3.24 | Clinic QR refresh, print, PDF download | `qr_code_page.dart` |
+| 3.24 | Shared static clinic QR, automatic loading, print, PDF download | `qr_code_page.dart` |
 | 3.26 | Doctor status totals, next patient and waiting list | `call_patient_page.dart` |
 | 3.27 | Start/complete consultation and skipped/absent actions | `consultation_page.dart` |
 | 3.29 | Admin totals and management navigation | `dashboard_page.dart` |
@@ -57,6 +57,15 @@ text wrapping and dimensions; this is not a claim of pixel-identical reproductio
 
 ## Requirements beyond the pictured screens
 
+- Appointments remain pending until staff explicitly verify them from the Verify
+  tab. Pending bookings reserve capacity; confirmation enables check-in and reminders.
+  Upcoming bookings auto-confirmed by the application are returned to pending if
+  they have no staff verification or check-in.
+- Per the user's updated requirement, the clinic QR code does not expire and stays
+  identical across staff sessions until an administrator replaces it. The QR page
+  loads automatically with no refresh controls. Administrators manage the code from Home → Queue Settings → Manage
+  Clinic QR Code. The upgrade keeps the existing token and clears its old expiry;
+  replacing a code invalidates old copies.
 - Settings and audit logs appear below the administrator dashboard totals.
 - Staff can register an existing patient account without requiring that patient to
   operate the scanner. Account creation stays under administrator permissions.
@@ -95,7 +104,8 @@ submission handling. Rendered PNGs are in `.tmp/screenshots/` (ignored by Git).
 The in-app browser was unavailable; visual QA used direct Flutter renders instead.
 
 Backend tests use isolated in-memory SQLite and cover complete consultation flow,
-permissions, patient isolation, QR expiry, duplicate registration, approved queue
+permissions, patient isolation, static QR persistence and administrator-only replacement,
+duplicate registration, approved queue
 order, busy doctors, invalid room assignments, slot capacity, reminder deduplication,
 report restrictions, password reset reuse/revocation, and prediction fallback.
 

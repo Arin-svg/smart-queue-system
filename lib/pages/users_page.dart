@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'widgets/clinic_widgets.dart';
 import 'widgets/record_editor.dart';
+import 'user_import_dialog.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -46,6 +47,17 @@ class _UsersPageState extends State<UsersPage> {
           onPressed: () => edit(context, c),
           icon: const Icon(Icons.person_add_alt),
           label: const Text('Add User'),
+        ),
+        OutlinedButton.icon(
+          onPressed: c.saving
+              ? null
+              : () => showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => UserImportDialog(controller: c),
+                ),
+          icon: const Icon(Icons.upload_file),
+          label: const Text('Import spreadsheet'),
         ),
         const SizedBox(height: 14),
         if (rows.isEmpty)
@@ -149,12 +161,6 @@ class _UsersPageState extends State<UsersPage> {
             'Phone',
             required: false,
             initial: u?['phone_no'],
-          ),
-          EditField(
-            'password',
-            u == null ? 'Password' : 'New Password (optional)',
-            required: u == null,
-            secret: true,
           ),
           EditField(
             'status',

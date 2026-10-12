@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
 import '../model/role.dart';
 import '../services/api_service.dart';
 import 'widgets/clinic_widgets.dart';
 import 'queue_page.dart';
+import 'patient_home_page.dart';
 import 'appointment_page.dart';
 import 'notification_page.dart';
 import 'profile_page.dart';
@@ -31,6 +32,7 @@ class SessionPage extends StatefulWidget {
 class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
   late final WorkspaceController workspace = WorkspaceController(widget.api);
   String? selected;
+  bool queueHistory = false;
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,10 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  void navigate(String page) => setState(() => selected = page);
+  void navigate(String page) => setState(() {
+    queueHistory = page == 'History';
+    selected = queueHistory ? 'My Queue' : page;
+  });
   @override
   Widget build(BuildContext context) {
     final user = widget.controller.user!;
@@ -64,8 +69,16 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
         const Color(0xFF00B98E),
         'Patient',
         <(String, IconData, Widget)>[
+          ('Home', Icons.home_outlined, const PatientHomePage()),
           ('Scan', Icons.qr_code_scanner, const RegistrationPage()),
-          ('My Queue', Icons.format_list_numbered, const QueuePage()),
+          (
+            'My Queue',
+            Icons.format_list_numbered,
+            QueuePage(
+              key: ValueKey(queueHistory),
+              initialHistory: queueHistory,
+            ),
+          ),
           ('Appts', Icons.calendar_month_outlined, const AppointmentPage()),
           ('Alerts', Icons.notifications_none, const NotificationPage()),
           ('Profile', Icons.account_circle_outlined, const ProfilePage()),

@@ -57,12 +57,14 @@ camera access, except supported localhost development.
 | `GET /me`, `POST /logout` | Current account/session |
 | `GET /workspace` | Role-scoped queues, bookings, notifications, and reference data |
 | `POST /notifications/{id}/read` | Notification owner only |
-| `POST /clinic/qr` | Staff/admin: refresh a 15-minute clinic registration code |
+| `GET /clinic/qr` | Staff/admin: read the saved clinic QR code without changing it |
+| `POST /clinic/qr` | Administrator only: create or explicitly replace the non-expiring code |
 | `POST /clinic/qr/validate` | Patient: validate scanned code |
 | `POST /queues` | Patient with QR or staff assisting an existing patient |
 | `POST /queues/{id}` | Role-checked verify/assign/priority/call/start/complete/skip/absent/requeue/cancel |
 | `GET /appointments/slots` | Available slots for department/date/optional doctor |
 | `POST /appointments`, `POST /appointments/{id}/cancel` | Patient bookings |
+| `POST /appointments/{id}/verify` | Staff only: explicitly confirm a pending appointment |
 | `POST /admin/users/{id?}` | Administrator account creation/edit/status |
 | `POST /admin/departments/{id?}` | Administrator department management |
 | `POST /admin/rooms/{id?}` | Administrator room/doctor management |
@@ -71,10 +73,24 @@ camera access, except supported localhost development.
 | `POST /profile` | Patient phone-number update |
 | `POST /profile/password` | Current account password change |
 
+Clinic QR codes remain valid until an administrator replaces them. Staff reads
+and exports never rotate a code. If no code exists, GET returns a null
+token and an administrator must create it. The static-QR migration clears the old
+expiry timestamp while preserving the stored token and existing printed QR codes.
+Replacement is serialized with registration and recorded in the audit log; the
+previous token is rejected immediately after replacement.
+
 Queue writes and booking checks run inside serialized clinic transactions to avoid
 competing allocations. A patient can have only one active queue. Doctor actions
 require assignment and valid transitions. Room/doctor changes and deactivation are
 blocked while dependent work remains active. Existing records are not hard-deleted.
+
+New bookings are pending and reserve capacity until cancelled or processed. Staff
+verification records the staff member in the audit log and notifies the patient.
+Only confirmed appointments can check in or receive appointment reminders. The
+verification migration returns upcoming auto-confirmed application bookings to
+pending only when a patient booking audit exists and no verification or check-in
+exists. Imported, checked-in, past, cancelled and staff-confirmed records are preserved.
 
 Workspace lists currently cap queue history at 250, appointments at 150 and
 notifications/logs at 100. Administrator summary/report counts do not use these caps.
@@ -93,4 +109,5 @@ See the root README for sample requirements, fallbacks and deployment limitation
 
 `php artisan test` forces SQLite `:memory:`. Tests never reset the imported MySQL
 database. The suite covers auth, the complete queue lifecycle, role isolation,
-booking capacity, QR expiry, reminder deduplication, password reset and model behavior.
+booking capacity, static QR persistence and administrator-only replacement, reminder
+deduplication, password reset and model behavior.

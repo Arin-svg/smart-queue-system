@@ -16,15 +16,25 @@ class QueueController extends Controller
     {
         Clinic::roles($request->user(), ['staff', 'administrator']);
 
-        return DB::transaction(function () use ($request) {
-            DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
-            $expires = now()->addMinutes(15);
-            $token = Crypt::encryptString(Str::random(32));
-            DB::table('clinic_settings')->where('id', 1)->update(['qr_token' => $token, 'qr_expires_at' => $expires]);
-            Clinic::log($request->user(), 'refresh_qr', 'clinic');
+        return ['token' => Clinic::settings()->qr_token, 'expires_at' => null];
+    }
 
-            return ['token' => $token, 'expires_at' => $expires->toIso8601String()];
-        });
+    public function replaceQr(Request $request)
+    {
+        Clinic::roles($request->user(), ['administrator']);
+
+        return DB::transaction(function () use ($request) {
+            $settings = DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
+            $token = Crypt::encryptString(Str::random(32));
+            DB::table('clinic_settings')->where('id', 1)->update(['qr_token' => $token, 'qr_expires_at' => null]);
+            Clinic::log($request->user(), $settings->qr_token ? 'replace_qr' : 'create_qr', 'clinic');
+
+            return [
+                'token' => $token,
+                'expires_at' => null,
+                'message' => $settings->qr_token ? 'Clinic QR code replaced. Previous copies no longer work.' : 'Clinic QR code created.',
+            ];
+        }, 3);
     }
 
     public function validateQr(Request $request)
@@ -68,8 +78,8 @@ class QueueController extends Controller
             if (! empty($data['appointment_id'])) {
                 $appointment = DB::table('appointments')->where('appointment_id', $data['appointment_id'])->first();
                 if ($appointment->user_id != $patientId || $appointment->department_id != $dept->department_id ||
-                    ! in_array($appointment->appointment_status, ['pending', 'confirmed']) || $appointment->appointment_date !== now()->toDateString()) {
-                    Clinic::fail('Only your valid appointment for today can be checked in.');
+                    $appointment->appointment_status !== 'confirmed' || $appointment->appointment_date !== now()->toDateString()) {
+                    Clinic::fail('Only your staff-confirmed appointment for today can be checked in.');
                 }
                 if (DB::table('queues')->where('appointment_id', $appointment->appointment_id)->exists()) {
                     Clinic::fail('This appointment has already been checked in.');

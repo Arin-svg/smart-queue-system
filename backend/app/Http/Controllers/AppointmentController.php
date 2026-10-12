@@ -72,11 +72,44 @@ class AppointmentController extends Controller
                 Clinic::fail('This time slot is no longer available.');
             }
             $data['appointment_time'] = $at->format('H:i:s');
-            $id = DB::table('appointments')->insertGetId($data + ['user_id' => $actor->user_id, 'appointment_status' => 'confirmed', 'created_at' => now(), 'updated_at' => now()], 'appointment_id');
-            Clinic::notify($actor->user_id, 'Appointment confirmed', 'Your appointment is on '.$at->format('d M Y, H:i').'. Scan the clinic QR code when you arrive.');
+            $id = DB::table('appointments')->insertGetId($data + ['user_id' => $actor->user_id, 'appointment_status' => 'pending', 'created_at' => now(), 'updated_at' => now()], 'appointment_id');
+            Clinic::notify($actor->user_id, 'Appointment awaiting verification', 'Your appointment request for '.$at->format('d M Y, H:i').' is pending staff verification.');
             Clinic::log($actor, 'book_appointment', 'appointment', $id);
 
-            return response()->json(['message' => 'Appointment confirmed.', 'appointment_id' => $id], 201);
+            return response()->json(['message' => 'Appointment requested. Awaiting staff verification.', 'appointment_id' => $id, 'appointment_status' => 'pending'], 201);
+        }, 3);
+    }
+
+    public function verify(Request $request, int $id)
+    {
+        $actor = $request->user();
+        Clinic::roles($actor, ['staff']);
+
+        return DB::transaction(function () use ($actor, $id) {
+            DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
+            $appointment = DB::table('appointments')->where('appointment_id', $id)->lockForUpdate()->first();
+            abort_unless($appointment, 404);
+            if ($appointment->appointment_status !== 'pending') {
+                Clinic::fail('Only pending appointments can be verified.');
+            }
+            $at = Carbon::parse($appointment->appointment_date.' '.$appointment->appointment_time);
+            if (! $at->isFuture()) {
+                Clinic::fail('This appointment time has passed. The patient must book a new time.');
+            }
+            if (! DB::table('departments')->where('department_id', $appointment->department_id)->where('status', 'active')->exists()) {
+                Clinic::fail('Department unavailable.');
+            }
+            if ($appointment->doctor_id) {
+                $doctor = User::with('role')->find($appointment->doctor_id);
+                if (! $doctor || $doctor->status !== 'active' || $doctor->role->role_name !== 'doctor' || ! DB::table('rooms')->where('department_id', $appointment->department_id)->where('doctor_id', $appointment->doctor_id)->where('status', 'available')->exists()) {
+                    Clinic::fail('Doctor unavailable for this department.');
+                }
+            }
+            DB::table('appointments')->where('appointment_id', $id)->update(['appointment_status' => 'confirmed', 'updated_at' => now()]);
+            Clinic::log($actor, 'verify_appointment', 'appointment', $id);
+            Clinic::notify($appointment->user_id, 'Appointment confirmed', 'Staff have verified your appointment on '.$at->format('d M Y, H:i').'. Scan the clinic QR code when you arrive.');
+
+            return ['message' => 'Appointment verified and confirmed.', 'appointment_id' => $id, 'appointment_status' => 'confirmed'];
         }, 3);
     }
 

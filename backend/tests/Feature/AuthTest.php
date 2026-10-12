@@ -66,6 +66,21 @@ class AuthTest extends TestCase
         $this->getJson('/api/me', ['Authorization' => 'Bearer '.$token])->assertForbidden();
     }
 
+    public function test_failed_reset_email_and_immediate_retry_do_not_claim_success(): void
+    {
+        Notification::shouldReceive('send')->once()->andThrow(
+            new \Symfony\Component\Mailer\Exception\TransportException('SMTP unavailable')
+        );
+        $this->postJson('/api/forgot-password', ['email' => 'patient@example.test'])
+            ->assertStatus(503)->assertJsonPath('message', 'The reset email could not be sent. Please contact the clinic administrator or wait a minute and try again.');
+        $this->postJson('/api/forgot-password', ['email' => 'patient@example.test'])
+            ->assertStatus(429)->assertJsonPath('message', 'Please wait a minute before requesting another reset email.');
+        $this->travel(61)->seconds();
+        Notification::fake();
+        $this->postJson('/api/forgot-password', ['email' => 'patient@example.test'])->assertOk();
+        Notification::assertSentTo(User::first(), ResetPassword::class);
+    }
+
     public function test_validation_throttling_and_reset_request(): void
     {
         $this->postJson('/api/login', [])->assertUnprocessable();

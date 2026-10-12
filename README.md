@@ -11,7 +11,7 @@ were extracted from the PDF and inspected visually, including dialogs and profil
   read notifications, update phone number, and change password.
 - **Registration staff (cyan):** monitor and filter queues, assist existing patient
   accounts with walk-in registration, verify identity, approve priority, assign or
-  reassign doctor/room, requeue skipped patients, generate/print/download clinic QR.
+  reassign doctor/room, requeue skipped patients, view/print/download clinic QR.
 - **Doctor (orange):** view assigned patients in approved order, call next patient,
   start/complete consultation, skip or mark a called patient absent.
 - **Administrator (purple):** dashboard totals, user search/role filters, create/edit/
@@ -21,6 +21,19 @@ were extracted from the PDF and inspected visually, including dialogs and profil
   indicators, confirmation dialogs, and empty states.
 
 Screens use real API data. Demonstration records exist only in test fixtures.
+
+The clinic QR code is shared and does not expire. The page loads the saved code
+automatically and has no refresh controls. Only an administrator can generate the first
+code or replace it, through Home → Queue Settings → Manage Clinic QR Code.
+Replacing it invalidates old printed copies; print and distribute the new
+code afterward. The upgrade preserves the existing QR token and clears its former
+expiry timestamp.
+
+Appointments start as **Pending** and reserve the selected slot. Staff review them
+under **Verify → Appointments Awaiting Verification → Verify Appointment** before
+they become **Confirmed**. Only confirmed appointments receive reminders and allow
+check-in. The upgrade returns upcoming app-created, auto-confirmed bookings without
+a staff verification or check-in to pending, keeping their reserved slots.
 
 ## Run locally
 
@@ -69,7 +82,29 @@ Foreground queue and notification screens refresh every ten seconds and can be
 refreshed manually. Appointment reminders and prediction updates require the Laravel
 scheduler. Device push notifications while the application is closed are not configured.
 
+## Import a student batch
+
+Administrators can open **Users → Import spreadsheet**, save the CSV template,
+and choose an Excel `.xlsx` (one data sheet) or UTF-8 CSV file. Use headers
+`name,email,user_identifier,phone_no,role,status`; the first three are required.
+Blank role/status default to `patient`/`active`. Format IDs and phone numbers as
+Text in Excel to preserve leading zeros. Imports support up to 500 users and 2 MB.
+
+Preview shows invalid rows, duplicate rows and existing accounts before confirmation.
+Only ready rows are created; existing accounts are never updated. Each new account
+uses the normal temporary-password email flow. Keep the import screen open while
+it processes users. Stop takes effect after the current user. Save the result CSV
+to track skipped or failed rows. If a request times out, inspect Users before
+retrying; upload again for a fresh duplicate check. SMTP provider sending limits
+still apply, and SMTP acceptance does not guarantee inbox delivery.
+
 ## Password recovery
+
+Admin Add User generates a random temporary password and immediately sends it to
+the user's email. Admin forms do not accept passwords. Users can change their
+password in their profile after signing in. Creation requires a working mail
+transport; if sending fails, the new account is rolled back so creation can be retried.
+Editing an existing user does not change their password or send another email.
 
 Configure a real mail transport in `backend/.env` (`MAIL_MAILER`, SMTP host, port,
 credentials and sender), and set `APP_URL` to an address the recipient can reach.
@@ -86,7 +121,7 @@ flutter build web
 ```
 
 In `backend/`: `php artisan test`. Backend tests force SQLite `:memory:` and never
-reset the imported MySQL database. Tests cover role isolation, QR expiry, duplicate
+reset the imported MySQL database. Tests cover role isolation, static QR persistence and replacement, duplicate
 queues, status transitions, approved queue order, room assignment, appointment
 capacity, reminders, reports, password resets, and model abstention.
 

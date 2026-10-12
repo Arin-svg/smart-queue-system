@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'widgets/clinic_widgets.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -107,47 +107,57 @@ class ProfilePage extends StatelessWidget {
   }
 
   Future<void> editPhone(BuildContext context, WorkspaceController c) async {
-    final phone = TextEditingController(
-      text: display(c.profile['phone_no'], ''),
-    );
+    var phone = display(c.profile['phone_no'], '');
+    var saving = false;
     await showDialog<void>(
       context: context,
-      builder: (dialog) => AlertDialog(
-        title: const Text('Update Phone Number'),
-        content: TextField(
-          controller: phone,
-          keyboardType: TextInputType.phone,
-          maxLength: 20,
-          decoration: const InputDecoration(labelText: 'Phone Number'),
+      barrierDismissible: false,
+      builder: (dialog) => StatefulBuilder(
+        builder: (context, setState) => PopScope(
+          canPop: !saving,
+          child: AlertDialog(
+            title: const Text('Update Phone Number'),
+            content: TextFormField(
+              initialValue: phone,
+              onChanged: (value) => phone = value,
+              enabled: !saving,
+              keyboardType: TextInputType.phone,
+              maxLength: 20,
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: saving ? null : () => Navigator.pop(dialog),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: saving
+                    ? null
+                    : () async {
+                        setState(() => saving = true);
+                        final result = await perform(
+                          context,
+                          () =>
+                              c.submit('/profile', {'phone_no': phone.trim()}),
+                        );
+                        if (!dialog.mounted) return;
+                        setState(() => saving = false);
+                        if (result != null) Navigator.pop(dialog);
+                      },
+                child: Text(saving ? 'Saving…' : 'Save'),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialog),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final result = await perform(
-                context,
-                () => c.submit('/profile', {'phone_no': phone.text.trim()}),
-              );
-              if (result != null && dialog.mounted) Navigator.pop(dialog);
-            },
-            child: const Text('Save'),
-          ),
-        ],
       ),
     );
-    phone.dispose();
   }
 
   Future<void> changePassword(
     BuildContext context,
     WorkspaceController c,
   ) async {
-    final current = TextEditingController(),
-        password = TextEditingController(),
-        confirmation = TextEditingController();
+    var current = '', password = '', confirmation = '';
     final form = GlobalKey<FormState>();
     bool saving = false;
     await showDialog<void>(
@@ -163,7 +173,7 @@ class ProfilePage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
-                    controller: current,
+                    onChanged: (value) => current = value,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Current Password',
@@ -174,7 +184,7 @@ class ProfilePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
-                    controller: password,
+                    onChanged: (value) => password = value,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'New Password',
@@ -185,13 +195,13 @@ class ProfilePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
-                    controller: confirmation,
+                    onChanged: (value) => confirmation = value,
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Confirm New Password',
                     ),
                     validator: (v) =>
-                        v != password.text ? 'Passwords do not match' : null,
+                        v != password ? 'Passwords do not match' : null,
                   ),
                 ],
               ),
@@ -211,9 +221,9 @@ class ProfilePage extends StatelessWidget {
                       final result = await perform(
                         context,
                         () => c.submit('/profile/password', {
-                          'current_password': current.text,
-                          'password': password.text,
-                          'password_confirmation': confirmation.text,
+                          'current_password': current,
+                          'password': password,
+                          'password_confirmation': confirmation,
                         }),
                       );
                       if (dialog.mounted) {
@@ -230,8 +240,5 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
-    current.dispose();
-    password.dispose();
-    confirmation.dispose();
   }
 }

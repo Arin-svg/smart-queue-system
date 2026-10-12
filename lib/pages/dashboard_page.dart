@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'widgets/clinic_widgets.dart';
 import 'widgets/record_editor.dart';
+import 'qr_code_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -75,6 +76,11 @@ class DashboardPage extends StatelessWidget {
               OutlinedButton(
                 onPressed: () => settings(context, c),
                 child: const Text('Configure Queue Settings'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => openClinicPage(context, const QrCodePage()),
+                icon: const Icon(Icons.qr_code),
+                label: const Text('Manage Clinic QR Code'),
               ),
               OutlinedButton(
                 onPressed: c.saving

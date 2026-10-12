@@ -50,7 +50,14 @@ void main() {
         await tester.tap(find.widgetWithText(FilledButton, 'Log in'));
         await tester.pumpAndSettle();
         final tabs = switch (role) {
-          Role.patient => ['Scan', 'My Queue', 'Appts', 'Alerts', 'Profile'],
+          Role.patient => [
+            'Home',
+            'Scan',
+            'My Queue',
+            'Appts',
+            'Alerts',
+            'Profile',
+          ],
           Role.staff => ['Monitor', 'Verify', 'Assign', 'QR Code', 'Profile'],
           Role.doctor => ['Call', 'Consult', 'Profile'],
           Role.administrator => [
@@ -70,8 +77,12 @@ void main() {
               : null;
           await tester.tap(find.text(tab).last);
           await tester.pumpAndSettle();
-          await tester.tap(find.byTooltip('Refresh').first);
-          await tester.pumpAndSettle();
+          if (tab == 'QR Code') {
+            expect(find.byTooltip('Refresh'), findsNothing);
+          } else {
+            await tester.tap(find.byTooltip('Refresh').first);
+            await tester.pumpAndSettle();
+          }
           expect(
             tester.takeException(),
             isNull,
@@ -158,6 +169,9 @@ class FixtureApi implements ApiService {
   String? queueStatusOverride;
   @override
   Future<Map<String, dynamic>> get(String path) async {
+    if (path == '/clinic/qr') {
+      return {'token': 'static-clinic-qr-fixture', 'expires_at': null};
+    }
     if (path.startsWith('/reports')) {
       return {
         'start': '2026-10-05',

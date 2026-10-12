@@ -98,44 +98,47 @@ class ClinicPage extends StatelessWidget {
     required this.children,
     this.action,
     this.onRefresh,
+    this.enableRefresh = true,
   });
   final String title;
   final List<Widget> children;
   final Widget? action;
   final Future<void> Function()? onRefresh;
+  final bool enableRefresh;
   @override
   Widget build(BuildContext context) {
     final c = ClinicScope.of(context).controller;
-    return RefreshIndicator(
-      onRefresh: onRefresh ?? c.refresh,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+    final content = ListView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              ?action,
+            ),
+            ?action,
+            if (enableRefresh)
               IconButton(
                 tooltip: 'Refresh',
                 onPressed: c.loading ? null : onRefresh ?? c.refresh,
                 icon: const Icon(Icons.refresh, size: 20),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
-      ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...children,
+      ],
     );
+    return enableRefresh
+        ? RefreshIndicator(onRefresh: onRefresh ?? c.refresh, child: content)
+        : content;
   }
 }
 

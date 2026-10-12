@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../services/api_service.dart';
-import 'ai_waiting_time_controller.dart';
-import 'ai_priority_controller.dart';
 
 typedef Record = Map<String, dynamic>;
 
 /// Shared authenticated state. Polls only while the application is foregrounded.
-class WorkspaceController extends ChangeNotifier
-    implements AiWaitingTimeController, AiPriorityController {
+class WorkspaceController extends ChangeNotifier {
   WorkspaceController(this.api);
   final ApiService api;
   Record data = {};
@@ -54,9 +51,8 @@ class WorkspaceController extends ChangeNotifier
   }
 
   Future<Record> submit(String path, Record body) async {
-    if (saving) {
+    if (saving)
       throw const ApiException('Please wait for the current request.');
-    }
     saving = true;
     if (!_disposed) notifyListeners();
     try {
@@ -80,23 +76,6 @@ class WorkspaceController extends ChangeNotifier
   List<Record> get activeQueues => rows(
     'queues',
   ).where((q) => activeStatuses.contains(q['queue_status'])).toList();
-  @override
-  Future<Duration?> estimateWaitingTime(int queueId) async {
-    final queue = rows(
-      'queues',
-    ).where((q) => q['queue_id'] == queueId).firstOrNull;
-    final minutes = queue?['estimated_waiting_time'] as num?;
-    return minutes == null ? null : Duration(minutes: minutes.round());
-  }
-
-  @override
-  Future<int?> suggestPriority(int queueId) async {
-    final queue = rows(
-      'queues',
-    ).where((q) => q['queue_id'] == queueId).firstOrNull;
-    return (queue?['priority_recommendation'] as Map?)?['level'] as int?;
-  }
-
   List<Record> get orderedQueues {
     final list = rows('queues');
     list.sort((a, b) {

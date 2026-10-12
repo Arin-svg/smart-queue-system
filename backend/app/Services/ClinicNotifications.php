@@ -11,7 +11,7 @@ class ClinicNotifications
     {
         DB::transaction(function () {
             DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
-            $appointments = DB::table('appointments')->whereIn('appointment_status', ['pending', 'confirmed'])
+            $appointments = DB::table('appointments')->where('appointment_status', 'confirmed')
                 ->whereBetween('appointment_date', [now()->toDateString(), now()->addDay()->toDateString()])->get();
             foreach ($appointments as $a) {
                 $at = Carbon::parse($a->appointment_date.' '.$a->appointment_time);

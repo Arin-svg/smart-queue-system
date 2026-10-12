@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\TemporaryPassword;
 use App\Services\Clinic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -17,8 +19,12 @@ class AdminController extends Controller
             'name' => 'required|string|max:100', 'user_identifier' => ['required', 'string', 'max:50', Rule::unique('users', 'user_identifier')->ignore($id, 'user_id')],
             'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($id, 'user_id')],
             'phone_no' => 'nullable|string|max:20', 'role_id' => 'required|integer|exists:roles,role_id',
-            'status' => 'required|in:active,inactive', 'password' => ($id ? 'nullable' : 'required').'|string|min:8|max:255',
+            'status' => 'required|in:active,inactive', 'password' => 'prohibited',
         ]);
+
+        if (! $id && in_array(config('mail.default'), ['log', 'array'])) {
+            return response()->json(['message' => 'Account email is not configured. Configure email delivery before adding users.'], 503);
+        }
 
         return DB::transaction(function () use ($request, $id, $data) {
             DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
@@ -38,17 +44,28 @@ class AdminController extends Controller
                     Clinic::fail('Resolve this account\'s appointments first.');
                 }
             }
-            if (empty($data['password'])) {
-                unset($data['password']);
+            unset($data['password']);
+            if (! $id) {
+                $temporaryPassword = Str::password(16);
+                $data['password'] = $temporaryPassword;
             }
             $user->fill($data)->save();
-            if ($id && ($changedRole || $data['status'] === 'inactive' || isset($data['password']))) {
+            if ($id && ($changedRole || $data['status'] === 'inactive')) {
                 $user->tokens()->delete();
             }
             Clinic::log($request->user(), $id ? 'update_user' : 'create_user', 'user', $user->user_id);
 
-            return ['message' => 'User saved.'];
-        }, 3);
+            if (! $id) {
+                try {
+                    $user->notify(new TemporaryPassword($temporaryPassword));
+                } catch (\Throwable $exception) {
+                    // Roll back creation so the administrator can retry safely.
+                    abort(503, 'Account email could not be sent. The user was not created. Check email delivery and try again.');
+                }
+            }
+
+            return ['message' => $id ? 'User saved.' : 'User created. A temporary password has been sent by email.'];
+        });
     }
 
     public function department(Request $request, ?int $id = null)

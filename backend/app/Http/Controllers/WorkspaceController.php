@@ -17,7 +17,10 @@ class WorkspaceController extends Controller
         $queues = Clinic::estimates(Clinic::queues($actor)->orderByDesc('q.registered_at')->limit(250)->get());
         $appointments = DB::table('appointments as a')->join('departments as d', 'd.department_id', '=', 'a.department_id')
             ->join('users as p', 'p.user_id', '=', 'a.user_id')->leftJoin('users as doc', 'doc.user_id', '=', 'a.doctor_id')
-            ->select('a.*', 'd.department_name', 'p.name as patient_name', 'doc.name as doctor_name');
+            ->select('a.*', 'd.department_name', 'p.name as patient_name', 'p.user_identifier', 'doc.name as doctor_name');
+        if ($role === 'staff') {
+            $appointments->orderByRaw("CASE WHEN a.appointment_status = 'pending' THEN 0 ELSE 1 END")->orderBy('appointment_date')->orderBy('appointment_time');
+        }
         if ($role === 'patient') {
             $appointments->where('a.user_id', $actor->user_id);
         }

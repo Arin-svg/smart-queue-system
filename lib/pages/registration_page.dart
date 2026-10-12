@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'widgets/clinic_widgets.dart';
 
@@ -39,12 +39,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       context,
       () => c.api.post('/clinic/qr/validate', {'qr_token': result}),
     );
-    if (mounted) {
+    if (mounted)
       setState(() {
         checking = false;
         if (checked != null) token = result;
       });
-    }
   }
 
   @override

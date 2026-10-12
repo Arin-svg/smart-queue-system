@@ -7,6 +7,7 @@ use App\Services\ClinicNotifications;
 use Carbon\Carbon;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
@@ -38,6 +39,61 @@ SQL);
         User::create(['role_id' => 1, 'user_identifier' => 'PATIENT002', 'name' => 'Second Patient', 'email' => 'second@example.test', 'password' => 'TestPassword123!', 'status' => 'active']);
         DB::table('departments')->insert([['department_id' => 1, 'department_name' => 'General Consultation', 'department_code' => 'GC'], ['department_id' => 2, 'department_name' => 'Dental Clinic', 'department_code' => 'DEN']]);
         DB::table('rooms')->insert(['room_id' => 1, 'department_id' => 1, 'doctor_id' => 3, 'room_name' => 'Consultation Room 1', 'room_number' => 'R101']);
+    }
+
+    public function test_admin_creation_emails_generated_password_and_edit_preserves_it(): void
+    {
+        config(['mail.default' => 'smtp']);
+        Notification::fake();
+        $data = ['name' => 'New Patient', 'email' => 'new@example.test', 'user_identifier' => 'NEW001', 'role_id' => 1, 'status' => 'active'];
+        $response = $this->asUser(4)->postJson('/api/admin/users', $data)->assertOk();
+        $user = User::where('user_identifier', 'NEW001')->firstOrFail();
+        Notification::assertSentTo($user, \App\Notifications\TemporaryPassword::class, function ($notification) use ($user, $response) {
+            $this->assertTrue(\Illuminate\Support\Facades\Hash::check($notification->temporaryPassword, $user->password));
+            $this->assertStringNotContainsString($notification->temporaryPassword, $response->getContent());
+            return true;
+        });
+        $hash = $user->password;
+        $this->postJson('/api/admin/users/'.$user->user_id, [...$data, 'name' => 'Updated Patient'])->assertOk();
+        $this->assertSame($hash, $user->fresh()->password);
+        Notification::assertSentTimes(\App\Notifications\TemporaryPassword::class, 1);
+        $this->postJson('/api/admin/users/'.$user->user_id, [...$data, 'password' => 'Override123!'])->assertUnprocessable();
+    }
+
+    public function test_account_creation_requires_email_and_rolls_back_on_delivery_failure(): void
+    {
+        $data = ['name' => 'New Patient', 'email' => 'new@example.test', 'user_identifier' => 'NEW001', 'role_id' => 1, 'status' => 'active'];
+        config(['mail.default' => 'log']);
+        $this->asUser(4)->postJson('/api/admin/users', $data)->assertStatus(503);
+        $this->assertDatabaseMissing('users', ['user_identifier' => 'NEW001']);
+        config(['mail.default' => 'smtp']);
+        Notification::shouldReceive('send')->once()->andThrow(new \RuntimeException('Transport unavailable'));
+        $this->postJson('/api/admin/users', $data)->assertStatus(503);
+        $this->assertDatabaseMissing('users', ['user_identifier' => 'NEW001']);
+    }
+
+    public function test_import_preview_validates_defaults_duplicates_and_permissions_without_creating_users(): void
+    {
+        Notification::fake();
+        $valid = ['row' => 2, 'name' => 'Student One', 'email' => 'one@example.test', 'user_identifier' => 'BATCH001'];
+        $rows = [$valid,
+            [...$valid, 'row' => 3, 'email' => 'other@example.test'],
+            [...$valid, 'row' => 4, 'user_identifier' => 'OTHER', 'email' => 'patient@example.test'],
+            [...$valid, 'row' => 5, 'email' => 'bad-email'],
+            [...$valid, 'row' => 6, 'email' => 'two@example.test', 'user_identifier' => 'BATCH002', 'role' => 'not-a-role'],
+        ];
+        $this->asUser(1)->postJson('/api/admin/users/import/preview', ['rows' => $rows])->assertForbidden();
+        $this->asUser(4)->postJson('/api/admin/users/import/preview', ['rows' => $rows])->assertOk()
+            ->assertJsonPath('rows.0.status', 'ready')
+            ->assertJsonPath('rows.0.data.role_id', 1)
+            ->assertJsonPath('rows.0.data.status', 'active')
+            ->assertJsonPath('rows.1.status', 'duplicate')
+            ->assertJsonPath('rows.2.status', 'existing')
+            ->assertJsonPath('rows.3.status', 'invalid')
+            ->assertJsonPath('rows.4.status', 'invalid');
+        $this->assertDatabaseMissing('users', ['user_identifier' => 'BATCH001']);
+        Notification::assertNothingSent();
+        $this->postJson('/api/admin/users/import/preview', ['rows' => array_fill(0, 501, $valid)])->assertUnprocessable();
     }
 
     private function asUser(int $id): static
@@ -75,9 +131,9 @@ SQL);
         $this->getJson('/api/reports?start=2026-10-05&end=2026-10-05')->assertOk()->assertJsonPath('completed', 1);
     }
 
-    public function test_qr_expiry_duplicates_and_patient_isolation(): void
+    public function test_qr_stays_valid_over_time_with_duplicate_and_patient_isolation_rules(): void
     {
-        $token = $this->asUser(2)->postJson('/api/clinic/qr')->assertOk()->json('token');
+        $token = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->assertJsonPath('expires_at', null)->json('token');
         $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => $token])->assertOk();
         $body = ['qr_token' => $token, 'department_id' => 1, 'reason_for_visit' => 'Follow-up Visit'];
         $this->postJson('/api/queues', $body)->assertCreated();
@@ -85,9 +141,89 @@ SQL);
         $this->asUser(5)->getJson('/api/workspace')->assertOk()->assertJsonCount(0, 'queues')->assertJsonCount(0, 'notifications');
         $this->postJson('/api/notifications/1/read')->assertNotFound();
         $this->postJson('/api/queues/1', ['action' => 'cancel'])->assertForbidden();
-        $this->travel(16)->minutes();
-        $this->postJson('/api/clinic/qr/validate', ['qr_token' => $token])->assertUnprocessable();
-        $this->postJson('/api/queues', $body)->assertUnprocessable();
+        $this->travel(18)->months();
+        $this->postJson('/api/clinic/qr/validate', ['qr_token' => $token])->assertOk();
+        $this->postJson('/api/queues', $body)->assertCreated();
+    }
+
+    public function test_reading_qr_does_not_create_a_code_before_admin_setup(): void
+    {
+        foreach ([2, 4, 2] as $userId) {
+            $this->asUser($userId)->getJson('/api/clinic/qr')->assertOk()->assertExactJson(['token' => null, 'expires_at' => null]);
+        }
+        $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => null, 'qr_expires_at' => null]);
+        $this->assertDatabaseCount('audit_logs', 0);
+        $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => 'unknown-code'])->assertUnprocessable();
+    }
+
+    public function test_every_staff_member_reads_the_same_persisted_qr_without_rotating_it(): void
+    {
+        $secondStaff = User::create(['role_id' => 2, 'user_identifier' => 'STAFF002', 'name' => 'Second Staff',
+            'email' => 'staff2@example.test', 'password' => 'TestPassword123!', 'status' => 'active']);
+        $token = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->json('token');
+
+        foreach ([2, $secondStaff->user_id, 4, 2] as $userId) {
+            $this->asUser($userId)->getJson('/api/clinic/qr')->assertOk()->assertExactJson(['token' => $token, 'expires_at' => null]);
+        }
+        $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => $token, 'qr_expires_at' => null]);
+        $this->assertDatabaseCount('audit_logs', 1);
+        $this->assertDatabaseHas('audit_logs', ['actor_id' => 4, 'action' => 'create_qr', 'record_type' => 'clinic']);
+    }
+
+    public function test_only_administrators_can_create_or_replace_the_clinic_qr(): void
+    {
+        $this->asUser(2)->postJson('/api/clinic/qr')->assertForbidden();
+        $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => null]);
+        $token = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->json('token');
+
+        foreach ([2, 1, 3] as $userId) {
+            $this->asUser($userId)->postJson('/api/clinic/qr')->assertForbidden();
+            $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => $token]);
+        }
+        foreach ([1, 3] as $userId) {
+            $this->asUser($userId)->getJson('/api/clinic/qr')->assertForbidden();
+        }
+        $this->assertDatabaseCount('audit_logs', 1);
+    }
+
+    public function test_admin_replacement_invalidates_previous_qr_for_validation_and_registration(): void
+    {
+        $oldToken = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->json('token');
+        $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => $oldToken])->assertOk();
+        $newToken = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->assertJsonPath('expires_at', null)->json('token');
+        $this->assertNotSame($oldToken, $newToken);
+        $this->assertDatabaseHas('audit_logs', ['actor_id' => 4, 'action' => 'replace_qr', 'record_type' => 'clinic']);
+        $this->asUser(2)->getJson('/api/clinic/qr')->assertOk()->assertJsonPath('token', $newToken);
+
+        $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => $oldToken])->assertUnprocessable();
+        $body = ['department_id' => 1, 'reason_for_visit' => 'Follow-up Visit'];
+        $this->postJson('/api/queues', $body + ['qr_token' => $oldToken])->assertUnprocessable();
+        $this->assertDatabaseCount('queues', 0);
+        $this->postJson('/api/clinic/qr/validate', ['qr_token' => $newToken])->assertOk();
+        $this->postJson('/api/queues', $body + ['qr_token' => $newToken])->assertCreated();
+    }
+
+    public function test_legacy_expired_qr_is_preserved_and_works_as_a_static_code(): void
+    {
+        $token = Crypt::encryptString('legacy-clinic-qr-token');
+        DB::table('clinic_settings')->where('id', 1)->update(['qr_token' => $token, 'qr_expires_at' => now()->subMonths(6)]);
+        $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => $token])->assertOk();
+
+        $migration = require database_path('migrations/2026_10_05_000002_make_clinic_qr_static.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => $token, 'qr_expires_at' => null]);
+        $this->asUser(2)->getJson('/api/clinic/qr')->assertOk()->assertExactJson(['token' => $token, 'expires_at' => null]);
+        $this->asUser(1)->postJson('/api/clinic/qr/validate', ['qr_token' => $token])->assertOk();
+        $this->postJson('/api/queues', ['qr_token' => $token, 'department_id' => 1, 'reason_for_visit' => 'General Checkup'])->assertCreated();
+    }
+
+    public function test_static_qr_migration_leaves_unconfigured_clinic_for_administrator_setup(): void
+    {
+        $migration = require database_path('migrations/2026_10_05_000002_make_clinic_qr_static.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('clinic_settings', ['id' => 1, 'qr_token' => null, 'qr_expires_at' => null]);
     }
 
     public function test_staff_cannot_assign_wrong_department_or_unverified_queue(): void
@@ -130,11 +266,77 @@ SQL);
         $this->asUser(5)->postJson('/api/appointments', $body)->assertUnprocessable();
         $this->postJson('/api/appointments', array_replace($body, ['department_id' => 2, 'appointment_time' => '09:00']))->assertUnprocessable();
         ClinicNotifications::refresh();
+        $this->assertEquals(0, DB::table('notifications')->where('notification_title', 'Appointment reminder')->count());
+        $this->asUser(2)->postJson('/api/appointments/1/verify')->assertOk();
+        ClinicNotifications::refresh();
         ClinicNotifications::refresh();
         $this->assertEquals(1, DB::table('notifications')->where('notification_title', 'Appointment reminder')->count());
-        $this->postJson('/api/appointments/1/cancel')->assertNotFound();
+        $this->asUser(5)->postJson('/api/appointments/1/cancel')->assertNotFound();
         $this->asUser(1)->postJson('/api/appointments/1/cancel')->assertOk();
         $this->postJson('/api/appointments', array_replace($body, ['appointment_date' => '2026-10-10']))->assertUnprocessable();
+    }
+
+    public function test_appointments_require_staff_verification_before_confirmation_and_check_in(): void
+    {
+        $body = ['department_id' => 1, 'doctor_id' => 3, 'appointment_date' => '2026-10-05', 'appointment_time' => '10:00', 'reason_for_visit' => 'Checkup', 'appointment_status' => 'confirmed'];
+        $id = $this->asUser(1)->postJson('/api/appointments', $body)->assertCreated()->assertJsonPath('appointment_status', 'pending')->json('appointment_id');
+        $this->assertDatabaseHas('appointments', ['appointment_id' => $id, 'appointment_status' => 'pending']);
+        $this->assertDatabaseMissing('notifications', ['notification_title' => 'Appointment confirmed']);
+        $this->asUser(2)->getJson('/api/workspace')->assertOk()->assertJsonPath('appointments.0.appointment_status', 'pending')->assertJsonPath('appointments.0.user_identifier', 'PATIENT001');
+        $this->asUser(5)->getJson('/api/workspace')->assertOk()->assertJsonCount(0, 'appointments');
+        foreach ([1, 3, 4, 5] as $userId) {
+            $this->asUser($userId)->postJson('/api/appointments/'.$id.'/verify')->assertForbidden();
+        }
+        $token = $this->asUser(4)->postJson('/api/clinic/qr')->assertOk()->json('token');
+        $checkIn = ['department_id' => 1, 'appointment_id' => $id, 'reason_for_visit' => 'Checkup', 'qr_token' => $token];
+        $this->asUser(1)->postJson('/api/queues', $checkIn)->assertUnprocessable();
+        $this->asUser(2)->postJson('/api/queues', $checkIn + ['user_id' => 1])->assertUnprocessable();
+        $this->postJson('/api/appointments/'.$id.'/verify')->assertOk()->assertJsonPath('appointment_status', 'confirmed');
+        $this->postJson('/api/appointments/'.$id.'/verify')->assertUnprocessable();
+        $this->assertDatabaseHas('audit_logs', ['actor_id' => 2, 'action' => 'verify_appointment', 'record_id' => $id]);
+        $this->assertEquals(1, DB::table('notifications')->where('notification_title', 'Appointment confirmed')->count());
+        $this->asUser(1)->getJson('/api/workspace')->assertOk()->assertJsonPath('appointments.0.appointment_status', 'confirmed');
+        $this->postJson('/api/queues', $checkIn)->assertCreated();
+        $this->assertDatabaseHas('queues', ['appointment_id' => $id, 'queue_status' => 'waiting']);
+    }
+
+    public function test_cancelled_past_and_unavailable_appointments_cannot_be_verified(): void
+    {
+        $body = ['department_id' => 1, 'doctor_id' => 3, 'appointment_date' => '2026-10-05', 'appointment_time' => '10:00', 'reason_for_visit' => 'Checkup'];
+        $id = $this->asUser(1)->postJson('/api/appointments', $body)->assertCreated()->json('appointment_id');
+        DB::table('rooms')->where('room_id', 1)->update(['status' => 'inactive']);
+        $this->asUser(2)->postJson('/api/appointments/'.$id.'/verify')->assertUnprocessable();
+        DB::table('rooms')->where('room_id', 1)->update(['status' => 'available']);
+        $this->travel(3)->hours();
+        $this->postJson('/api/appointments/'.$id.'/verify')->assertUnprocessable();
+        $this->asUser(1)->postJson('/api/appointments/'.$id.'/cancel')->assertOk();
+        $this->asUser(2)->postJson('/api/appointments/'.$id.'/verify')->assertUnprocessable();
+        $this->postJson('/api/appointments/999/verify')->assertNotFound();
+        $this->assertDatabaseMissing('audit_logs', ['action' => 'verify_appointment']);
+    }
+
+    public function test_upgrade_returns_only_upcoming_auto_confirmed_unchecked_bookings_to_pending(): void
+    {
+        $base = ['user_id' => 1, 'department_id' => 1, 'appointment_date' => '2026-10-06', 'appointment_time' => '10:00:00', 'appointment_status' => 'confirmed', 'reason_for_visit' => 'Checkup'];
+        foreach (range(1, 6) as $id) {
+            DB::table('appointments')->insert($base + ['appointment_id' => $id]);
+            if ($id !== 2) {
+                DB::table('audit_logs')->insert(['actor_id' => 1, 'action' => 'book_appointment', 'record_type' => 'appointment', 'record_id' => $id]);
+            }
+        }
+        DB::table('audit_logs')->insert(['actor_id' => 2, 'action' => 'verify_appointment', 'record_type' => 'appointment', 'record_id' => 3]);
+        DB::table('queues')->insert(['user_id' => 1, 'department_id' => 1, 'appointment_id' => 4, 'queue_status' => 'waiting']);
+        DB::table('appointments')->where('appointment_id', 5)->update(['appointment_date' => '2026-10-04']);
+        DB::table('appointments')->where('appointment_id', 6)->update(['appointment_status' => 'cancelled']);
+        $migration = require database_path('migrations/2026_10_05_000003_require_appointment_verification.php');
+        $migration->up();
+        $migration->up();
+        $this->assertDatabaseHas('appointments', ['appointment_id' => 1, 'appointment_status' => 'pending']);
+        foreach ([2, 3, 4, 5] as $id) {
+            $this->assertDatabaseHas('appointments', ['appointment_id' => $id, 'appointment_status' => 'confirmed']);
+        }
+        $this->assertDatabaseHas('appointments', ['appointment_id' => 6, 'appointment_status' => 'cancelled']);
+        $this->assertEquals(1, DB::table('notifications')->where('notification_title', 'Appointment awaiting verification')->count());
     }
 
     public function test_admin_management_and_role_enforcement(): void
