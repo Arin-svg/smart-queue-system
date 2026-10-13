@@ -65,6 +65,29 @@ account. No shared default password or demonstration accounts are installed.
 
 ## Predictions and notifications
 
+### Ask SQS chat companion
+
+Patient pages include a draggable Ask SQS bubble. Home's AI Chat shortcut opens
+the same conversation. Minimize to continue using the app; history remains in
+memory until sign-out, app restart, or Clear conversation. English and Bahasa
+Melayu replies are available from Chat options. This is a read-only assistant:
+it guides users to pages but cannot book/cancel appointments or change priority.
+
+Set `GROQ_API_KEY` locally in `backend/.env` and choose a model available to your
+Groq account using `GROQ_MODEL` (default `openai/gpt-oss-20b`). Run
+`php artisan config:clear` and restart Laravel after changes. Never put the key
+in Flutter or commit it. Without a key the chat displays a setup error rather
+than pretending to generate AI replies. Provider quotas/billing may apply.
+
+The authenticated `/api/ai/chat` endpoint is patient-only and limited to 10 requests
+per minute. It sends the current message, up to 10 recent conversation messages,
+and an allowlisted summary of that patient's active queue and next appointment to
+Groq. Names, emails, phone numbers, IDs and reasons for visits are not
+included automatically. Users see a disclosure before messaging. Messages are
+not stored in the application database. Review provider data terms and clinic
+approval before using real patient data. Answers may be wrong and do not replace
+staff or medical assessment. Test coverage uses mocked Groq responses.
+
 Waiting-time prediction uses a local nearest-neighbour regression over completed
 consultations in the same department, with doctor, visit type and consultation hour
 as features. A chronological holdout compares error against a simple average.
@@ -136,6 +159,24 @@ hosting/scheduler operation still require environment/device acceptance checks.
 See [implementation traceability](docs/implementation-reference.md) and
 [backend setup](backend/README.md).
 
+
+### Android device notifications
+
+Firebase Messaging is configured for Android. On a rebuilt app, allow notification
+permission and sign in to register the device. New clinic alerts and queue changes
+appear in the notification tray; tapping a queue alert opens My Queue. Android
+may suppress delivery after a force-stop until the app is opened again.
+
+The server service-account file belongs at
+`backend/storage/app/firebase-service-account.json` (Git-ignored). Never bundle
+this private file in Flutter. Apply migrations with `php artisan migrate`.
+Keep the backend running and run `php artisan schedule:work` in another terminal
+inside `backend`. This generates reminders every minute and sends pending push
+notifications every ten seconds. `php artisan sqs:push` performs one delivery pass.
+The device receives new alerts after registration; existing inbox history is not
+replayed. Delivery is tied to the authenticated session and stops after sign-out,
+revocation, account deactivation, or session expiry. Failed delivery is retried on
+the next pass. FCM acceptance is not proof that a device displayed a notification.
 
 
 test punya password: Test1234!

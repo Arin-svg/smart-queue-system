@@ -14,8 +14,10 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:lo
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
 Route::middleware(['auth:sanctum', EnsureActiveUser::class])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/push/device', [\App\Http\Controllers\PushDeviceController::class, 'store'])->middleware('throttle:20,1');
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/workspace', [WorkspaceController::class, 'index']);
+    Route::post('/ai/chat', [\App\Http\Controllers\AiChatController::class, 'reply'])->middleware('throttle:10,1');
     Route::post('/notifications/{id}/read', [WorkspaceController::class, 'readNotification']);
     Route::get('/clinic/qr', [QueueController::class, 'qr']);
     Route::post('/clinic/qr', [QueueController::class, 'replaceQr']);

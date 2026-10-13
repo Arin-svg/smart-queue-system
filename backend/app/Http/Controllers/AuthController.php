@@ -41,6 +41,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        \Illuminate\Support\Facades\DB::table('push_devices')->where('access_token_id', $request->user()->currentAccessToken()->id)->delete();
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Signed out.']);

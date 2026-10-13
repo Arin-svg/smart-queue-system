@@ -68,7 +68,7 @@ class ProfilePage extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(child: Text(display(user[field.$2], '—'))),
-                      if (field.$2 == 'phone_no' && scope.role == 'patient')
+                      if (field.$2 == 'phone_no')
                         IconButton(
                           tooltip: 'Edit phone number',
                           icon: const Icon(Icons.edit_outlined, size: 18),

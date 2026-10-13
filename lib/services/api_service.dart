@@ -45,7 +45,7 @@ class HttpApiService implements ApiService {
           await (method == 'GET'
                   ? _client.get(uri, headers: headers)
                   : _client.post(uri, headers: headers, body: jsonEncode(body)))
-              .timeout(ApiConfig.timeout);
+              .timeout(path == '/ai/chat' ? const Duration(seconds: 75) : ApiConfig.timeout);
       Map<String, dynamic> data;
       try {
         data = jsonDecode(response.body) as Map<String, dynamic>;

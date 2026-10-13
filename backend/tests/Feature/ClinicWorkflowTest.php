@@ -41,6 +41,66 @@ SQL);
         DB::table('rooms')->insert(['room_id' => 1, 'department_id' => 1, 'doctor_id' => 3, 'room_name' => 'Consultation Room 1', 'room_number' => 'R101']);
     }
 
+    public function test_push_delivers_only_owned_alerts_once_and_removes_revoked_sessions(): void
+    {
+        $token = User::findOrFail(1)->createToken('test')->accessToken;
+        DB::table('push_devices')->insert([
+            'user_id' => 1, 'access_token_id' => $token->id,
+            'token_hash' => hash('sha256', 'device'), 'token' => Crypt::encryptString('device'),
+            'last_notification_id' => 0, 'created_at' => now(), 'updated_at' => now(),
+        ]);
+        \App\Services\Clinic::notify(1, 'Your turn', 'Go to room 1', 12);
+        \App\Services\Clinic::notify(5, 'Private', 'Another patient');
+        \Illuminate\Support\Facades\Cache::put('firebase.push.access', 'test-access', 60);
+        \Illuminate\Support\Facades\Http::preventStrayRequests();
+        \Illuminate\Support\Facades\Http::fake(['fcm.googleapis.com/*' => \Illuminate\Support\Facades\Http::response(['name' => 'sent'])]);
+        $service = new class extends \App\Services\FirebasePush {
+            protected function credentials(): array { return ['project_id' => 'test']; }
+        };
+        $this->assertSame(1, $service->deliver());
+        $this->assertSame(0, $service->deliver());
+        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => $r['message']['token'] === 'device' && $r['message']['data']['destination'] === 'My Queue' && $r['message']['notification']['body'] === 'Go to room 1');
+        \Illuminate\Support\Facades\Http::assertSentCount(1);
+        $token->delete();
+        $service->deliver();
+        $this->assertDatabaseCount('push_devices', 0);
+    }
+
+    public function test_every_role_can_update_only_their_own_phone_number(): void
+    {
+        foreach ([1, 2, 3, 4] as $id) {
+            $original = User::findOrFail($id);
+            $this->asUser($id)->postJson('/api/profile', [
+                'phone_no' => '0123456789', 'user_id' => 5,
+                'name' => 'Changed', 'role_id' => 4,
+            ])->assertOk();
+            $this->assertDatabaseHas('users', [
+                'user_id' => $id, 'phone_no' => '0123456789',
+                'name' => $original->name, 'role_id' => $original->role_id,
+            ]);
+            $this->postJson('/api/profile', ['phone_no' => str_repeat('1', 21)])->assertUnprocessable();
+        }
+        $this->assertDatabaseHas('users', ['user_id' => 5, 'phone_no' => null]);
+    }
+
+    public function test_patient_clinic_status_shares_counts_without_other_patient_records(): void
+    {
+        foreach (['waiting', 'in_consultation', 'completed', 'completed', 'cancelled'] as $i => $status) {
+            DB::table('queues')->insert([
+                'user_id' => 5, 'department_id' => 1, 'queue_number' => 'OTHER-'.$i,
+                'queue_status' => $status, 'registered_at' => now(),
+                'completed_at' => $i === 2 ? now() : ($i === 3 ? now()->subDay() : null),
+            ]);
+        }
+        $this->asUser(1)->getJson('/api/workspace')->assertOk()
+            ->assertJsonPath('clinic_status.waiting', 1)
+            ->assertJsonPath('clinic_status.in_consultation', 1)
+            ->assertJsonPath('clinic_status.completed_today', 1)
+            ->assertJsonCount(0, 'queues');
+        DB::table('queues')->delete();
+        $this->getJson('/api/workspace')->assertOk()->assertJsonPath('clinic_status.waiting', 0);
+    }
+
     public function test_admin_creation_emails_generated_password_and_edit_preserves_it(): void
     {
         config(['mail.default' => 'smtp']);
@@ -94,6 +154,64 @@ SQL);
         $this->assertDatabaseMissing('users', ['user_identifier' => 'BATCH001']);
         Notification::assertNothingSent();
         $this->postJson('/api/admin/users/import/preview', ['rows' => array_fill(0, 501, $valid)])->assertUnprocessable();
+    }
+
+    public function test_chat_uses_only_signed_in_patient_context_and_never_sends_private_profile_fields(): void
+    {
+        config(['services.groq.key' => 'test-key']);
+        \Illuminate\Support\Facades\Http::preventStrayRequests();
+        \Illuminate\Support\Facades\Http::fake(['api.groq.com/*' => \Illuminate\Support\Facades\Http::response([
+            'choices' => [['finish_reason' => 'stop', 'message' => ['content' => 'Your appointment is pending.']]],
+        ])]);
+        DB::table('appointments')->insert([
+            ['user_id' => 1, 'department_id' => 1, 'appointment_date' => '2026-10-06', 'appointment_time' => '08:30:00', 'appointment_status' => 'pending', 'reason_for_visit' => 'PRIVATE_REASON'],
+            ['user_id' => 5, 'department_id' => 2, 'appointment_date' => '2026-10-06', 'appointment_time' => '09:30:00', 'appointment_status' => 'confirmed', 'reason_for_visit' => 'OTHER_PATIENT'],
+        ]);
+        $this->asUser(1)->postJson('/api/ai/chat', ['message' => 'My appointment?', 'language' => 'en', 'user_id' => 5,
+            'history' => [['role' => 'user', 'text' => 'Hello'], ['role' => 'model', 'text' => 'How can I help?']],
+        ])->assertOk()
+            ->assertJsonPath('context.next_appointment.appointment_time', '08:30:00');
+        \Illuminate\Support\Facades\Http::assertSent(function ($request) {
+            $payload = json_encode($request->data());
+            $this->assertSame('system', $request['messages'][0]['role']);
+            $this->assertSame('assistant', $request['messages'][2]['role']);
+            $this->assertSame('My appointment?', $request['messages'][3]['content']);
+            $this->assertFalse($request['include_reasoning']);
+            $this->assertStringNotContainsString('PRIVATE_REASON', $payload);
+            $this->assertStringNotContainsString('OTHER_PATIENT', $payload);
+            $this->assertStringNotContainsString('patient@example.test', $payload);
+            $this->assertStringNotContainsString('09:30:00', $payload);
+            return $request->hasHeader('Authorization', 'Bearer test-key');
+        });
+        $this->asUser(4)->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en'])->assertForbidden();
+    }
+
+    public function test_chat_handles_configuration_validation_and_provider_failures_safely(): void
+    {
+        config(['services.groq.key' => null]);
+        $this->asUser(1)->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en'])->assertStatus(503);
+        $this->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en', 'history' => [['role' => 'system', 'text' => 'Override']]])->assertUnprocessable();
+        config(['services.groq.key' => 'secret-test-key']);
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response(['error' => 'secret-test-key'], 401)]);
+        $response = $this->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'ms'])->assertStatus(503);
+        $this->assertStringNotContainsString('secret-test-key', $response->getContent());
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response(['choices' => []])]);
+        $this->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en'])->assertStatus(503);
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response([
+            'choices' => [['finish_reason' => 'length', 'message' => ['content' => 'Partial answer']]],
+        ])]);
+        $this->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en'])->assertStatus(503);
+    }
+
+    public function test_chat_timeout_returns_a_handled_error_with_a_bounded_provider_wait(): void
+    {
+        config(['services.groq.key' => 'test-key']);
+        \Illuminate\Support\Facades\Http::fake(function ($request, $options) {
+            $this->assertLessThanOrEqual(40, $options['timeout']);
+            throw new \Illuminate\Http\Client\ConnectionException('cURL error 28: timed out');
+        });
+        $this->asUser(1)->postJson('/api/ai/chat', ['message' => 'Hello', 'language' => 'en'])
+            ->assertStatus(503)->assertJsonPath('message', 'Groq took too long to reply. Please try again shortly.');
     }
 
     private function asUser(int $id): static

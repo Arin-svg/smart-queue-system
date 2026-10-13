@@ -54,8 +54,7 @@ void main() {
             'Home',
             'Scan',
             'My Queue',
-            'Appts',
-            'Alerts',
+            'Appointments',
             'Profile',
           ],
           Role.staff => ['Monitor', 'Verify', 'Assign', 'QR Code', 'Profile'],
@@ -105,6 +104,18 @@ void main() {
               image.dispose();
             });
           }
+        }
+        if (role == Role.patient) {
+          expect(find.text('Alerts'), findsNothing);
+          await tester.tap(find.text('Home').last);
+          await tester.pumpAndSettle();
+          await tester.tap(find.byIcon(Icons.notifications_none_rounded));
+          await tester.pumpAndSettle();
+          expect(find.byType(BackButton), findsOneWidget);
+          await tester.tap(find.byType(BackButton));
+          await tester.pumpAndSettle();
+          expect(find.text('Hello, Muhammad Amin'), findsOneWidget);
+          expect(tester.takeException(), isNull);
         }
         // Ensure navigation preserves the authenticated role, with no other-role tabs.
         if (role != Role.administrator) {
@@ -222,6 +233,12 @@ class FixtureApi implements ApiService {
               'Configured average (learning needs 10 completed consultations)',
         },
       ],
+      'clinic_status': {
+        'waiting': 12,
+        'in_consultation': 3,
+        'completed_today': 24,
+        'updated_at': '2026-10-14T09:30:00+08:00',
+      },
       'departments': [
         {
           'department_id': 1,

@@ -40,6 +40,17 @@ class WorkspaceController extends Controller
         if (in_array($role, ['staff', 'administrator'])) {
             $result['patients'] = DB::table('users as u')->join('roles as r', 'r.role_id', '=', 'u.role_id')->where('r.role_name', 'patient')->where('u.status', 'active')->orderBy('u.name')->get(['u.user_id', 'u.name', 'u.user_identifier']);
         }
+        if ($role === 'patient') {
+            // Share aggregate activity only, never other patients' queue records.
+            $counts = DB::table('queues')->whereIn('queue_status', Clinic::ACTIVE)
+                ->selectRaw('queue_status, COUNT(*) as total')->groupBy('queue_status')->pluck('total', 'queue_status');
+            $result['clinic_status'] = [
+                'waiting' => collect(['waiting', 'verified', 'assigned', 'called', 'skipped'])->sum(fn ($status) => (int) ($counts[$status] ?? 0)),
+                'in_consultation' => (int) ($counts['in_consultation'] ?? 0),
+                'completed_today' => DB::table('queues')->where('queue_status', 'completed')->whereDate('completed_at', now()->toDateString())->count(),
+                'updated_at' => now()->toIso8601String(),
+            ];
+        }
         if ($role === 'staff') {
             $samples = DB::table('priority_training_samples')->orderByDesc('created_at')->limit(500)->get()->all();
             foreach ($queues as $q) {

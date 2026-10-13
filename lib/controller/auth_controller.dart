@@ -12,6 +12,26 @@ class AuthController extends ChangeNotifier {
   User? get user => _user;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  bool restoring = false;
+  String? restoreError;
+
+  Future<void> restoreSession() async {
+    final service = _service;
+    if (service is! RestorableAuthService || restoring) return;
+    restoring = true;
+    restoreError = null;
+    notifyListeners();
+    try {
+      _user = await (service as RestorableAuthService).restoreSession();
+    } on ApiException catch (error) {
+      restoreError = error.message;
+    } catch (_) {
+      restoreError = 'Unable to restore your saved login. Please try again.';
+    } finally {
+      restoring = false;
+      notifyListeners();
+    }
+  }
 
   bool _isResetting = false;
   bool _resetSucceeded = false;

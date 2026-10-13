@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../controller/auth_controller.dart';
+import '../controller/chat_controller.dart';
+import 'widgets/chat_companion.dart';
 import '../model/role.dart';
 import '../services/api_service.dart';
+import '../services/device_push_service.dart';
 import 'widgets/clinic_widgets.dart';
 import 'queue_page.dart';
 import 'patient_home_page.dart';
@@ -31,6 +34,14 @@ class SessionPage extends StatefulWidget {
 
 class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
   late final WorkspaceController workspace = WorkspaceController(widget.api);
+  late final ChatController chat = ChatController(widget.api);
+  late final DevicePushService push = DevicePushService(
+    widget.api,
+    widget.controller.user!.id,
+    (page) {
+      if (mounted) navigate(page);
+    },
+  );
   String? selected;
   bool queueHistory = false;
   @override
@@ -38,6 +49,7 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     workspace.start();
+    push.start();
   }
 
   @override
@@ -45,6 +57,7 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       workspace.refresh();
       workspace.resume();
+      push.refreshToken();
     } else {
       workspace.pause();
     }
@@ -54,13 +67,22 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     workspace.dispose();
+    chat.dispose();
+    push.dispose();
     super.dispose();
   }
 
-  void navigate(String page) => setState(() {
-    queueHistory = page == 'History';
-    selected = queueHistory ? 'My Queue' : page;
-  });
+  void navigate(String page) {
+    if (page == 'AI Chat') {
+      chat.open();
+      return;
+    }
+    setState(() {
+      queueHistory = page == 'History';
+      selected = queueHistory ? 'My Queue' : page;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = widget.controller.user!;
@@ -80,7 +102,6 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
             ),
           ),
           ('Appts', Icons.calendar_month_outlined, const AppointmentPage()),
-          ('Alerts', Icons.notifications_none, const NotificationPage()),
           ('Profile', Icons.account_circle_outlined, const ProfilePage()),
         ],
       ),
@@ -123,6 +144,7 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
     };
     final index = destinations.indexWhere((d) => d.$1 == selected);
     final current = index < 0 ? 0 : index;
+    final showingAlerts = selected == 'Alerts';
     final theme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: color, primary: color),
@@ -163,182 +185,205 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
         child: Builder(
           builder: (context) {
             final c = ClinicScope.of(context).controller;
-            return Scaffold(
-              appBar: AppBar(
-                backgroundColor: color,
-                foregroundColor: Colors.white,
-                toolbarHeight: 76,
-                title: const Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Color(0x30FFFFFF),
-                      child: Icon(Icons.favorite_border, color: Colors.white),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      'SQS',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+            return PopScope(
+              canPop: !showingAlerts,
+              onPopInvokedWithResult: (didPop, result) {
+                if (!didPop && showingAlerts) navigate('Home');
+              },
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: showingAlerts
+                      ? BackButton(onPressed: () => navigate('Home'))
+                      : null,
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                  toolbarHeight: 76,
+                  title: const Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Color(0x30FFFFFF),
+                        child: Icon(Icons.favorite_border, color: Colors.white),
                       ),
+                      SizedBox(width: 12),
+                      Text(
+                        'SQS',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    PopupMenuButton<String>(
+                      tooltip: 'Account menu',
+                      icon: CircleAvatar(
+                        backgroundColor: const Color(0xFFDDE8E7),
+                        child: Text(
+                          user.name.isEmpty ? '?' : user.name[0],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      onSelected: (value) async {
+                        if (value == 'profile') {
+                          navigate('Profile');
+                          return;
+                        }
+                        await widget.controller.logout();
+                        if (context.mounted &&
+                            widget.controller.error != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(widget.controller.error!)),
+                          );
+                        }
+                      },
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          enabled: false,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(user.email),
+                              Text(display(c.profile['phone_no'], role)),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'profile',
+                          child: ListTile(
+                            leading: Icon(Icons.account_circle_outlined),
+                            title: Text('My Profile'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'logout',
+                          enabled: !widget.controller.isLoading,
+                          child: const ListTile(
+                            leading: Icon(Icons.logout, color: Colors.red),
+                            title: Text(
+                              'Sign Out',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(width: 12),
                   ],
                 ),
-                actions: [
-                  PopupMenuButton<String>(
-                    tooltip: 'Account menu',
-                    icon: CircleAvatar(
-                      backgroundColor: const Color(0xFFDDE8E7),
-                      child: Text(
-                        user.name.isEmpty ? '?' : user.name[0],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    onSelected: (value) async {
-                      if (value == 'profile') {
-                        navigate('Profile');
-                        return;
-                      }
-                      await widget.controller.logout();
-                      if (context.mounted && widget.controller.error != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(widget.controller.error!)),
-                        );
-                      }
-                    },
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        enabled: false,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                body: ChatCompanionHost(
+                  enabled: user.role == Role.patient,
+                  controller: chat,
+                  navigate: navigate,
+                  child: Column(
+                    children: [
+                      if (c.loading)
+                        const LinearProgressIndicator(minHeight: 2),
+                      if (c.error != null)
+                        Material(
+                          color: const Color(0xFFFFEDEA),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
                             ),
-                            Text(user.email),
-                            Text(display(c.profile['phone_no'], role)),
-                          ],
+                            child: Row(
+                              children: [
+                                Expanded(child: Text(c.error!)),
+                                TextButton(
+                                  onPressed: c.refresh,
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                      const PopupMenuItem(
-                        value: 'profile',
-                        child: ListTile(
-                          leading: Icon(Icons.account_circle_outlined),
-                          title: Text('My Profile'),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'logout',
-                        enabled: !widget.controller.isLoading,
-                        child: const ListTile(
-                          leading: Icon(Icons.logout, color: Colors.red),
-                          title: Text(
-                            'Sign Out',
-                            style: TextStyle(color: Colors.red),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1000),
+                            child: c.data.isEmpty && c.loading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : showingAlerts
+                                ? const NotificationPage()
+                                : destinations[current].$3,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(width: 12),
-                ],
-              ),
-              body: Column(
-                children: [
-                  if (c.loading) const LinearProgressIndicator(minHeight: 2),
-                  if (c.error != null)
-                    Material(
-                      color: const Color(0xFFFFEDEA),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(c.error!)),
-                            TextButton(
-                              onPressed: c.refresh,
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
+                ),
+                bottomNavigationBar: SafeArea(
+                  top: false,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      border: Border(top: BorderSide(color: Color(0xFFDDE0E6))),
                     ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1000),
-                        child: c.data.isEmpty && c.loading
-                            ? const Center(child: CircularProgressIndicator())
-                            : destinations[current].$3,
-                      ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 6,
                     ),
-                  ),
-                ],
-              ),
-              bottomNavigationBar: SafeArea(
-                top: false,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    border: Border(top: BorderSide(color: Color(0xFFDDE0E6))),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 6,
-                  ),
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < destinations.length; i++)
-                        Expanded(
-                          child: Semantics(
-                            selected: i == current,
-                            button: true,
-                            child: InkWell(
-                              onTap: () => navigate(destinations[i].$1),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 7,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: i == current
-                                      ? color.withValues(alpha: .09)
-                                      : null,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      destinations[i].$2,
-                                      size: 23,
-                                      color: i == current
-                                          ? color
-                                          : const Color(0xFFA0A8B7),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      destinations[i].$1,
-                                      style: TextStyle(
-                                        fontSize: 10,
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < destinations.length; i++)
+                          Expanded(
+                            child: Semantics(
+                              selected: i == current,
+                              button: true,
+                              child: InkWell(
+                                onTap: () => navigate(destinations[i].$1),
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: i == current
+                                        ? color.withValues(alpha: .09)
+                                        : null,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        destinations[i].$2,
+                                        size: 23,
                                         color: i == current
                                             ? color
-                                            : const Color(0xFF8B94A5),
+                                            : const Color(0xFFA0A8B7),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        destinations[i].$1 == 'Appts'
+                                            ? 'Appointments'
+                                            : destinations[i].$1,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: i == current
+                                              ? color
+                                              : const Color(0xFF8B94A5),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

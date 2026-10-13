@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function update(Request $request)
     {
-        Clinic::roles($request->user(), ['patient']);
+        Clinic::roles($request->user(), ['patient', 'staff', 'doctor', 'administrator']);
         $data = $request->validate(['phone_no' => 'nullable|string|max:20']);
         $request->user()->update($data);
         Clinic::log($request->user(), 'update_profile', 'user', $request->user()->user_id);
