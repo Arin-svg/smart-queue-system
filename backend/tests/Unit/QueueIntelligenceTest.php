@@ -23,19 +23,31 @@ class QueueIntelligenceTest extends TestCase
         }
         [$duration, $method, $error] = QueueIntelligence::duration($samples, (object) ['doctor_id' => 3, 'queue_type' => 'qr_walk_in'], 15);
         $this->assertEquals(12, $duration);
-        $this->assertStringStartsWith('AI:', $method);
+        $this->assertStringStartsWith('Historical average', $method);
         $this->assertEquals(0, $error);
     }
 
     public function test_priority_requires_similar_human_labels_and_never_changes_queue(): void
     {
-        $queue = (object) ['queue_id' => 20, 'department_id' => 1, 'reason_for_visit' => 'Follow-up Visit',
-            'registered_at' => now()->subMinutes(20), 'queue_type' => 'qr_walk_in', 'priority' => 0];
+        $queue = (object) [
+            'queue_id' => 20,
+            'department_id' => 1,
+            'reason_for_visit' => 'Follow-up Visit',
+            'registered_at' => now()->subMinutes(20),
+            'queue_type' => 'qr_walk_in',
+            'priority' => 0
+        ];
         $this->assertNull(QueueIntelligence::priority([], $queue)['level']);
         $samples = [];
         for ($i = 1; $i <= 5; $i++) {
-            $samples[] = (object) ['queue_id' => $i, 'department_id' => 1,
-                'reason_for_visit' => 'Follow-up Visit', 'queue_type' => 'qr_walk_in', 'wait_minutes' => 20, 'priority' => 1];
+            $samples[] = (object) [
+                'queue_id' => $i,
+                'department_id' => 1,
+                'reason_for_visit' => 'Follow-up Visit',
+                'queue_type' => 'qr_walk_in',
+                'wait_minutes' => 20,
+                'priority' => 1
+            ];
         }
         $result = QueueIntelligence::priority($samples, $queue);
         $this->assertEquals(1, $result['level']);
