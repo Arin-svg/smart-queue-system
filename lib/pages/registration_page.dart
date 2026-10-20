@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'widgets/clinic_widgets.dart';
 
@@ -15,6 +15,33 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _other = TextEditingController();
   String? token, department, reason, patient;
   bool checking = false;
+  Record? booking;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final c = ClinicScope.of(context).controller;
+    final today = DateTime.now()
+        .toUtc()
+        .add(const Duration(hours: 8))
+        .toIso8601String()
+        .substring(0, 10);
+    final eligible = c
+        .rows('appointments')
+        .where(
+          (a) =>
+              a['appointment_status'] == 'confirmed' &&
+              a['appointment_date'] == today &&
+              !c
+                  .rows('queues')
+                  .any((q) => q['appointment_id'] == a['appointment_id']),
+        )
+        .toList();
+    // Never silently choose between multiple bookings.
+    booking =
+        widget.appointment ?? (eligible.length == 1 ? eligible.single : null);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +55,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   Future<void> scan() async {
+    final appointment = booking;
     final result = await Navigator.push<String>(
       context,
       MaterialPageRoute(builder: (_) => const ClinicScanner()),
@@ -35,6 +63,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
     if (result == null || !mounted) return;
     setState(() => checking = true);
     final c = ClinicScope.of(context).controller;
+    if (appointment != null && !widget.staff) {
+      final scope = ClinicScope.of(context);
+      final checkedIn = await perform(
+        context,
+        () => c.submit('/queues', {
+          'appointment_id': appointment['appointment_id'],
+          'department_id': appointment['department_id'],
+          'reason_for_visit': display(
+            appointment['reason_for_visit'],
+            'Appointment visit',
+          ),
+          'qr_token': result,
+        }),
+        success: 'You are checked in. Your queue number is ready.',
+      );
+      if (!mounted) return;
+      setState(() => checking = false);
+      if (checkedIn != null) {
+        if (widget.appointment != null) Navigator.pop(context);
+        scope.navigate('My Queue');
+      }
+      return;
+    }
     final checked = await perform(
       context,
       () => c.api.post('/clinic/qr/validate', {'qr_token': result}),
@@ -51,7 +102,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final scope = ClinicScope.of(context);
     final c = scope.controller;
     return ClinicPage(
-      title: widget.staff ? 'Register Walk-in Patient' : 'Get Queue Number',
+      title: widget.staff
+          ? 'Register Walk-in Patient'
+          : booking != null
+          ? 'Appointment check-in'
+          : 'Clinic check-in',
       children: [
         if (!widget.staff && token == null) ...[
           const SizedBox(height: 24),
@@ -66,13 +121,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   color: Color(0xFF00AB84),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Scan to Get Queue Number',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                Text(
+                  booking != null
+                      ? 'Appointment confirmed'
+                      : 'Scan to Get Queue Number',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Scan the QR code displayed at the entrance to join the walk-in queue.',
+                Text(
+                  booking != null
+                      ? 'Scan when you arrive. We will use your booking details and give you a queue number automatically.'
+                      : 'For a walk-in, scan the clinic QR code. If you have a booking, open Appointments and choose Check in.',
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),

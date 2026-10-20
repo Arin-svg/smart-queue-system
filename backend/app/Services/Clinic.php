@@ -36,6 +36,15 @@ class Clinic
         DB::table('notifications')->insert(['user_id' => $userId, 'queue_id' => $queueId, 'notification_title' => $title, 'notification_message' => $message, 'notification_status' => 'sent', 'sent_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
     }
 
+    public static function notifyVerificationStaff(string $message, ?int $queueId = null): void
+    {
+        $staff = DB::table('users as u')->join('roles as r', 'r.role_id', '=', 'u.role_id')
+            ->where('r.role_name', 'staff')->where('u.status', 'active')->pluck('u.user_id');
+        foreach ($staff as $userId) {
+            self::notify($userId, 'Verification needed', $message, $queueId);
+        }
+    }
+
     public static function validateQr(string $token): void
     {
         $settings = self::settings();

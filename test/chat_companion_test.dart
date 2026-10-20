@@ -154,11 +154,11 @@ void main() {
         await tester.pumpAndSettle();
         expect(c.messages.length, 2);
         await tester.scrollUntilVisible(
-          find.text('Open appointments'),
+          find.text('View appointment'),
           200,
           scrollable: find.byType(Scrollable).first,
         );
-        await tester.tap(find.text('Open appointments'));
+        await tester.tap(find.text('View appointment'));
         await tester.pumpAndSettle();
         expect(page, 'Appts');
         expect(c.opened, false);

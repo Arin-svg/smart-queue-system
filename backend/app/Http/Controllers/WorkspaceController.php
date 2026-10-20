@@ -82,4 +82,13 @@ class WorkspaceController extends Controller
 
         return ['message' => 'Notification marked as read.'];
     }
+
+    public function readNotifications(Request $request)
+    {
+        $data = $request->validate(['ids' => 'required|array|max:100', 'ids.*' => 'integer']);
+        DB::table('notifications')->where('user_id', $request->user()->user_id)
+            ->whereIn('notification_id', $data['ids'])->where('notification_status', '!=', 'read')
+            ->update(['notification_status' => 'read', 'read_at' => now(), 'updated_at' => now()]);
+        return ['message' => 'Notifications marked as read.'];
+    }
 }

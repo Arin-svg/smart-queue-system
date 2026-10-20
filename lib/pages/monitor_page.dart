@@ -113,22 +113,44 @@ class _MonitorPageState extends State<MonitorPage> {
             'Try a different filter or register a walk-in patient.',
           ),
         ...queues.map(
-          (q) => QueueCard(
-            q,
-            actions: [
-              if (q['queue_status'] == 'skipped')
-                TextButton(
-                  onPressed: c.saving
-                      ? null
-                      : () => perform(
-                          context,
-                          () => c.submit('/queues/${q['queue_id']}', {
-                            'action': 'requeue',
-                          }),
-                        ),
-                  child: const Text('Requeue Patient'),
-                ),
-            ],
+          (q) => Semantics(
+            button: q['queue_status'] == 'waiting',
+            label: q['queue_status'] == 'waiting'
+                ? 'Open patient verification'
+                : null,
+            child: InkWell(
+              onTap: q['queue_status'] == 'waiting'
+                  ? () => ClinicScope.of(
+                      context,
+                    ).navigate('Verify/${q['queue_id']}')
+                  : null,
+              borderRadius: BorderRadius.circular(16),
+              child: QueueCard(
+                q,
+                actions: [
+                  if (q['queue_status'] == 'waiting')
+                    TextButton.icon(
+                      onPressed: () => ClinicScope.of(
+                        context,
+                      ).navigate('Verify/${q['queue_id']}'),
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      label: const Text('View and verify'),
+                    ),
+                  if (q['queue_status'] == 'skipped')
+                    TextButton(
+                      onPressed: c.saving
+                          ? null
+                          : () => perform(
+                              context,
+                              () => c.submit('/queues/${q['queue_id']}', {
+                                'action': 'requeue',
+                              }),
+                            ),
+                      child: const Text('Requeue Patient'),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ],

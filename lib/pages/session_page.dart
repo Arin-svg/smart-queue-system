@@ -44,6 +44,7 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
   );
   String? selected;
   bool queueHistory = false;
+  String? verificationQueueId;
   @override
   void initState() {
     super.initState();
@@ -73,11 +74,19 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
   }
 
   void navigate(String page) {
+    if (page.startsWith('Verify/')) {
+      setState(() {
+        verificationQueueId = page.substring('Verify/'.length);
+        selected = 'Verify';
+      });
+      return;
+    }
     if (page == 'AI Chat') {
       chat.open();
       return;
     }
     setState(() {
+      verificationQueueId = null;
       queueHistory = page == 'History';
       selected = queueHistory ? 'My Queue' : page;
     });
@@ -110,7 +119,11 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
         'Registration Staff',
         <(String, IconData, Widget)>[
           ('Monitor', Icons.desktop_windows_outlined, const MonitorPage()),
-          ('Verify', Icons.verified_outlined, const VerifyPage()),
+          (
+            'Verify',
+            Icons.verified_outlined,
+            VerifyPage(queueId: verificationQueueId),
+          ),
           ('Assign', Icons.person_add_alt, const AssignPage()),
           ('QR Code', Icons.qr_code, const QrCodePage()),
           ('Profile', Icons.account_circle_outlined, const ProfilePage()),
@@ -356,12 +369,36 @@ class _SessionPageState extends State<SessionPage> with WidgetsBindingObserver {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
-                                        destinations[i].$2,
-                                        size: 23,
-                                        color: i == current
-                                            ? color
-                                            : const Color(0xFFA0A8B7),
+                                      Badge(
+                                        key: destinations[i].$1 == 'Verify'
+                                            ? const Key(
+                                                'verify-notification-dot',
+                                              )
+                                            : null,
+                                        backgroundColor: Colors.red,
+                                        isLabelVisible:
+                                            destinations[i].$1 == 'Verify' &&
+                                            (c
+                                                    .rows('queues')
+                                                    .any(
+                                                      (q) =>
+                                                          q['queue_status'] ==
+                                                          'waiting',
+                                                    ) ||
+                                                c
+                                                    .rows('appointments')
+                                                    .any(
+                                                      (a) =>
+                                                          a['appointment_status'] ==
+                                                          'pending',
+                                                    )),
+                                        child: Icon(
+                                          destinations[i].$2,
+                                          size: 23,
+                                          color: i == current
+                                              ? color
+                                              : const Color(0xFFA0A8B7),
+                                        ),
                                       ),
                                       const SizedBox(height: 3),
                                       Text(

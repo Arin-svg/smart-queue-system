@@ -88,12 +88,13 @@ class QueueController extends Controller
             $id = DB::table('queues')->insertGetId([
                 'user_id' => $patientId, 'department_id' => $dept->department_id, 'appointment_id' => $appointment?->appointment_id,
                 'queue_number' => strtoupper(bin2hex(random_bytes(8))), 'queue_type' => $appointment ? 'appointment' : 'qr_walk_in',
-                'queue_status' => 'waiting', 'reason_for_visit' => $data['reason_for_visit'], 'registered_at' => now(), 'priority' => 0,
+                'queue_status' => 'waiting', 'reason_for_visit' => $appointment ? ($appointment->reason_for_visit ?: 'Appointment visit') : $data['reason_for_visit'], 'registered_at' => now(), 'priority' => 0,
                 'created_at' => now(), 'updated_at' => now(),
             ], 'queue_id');
             $number = now()->format('ymd').'-'.str_pad((string) $id, 5, '0', STR_PAD_LEFT);
             DB::table('queues')->where('queue_id', $id)->update(['queue_number' => $number]);
             Clinic::notify($patientId, 'Queue registered', 'Your queue number is '.$number.'. Please wait for registration verification.', $id);
+            Clinic::notifyVerificationStaff('Queue '.$number.' is waiting for verification. Open Verify to review.', $id);
             Clinic::log($actor, 'register_queue', 'queue', $id);
 
             return response()->json(['message' => 'Queue registered.', 'queue_id' => $id, 'queue_number' => $number], 201);

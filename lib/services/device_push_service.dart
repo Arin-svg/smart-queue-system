@@ -13,9 +13,28 @@ class DevicePushService {
   static const channel = MethodChannel('sqs/notifications');
   final List<StreamSubscription<dynamic>> subscriptions = [];
   bool disposed = false;
-  void open(Map<String, dynamic> data) {
+  Future<void> open(Map<String, dynamic> data) async {
     if (disposed || data['user_id'] != '$userId') return;
-    navigate(data['destination'] == 'My Queue' ? 'My Queue' : 'Alerts');
+    if (data['mark_read'] == 'true') {
+      final id = int.tryParse('${data['notification_id']}');
+      if (id != null) {
+        try {
+          await api.post('/notifications/$id/read', {});
+          await channel.invokeMethod('cancel', {'notification_id': '$id'});
+        } catch (_) {
+          debugPrint(
+            'Read status could not be saved; opening Alerts to retry.',
+          );
+        }
+      }
+      if (!disposed) navigate('Alerts');
+      return;
+    }
+    navigate(
+      ['My Queue', 'Verify'].contains(data['destination'])
+          ? data['destination'] as String
+          : 'Alerts',
+    );
   }
 
   Future<void> register(String token) async {
@@ -59,8 +78,11 @@ class DevicePushService {
           try {
             await channel.invokeMethod('show', {
               ...m.data,
-              'title': m.notification?.title ?? 'SQS update',
-              'body': m.notification?.body ?? 'Open SQS to view your update.',
+              'title': m.notification?.title ?? m.data['title'] ?? 'SQS update',
+              'body':
+                  m.notification?.body ??
+                  m.data['body'] ??
+                  'Open SQS to view your update.',
             });
           } catch (_) {
             debugPrint('Unable to display device notification.');

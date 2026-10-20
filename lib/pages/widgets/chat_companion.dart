@@ -273,23 +273,11 @@ class _ChatCompanionState extends State<ChatCompanion> {
                                   ),
                                   const SizedBox(height: 24),
                                 ],
-                                if (c.messages.isNotEmpty)
-                                  _message(
-                                    c.language == 'en'
-                                        ? 'Hi! I’m SQS chatbot. What can I help you with today?'
-                                        : 'Hai! Saya Chatbot SQS. Apa yang boleh saya bantu hari ini?',
-                                    false,
-                                  ),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8),
-                                  child: Text(
-                                    'AI can make mistakes. Verify important details with clinic staff.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.blueGrey,
-                                    ),
-                                  ),
+                                _message(
+                                  c.language == 'en'
+                                      ? 'Hi! I’m SQS chatbot. What can I help you with today?'
+                                      : 'Hai! Saya Chatbot SQS. Apa yang boleh saya bantu hari ini?',
+                                  false,
                                 ),
                                 for (final m in c.messages)
                                   _message(
@@ -338,68 +326,6 @@ class _ChatCompanionState extends State<ChatCompanion> {
                                   _appointmentCard(
                                     c.context!['next_appointment'] as Map,
                                   ),
-                                if (c.messages.isEmpty)
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 4,
-                                    children: [
-                                      ActionChip(
-                                        label: Text(
-                                          c.language == 'en'
-                                              ? 'My queue status'
-                                              : 'Status giliran',
-                                        ),
-                                        onPressed: c.busy
-                                            ? null
-                                            : () => send(
-                                                c.language == 'en'
-                                                    ? 'What is my current queue status?'
-                                                    : 'Apakah status giliran saya?',
-                                              ),
-                                      ),
-                                      ActionChip(
-                                        label: Text(
-                                          c.language == 'en'
-                                              ? 'Next appointment'
-                                              : 'Janji temu seterusnya',
-                                        ),
-                                        onPressed: c.busy
-                                            ? null
-                                            : () => send(
-                                                c.language == 'en'
-                                                    ? 'When is my next appointment?'
-                                                    : 'Bilakah janji temu saya yang seterusnya?',
-                                              ),
-                                      ),
-                                      ActionChip(
-                                        label: Text(
-                                          c.language == 'en'
-                                              ? 'How to check in'
-                                              : 'Cara daftar masuk',
-                                        ),
-                                        onPressed: c.busy
-                                            ? null
-                                            : () => send(
-                                                c.language == 'en'
-                                                    ? 'How do I check in at the clinic?'
-                                                    : 'Bagaimana saya mendaftar masuk di klinik?',
-                                              ),
-                                      ),
-                                    ],
-                                  ),
-                                Wrap(
-                                  spacing: 8,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () => navigate('My Queue'),
-                                      child: const Text('Open My Queue'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => navigate('Appts'),
-                                      child: const Text('Open appointments'),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
@@ -460,6 +386,24 @@ class _ChatCompanionState extends State<ChatCompanion> {
                                   icon: const Icon(Icons.arrow_upward_rounded),
                                 ),
                               ],
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            color: Colors.white,
+                            child: const SafeArea(
+                              top: false,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                child: Text(
+                                  'AI can make mistakes. Verify important details with clinic staff.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.blueGrey,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],

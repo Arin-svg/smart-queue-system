@@ -24,11 +24,15 @@ class FirebasePush {
     DB::table('push_devices')->where('id',$device->id)->delete(); continue;
    }
    foreach(DB::table('notifications')->where('user_id',$device->user_id)->where('notification_id','>',$device->last_notification_id)->orderBy('notification_id')->limit(50)->get() as $n) {
+    if ($n->notification_status === 'read') {
+     DB::table('push_devices')->where('id',$device->id)->where('access_token_id',$device->access_token_id)->update(['last_notification_id'=>$n->notification_id]);
+     continue;
+    }
     $r=Http::withToken($access)->connectTimeout(5)->timeout(15)->post('https://fcm.googleapis.com/v1/projects/'.rawurlencode($credentials['project_id']).'/messages:send', ['message'=>[
      'token'=>Crypt::decryptString($device->token),
-     'notification'=>['title'=>$n->notification_title,'body'=>$n->notification_message],
-     'data'=>['destination'=>$n->queue_id ? 'My Queue' : 'Alerts','user_id'=>(string)$device->user_id,'notification_id'=>(string)$n->notification_id],
-     'android'=>['priority'=>'high','ttl'=>'300s','notification'=>['channel_id'=>'sqs_updates','tag'=>$n->queue_id ? 'queue-'.$n->queue_id : 'alert-'.$n->notification_id]],
+
+     'data'=>['title'=>$n->notification_title,'body'=>$n->notification_message,'destination'=>$n->notification_title === 'Verification needed' ? 'Verify' : ($n->queue_id ? 'My Queue' : 'Alerts'),'user_id'=>(string)$device->user_id,'notification_id'=>(string)$n->notification_id],
+     'android'=>['priority'=>'high','ttl'=>'300s'],
     ]]);
     if(!$r->successful()) {
      $codes=collect($r->json('error.details',[]))->pluck('errorCode');

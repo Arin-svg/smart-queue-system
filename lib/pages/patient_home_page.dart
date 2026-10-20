@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/clinic_widgets.dart';
+import 'registration_page.dart';
 
 class PatientHomePage extends StatelessWidget {
   const PatientHomePage({super.key});
@@ -292,12 +293,14 @@ class PatientHomePage extends StatelessWidget {
                 Text(
                   appointment['appointment_status'] == 'pending'
                       ? 'Awaiting staff verification. Your appointment is not confirmed yet.'
-                      : 'Confirmed. Scan the clinic QR code when you arrive.',
+                      : 'Appointment confirmed · Scan when you arrive. You may cancel or reschedule if needed.',
                 ),
               ],
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => scope.navigate('Appts'),
+                onPressed: () => appointment == null
+                    ? scope.navigate('Appts')
+                    : _showAppointment(context, appointment),
                 icon: const Icon(Icons.calendar_month_outlined),
                 label: Text(
                   appointment == null
@@ -317,6 +320,165 @@ class PatientHomePage extends StatelessWidget {
     return date == null
         ? value
         : MaterialLocalizations.of(context).formatMediumDate(date);
+  }
+
+  Future<void> _showAppointment(
+    BuildContext context,
+    Record appointment,
+  ) async {
+    final homeContext = context;
+    final scope = ClinicScope.of(context);
+    final c = scope.controller;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheet) => AnimatedBuilder(
+        animation: c,
+        builder: (context, _) {
+          final matches = c
+              .rows('appointments')
+              .where(
+                (a) => a['appointment_id'] == appointment['appointment_id'],
+              );
+          final a = matches.isEmpty ? appointment : matches.first;
+          final active = [
+            'pending',
+            'confirmed',
+          ].contains(a['appointment_status']);
+          final today = DateTime.now()
+              .toUtc()
+              .add(const Duration(hours: 8))
+              .toIso8601String()
+              .substring(0, 10);
+          final checkedIn = c
+              .rows('queues')
+              .any((q) => q['appointment_id'] == a['appointment_id']);
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * .85,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Appointment details',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Close details',
+                        onPressed: () => Navigator.pop(sheet),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    display(a['department_name']),
+                    style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF007E69),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: StatusBadge('${a['appointment_status']}'),
+                  ),
+                  const SizedBox(height: 20),
+                  InfoLine(
+                    Icons.calendar_month_outlined,
+                    _dateLabel(context, '${a['appointment_date']}'),
+                  ),
+                  InfoLine(
+                    Icons.schedule,
+                    '${a['appointment_time']}'.split(':').take(2).join(':'),
+                  ),
+                  InfoLine(
+                    Icons.person_outline,
+                    display(a['doctor_name'], 'Any available doctor'),
+                  ),
+                  const Divider(height: 28),
+                  const Text(
+                    'Reason for visit',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(display(a['reason_for_visit'], 'Not provided')),
+                  const SizedBox(height: 20),
+                  Text(
+                    checkedIn
+                        ? 'You have already checked in for this appointment.'
+                        : a['appointment_status'] == 'pending'
+                        ? 'Awaiting staff verification. You can check in after confirmation on the appointment day.'
+                        : a['appointment_status'] == 'confirmed'
+                        ? 'Scan the clinic QR when you arrive. Your booking details will be used automatically.'
+                        : 'This appointment is ${a['appointment_status']}.',
+                  ),
+                  const SizedBox(height: 20),
+                  if (!checkedIn &&
+                      a['appointment_status'] == 'confirmed' &&
+                      a['appointment_date'] == today)
+                    FilledButton.icon(
+                      onPressed: c.saving
+                          ? null
+                          : () {
+                              Navigator.pop(sheet);
+                              openClinicPage(
+                                homeContext,
+                                RegistrationPage(appointment: a),
+                              );
+                            },
+                      icon: const Icon(Icons.qr_code_scanner),
+                      label: const Text('Scan to check in'),
+                    ),
+                  if (active && !checkedIn)
+                    TextButton(
+                      onPressed: c.saving
+                          ? null
+                          : () async {
+                              if (!await confirm(
+                                    context,
+                                    'Cancel appointment?',
+                                    'Cancel your appointment on ${a['appointment_date']}?',
+                                  ) ||
+                                  !context.mounted)
+                                return;
+                              await perform(
+                                context,
+                                () => c.submit(
+                                  '/appointments/${a['appointment_id']}/cancel',
+                                  {},
+                                ),
+                              );
+                            },
+                      child: Text(
+                        c.saving ? 'Saving…' : 'Cancel appointment',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 

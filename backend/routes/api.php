@@ -19,6 +19,7 @@ Route::middleware(['auth:sanctum', EnsureActiveUser::class])->group(function () 
     Route::get('/workspace', [WorkspaceController::class, 'index']);
     Route::post('/ai/chat', [\App\Http\Controllers\AiChatController::class, 'reply'])->middleware('throttle:10,1');
     Route::post('/notifications/{id}/read', [WorkspaceController::class, 'readNotification']);
+    Route::post('/notifications/read', [WorkspaceController::class, 'readNotifications']);
     Route::get('/clinic/qr', [QueueController::class, 'qr']);
     Route::post('/clinic/qr', [QueueController::class, 'replaceQr']);
     Route::post('/clinic/qr/validate', [QueueController::class, 'validateQr']);

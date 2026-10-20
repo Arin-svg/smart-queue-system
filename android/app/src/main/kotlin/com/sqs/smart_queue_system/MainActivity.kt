@@ -14,7 +14,7 @@ class MainActivity : FlutterActivity() {
     private val channelId = "sqs_updates"
     private fun payload(intent: Intent?): Map<String, String>? {
         if (intent?.getStringExtra("sqs_local") != "true") return null
-        return mapOf("destination" to (intent.getStringExtra("destination") ?: "Alerts"), "user_id" to (intent.getStringExtra("user_id") ?: ""))
+        return mapOf("notification_id" to (intent.getStringExtra("notification_id") ?: ""), "mark_read" to (intent.getStringExtra("mark_read") ?: "false"), "destination" to (intent.getStringExtra("destination") ?: "Alerts"), "user_id" to (intent.getStringExtra("user_id") ?: ""))
     }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -31,23 +31,11 @@ class MainActivity : FlutterActivity() {
                     result.success(null)
                 }
                 "initial" -> { result.success(payload(intent)); intent?.removeExtra("sqs_local") }
+                "cancel" -> { manager.cancel(call.argument<String>("notification_id")?.toIntOrNull() ?: 0); result.success(null) }
                 "clear" -> { manager.cancelAll(); result.success(null) }
                 "show" -> {
-                    val id = call.argument<String>("notification_id")?.toIntOrNull() ?: 1
-                    val target = Intent(this, MainActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        putExtra("sqs_local", "true")
-                        putExtra("destination", call.argument<String>("destination"))
-                        putExtra("user_id", call.argument<String>("user_id"))
-                    }
-                    val pending = PendingIntent.getActivity(this, id, target, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                    val builder = if (Build.VERSION.SDK_INT >= 26) android.app.Notification.Builder(this, channelId) else android.app.Notification.Builder(this)
-                    val body = call.argument<String>("body") ?: ""
-                    builder.setSmallIcon(R.drawable.ic_stat_sqs).setContentTitle(call.argument<String>("title"))
-                        .setContentText(body).setStyle(android.app.Notification.BigTextStyle().bigText(body))
-                        .setAutoCancel(true).setContentIntent(pending).setVisibility(android.app.Notification.VISIBILITY_PRIVATE)
-                    try { manager.notify(id, builder.build()); result.success(null) }
-                    catch (_: SecurityException) { result.success(null) }
+                    SqsNotifications.show(this, call.arguments as Map<String, String>)
+                    result.success(null)
                 }
                 else -> result.notImplemented()
             }

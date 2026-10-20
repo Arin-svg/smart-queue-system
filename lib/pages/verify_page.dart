@@ -3,13 +3,21 @@ import 'widgets/clinic_widgets.dart';
 import 'monitor_page.dart';
 
 class VerifyPage extends StatelessWidget {
-  const VerifyPage({super.key});
+  const VerifyPage({super.key, this.queueId});
+  final String? queueId;
   @override
   Widget build(BuildContext context) {
     final c = ClinicScope.of(context).controller;
     final queues = c.orderedQueues
         .where((q) => q['queue_status'] == 'waiting')
         .toList();
+    if (queueId != null) {
+      queues.sort(
+        (a, b) => ('${a['queue_id']}' == queueId ? 0 : 1).compareTo(
+          '${b['queue_id']}' == queueId ? 0 : 1,
+        ),
+      );
+    }
     final appointments = c
         .rows('appointments')
         .where((a) => a['appointment_status'] == 'pending')

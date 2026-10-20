@@ -74,6 +74,7 @@ class AppointmentController extends Controller
             $data['appointment_time'] = $at->format('H:i:s');
             $id = DB::table('appointments')->insertGetId($data + ['user_id' => $actor->user_id, 'appointment_status' => 'pending', 'created_at' => now(), 'updated_at' => now()], 'appointment_id');
             Clinic::notify($actor->user_id, 'Appointment awaiting verification', 'Your appointment request for '.$at->format('d M Y, H:i').' is pending staff verification.');
+            Clinic::notifyVerificationStaff('A new appointment request is waiting for verification. Open Verify to review.');
             Clinic::log($actor, 'book_appointment', 'appointment', $id);
 
             return response()->json(['message' => 'Appointment requested. Awaiting staff verification.', 'appointment_id' => $id, 'appointment_status' => 'pending'], 201);

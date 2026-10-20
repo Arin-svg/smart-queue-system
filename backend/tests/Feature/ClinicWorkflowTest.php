@@ -59,11 +59,31 @@ SQL);
         };
         $this->assertSame(1, $service->deliver());
         $this->assertSame(0, $service->deliver());
-        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => $r['message']['token'] === 'device' && $r['message']['data']['destination'] === 'My Queue' && $r['message']['notification']['body'] === 'Go to room 1');
+        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => $r['message']['token'] === 'device' && $r['message']['data']['destination'] === 'My Queue' && $r['message']['data']['body'] === 'Go to room 1');
         \Illuminate\Support\Facades\Http::assertSentCount(1);
         $token->delete();
         $service->deliver();
         $this->assertDatabaseCount('push_devices', 0);
+    }
+
+    public function test_bulk_read_only_updates_the_signed_in_users_alerts(): void
+    {
+        \App\Services\Clinic::notify(1, 'Own alert', 'Message');
+        \App\Services\Clinic::notify(5, 'Other alert', 'Message');
+        $ids = DB::table('notifications')->pluck('notification_id')->all();
+        $this->asUser(1)->postJson('/api/notifications/read', ['ids' => $ids])->assertOk();
+        $this->assertDatabaseHas('notifications', ['user_id' => 1, 'notification_status' => 'read']);
+        $this->assertDatabaseHas('notifications', ['user_id' => 5, 'notification_status' => 'sent']);
+    }
+
+    public function test_verification_alerts_are_sent_only_to_active_staff(): void
+    {
+        \App\Services\Clinic::notifyVerificationStaff('A patient is waiting.', 123);
+        $this->assertDatabaseHas('notifications', ['user_id' => 2, 'queue_id' => 123, 'notification_title' => 'Verification needed']);
+        $this->assertDatabaseCount('notifications', 1);
+        DB::table('users')->where('user_id', 2)->update(['status' => 'inactive']);
+        \App\Services\Clinic::notifyVerificationStaff('Another patient is waiting.');
+        $this->assertDatabaseCount('notifications', 1);
     }
 
     public function test_every_role_can_update_only_their_own_phone_number(): void
