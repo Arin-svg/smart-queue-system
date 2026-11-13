@@ -114,6 +114,7 @@ class QueueController extends Controller
             abort_unless($q, 404);
             $action = $data['action'];
             $change = ['updated_at' => now()];
+            $messageSuffix = '';
             if (in_array($action, ['verify', 'assign', 'priority', 'requeue'])) {
                 Clinic::roles($actor, ['staff']);
             } elseif ($action === 'cancel') {
@@ -173,6 +174,7 @@ class QueueController extends Controller
                     Clinic::fail('Call the next patient in the approved queue order.');
                 }
                 $change += ['queue_status' => 'called', 'called_at' => now()];
+                $messageSuffix = ' Please proceed to '.$room->room_name.'.';
                 DB::table('consultations')->updateOrInsert(['queue_id' => $id], [
                     'user_id' => $actor->user_id, 'room_id' => $q->room_id, 'consultation_status' => 'called',
                     'started_at' => null, 'ended_at' => null, 'created_at' => now(), 'updated_at' => now(),
@@ -208,10 +210,7 @@ class QueueController extends Controller
                 DB::table('appointments')->where('appointment_id', $q->appointment_id)->update(['appointment_status' => ['complete' => 'completed', 'absent' => 'absent', 'cancel' => 'cancelled'][$action], 'updated_at' => now()]);
             }
             $status = $change['queue_status'] ?? $q->queue_status;
-            $message = $q->queue_number.': '.str_replace('_', ' ', $status).'.';
-            if ($action === 'call') {
-                $message .= ' Please proceed to '.$room->room_name.'.';
-            }
+            $message = $q->queue_number.': '.str_replace('_', ' ', $status).'.'.$messageSuffix;
             Clinic::notify($q->user_id, $action === 'call' ? 'Your turn has been called' : 'Queue updated', $message, $id);
             Clinic::log($actor,$action,'queue',$id,$data['priority_note'] ?? null);
             Clinic::approaching($q->department_id);
