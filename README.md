@@ -4,6 +4,8 @@ Flutter application and Laravel API for UMPSA PKU Pekan, implemented against
 `PSM1_CB23094_V2.pdf`, section 3.3 and Figures 3.14–3.34. The original figures
 were extracted from the PDF and inspected visually, including dialogs and profiles.
 
+For the source-reviewed specification, see the [detailed system reference](docs/system-reference.md), including current workflows, database fields, API routes, algorithms, configuration, and corrections to older documentation below.
+
 ## Implemented workflows
 
 - **Patient (green):** scan the clinic QR, choose department and visit reason, register,
