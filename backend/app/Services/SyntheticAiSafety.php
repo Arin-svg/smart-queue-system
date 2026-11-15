@@ -14,9 +14,28 @@ class SyntheticAiSafety
         return app()->environment('local') && is_file(self::path());
     }
 
+    public static function mailPaused(): bool
+    {
+        return self::paused() && ! is_file(self::path().'-mail-resumed');
+    }
+
+    public static function allowMail(\Illuminate\Mail\Events\MessageSending $event): ?bool
+    {
+        foreach (array_merge($event->message->getTo(), $event->message->getCc(), $event->message->getBcc()) as $recipient) {
+            if (str_ends_with(strtolower($recipient->getAddress()), '@example.invalid')) {
+                return false;
+            }
+        }
+
+        return self::mailPaused() ? false : null;
+    }
+
     public static function pause(): void
     {
         DevelopmentDatabaseBackup::assertLocal();
+        if (is_file(self::path().'-mail-resumed')) {
+            unlink(self::path().'-mail-resumed');
+        }
         if (! is_dir(dirname(self::path()))) {
             mkdir(dirname(self::path()), 0700, true);
         }

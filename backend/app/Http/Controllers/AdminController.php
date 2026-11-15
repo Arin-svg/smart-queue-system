@@ -22,6 +22,14 @@ class AdminController extends Controller
             'status' => 'required|in:active,inactive', 'password' => 'prohibited',
         ]);
 
+        if (! $id && \App\Services\SyntheticAiSafety::mailPaused()) {
+            return response()->json(['message' => 'Account email is paused for synthetic testing. Resume mail delivery before adding users.'], 503);
+        }
+
+        if (! $id && str_ends_with(strtolower($data['email']), '@example.invalid')) {
+            return response()->json(['message' => 'Synthetic email addresses cannot receive account passwords.'], 422);
+        }
+
         if (! $id && in_array(config('mail.default'), ['log', 'array'])) {
             return response()->json(['message' => 'Account email is not configured. Configure email delivery before adding users.'], 503);
         }
