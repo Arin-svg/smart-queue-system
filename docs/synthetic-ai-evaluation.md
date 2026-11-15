@@ -6,6 +6,10 @@ Full machine-readable output: [synthetic-ai-evaluation-results.json](synthetic-a
 
 ## Post-cleanup update — 15 November 2026
 
+Final administrative wrap-up at 17:48:18: the 16 remaining active queues (7 and 315–329) and their two linked consultations were marked completed following explicit user instruction. Verified backup: `.tmp/sqs-ai/backups/20261115-174818-7b5be8/manifest.json`. There are now zero active queues and 325 completed queues. Recorded average waiting time stayed at 38.0 minutes. Existing call/start timestamps were preserved; unknown consultation end timestamps remain null, excluding those two administratively closed consultations from duration training. No notifications were dispatched. The evaluation JSON remains a historical snapshot, not an evaluation of this subsequently edited dataset.
+
+Later development update: at the user's request, the five queues with status `waiting` (310–314) were marked `completed`, with completion timestamps and an audit entry, after another verified backup. No call or consultation timings were invented. There are now 309 completed queues, zero `waiting` queues and 17 queues in other active statuses. The evaluation JSON below predates this status update. The original synthetic receipt fingerprint is intentionally retained; rerunning the seeder/evaluation integrity check will detect these five edited rows rather than silently treating the original dataset as unchanged.
+
 Following the user's request to remove the preserved waiting-time outlier, queue #6, its one consultation and 21 linked notifications were deleted transactionally. A fresh verified backup was created first at `.tmp/sqs-ai/backups/20261115-161120-df6e86/manifest.json` (SQL dump: `database.sql` in the same directory). Existing audit history was retained and a cleanup audit entry was added. Other original records, accounts and configuration were preserved.
 
 Commands: `php artisan sqs:cleanup-development --queues=6 --dry-run`, then `php artisan sqs:cleanup-development --queues=6 --execute` with explicit confirmation, then `php artisan sqs:ai-evaluate --output=../docs/synthetic-ai-evaluation-results.json`.
