@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Arin Ja/FlutterProjects/smart_queue_system/windows"
+    "cmake.sourceDirectory": "C:/Users/Arin Ja/FlutterProjects/smart_queue_system/windows",
+    "python.terminal.useEnvFile": true
 }

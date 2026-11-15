@@ -13,6 +13,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Mail\Events\MessageSending::class,
+            fn () => \App\Services\SyntheticAiSafety::paused() ? false : null);
         RateLimiter::for('login', fn (Request $request) => [
             Limit::perMinute(20)->by('ip:'.$request->ip()),
             Limit::perMinute(5)->by('login:'.strtolower((string) $request->input('user_identifier')).'|'.$request->ip()),

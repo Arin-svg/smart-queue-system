@@ -10,6 +10,7 @@ class FirebasePush {
   return json_decode(file_get_contents(storage_path('app/firebase-service-account.json')),true,512,JSON_THROW_ON_ERROR);
  }
  public function deliver(): int {
+  if (SyntheticAiSafety::paused()) return 0;
   $credentials=$this->credentials();
   $access=Cache::remember('firebase.push.access',3000, function() use($credentials) {
    $auth=new ServiceAccountCredentials('https://www.googleapis.com/auth/firebase.messaging',$credentials);

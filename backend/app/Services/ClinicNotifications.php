@@ -9,6 +9,9 @@ class ClinicNotifications
 {
     public static function refresh(): void
     {
+        if (SyntheticAiSafety::paused()) {
+            return;
+        }
         DB::transaction(function () {
             DB::table('clinic_settings')->where('id', 1)->lockForUpdate()->first();
             $appointments = DB::table('appointments')->where('appointment_status', 'confirmed')

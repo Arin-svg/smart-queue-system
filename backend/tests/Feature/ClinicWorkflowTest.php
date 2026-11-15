@@ -510,4 +510,28 @@ SQL);
         $this->post('/reset-password',$payload)->assertSessionHasErrors('email');
         $this->postJson('/api/login',['user_identifier' => $user->user_identifier, 'password' => 'Replacement123!'])->assertOk();
     }
+
+    public function test_ai_priority_requires_staff_approval_and_a_nonempty_reason(): void
+    {
+        DB::table('queues')->insert(['queue_id' => 100, 'user_id' => 1, 'department_id' => 1,
+            'queue_number' => 'PRIORITY-TEST', 'queue_status' => 'verified', 'queue_type' => 'qr_walk_in',
+            'reason_for_visit' => 'Routine follow up review visit', 'registered_at' => now()->subMinutes(10), 'priority' => 0]);
+        $this->asUser(1)->postJson('/api/queues/100', ['action' => 'priority', 'priority' => 2, 'priority_note' => 'Patient request'])->assertForbidden();
+        $this->asUser(2)->postJson('/api/queues/100', ['action' => 'priority', 'priority' => 2, 'priority_note' => ' '])->assertUnprocessable();
+        $this->assertDatabaseHas('queues', ['queue_id' => 100, 'priority' => 0]);
+        $this->postJson('/api/queues/100', ['action' => 'priority', 'priority' => 1, 'priority_note' => 'Synthetic staff decision'])->assertOk();
+        $this->assertDatabaseHas('priority_training_samples', ['queue_id' => 100, 'priority' => 1, 'reviewed_by' => 2]);
+    }
+
+    public function test_wait_workload_subtracts_elapsed_consultation_and_excludes_skipped(): void
+    {
+        $base = ['user_id' => 1, 'department_id' => 1, 'doctor_id' => 3, 'room_id' => 1, 'queue_type' => 'qr_walk_in', 'priority' => 0];
+        DB::table('queues')->insert($base + ['queue_id' => 101, 'queue_number' => 'BUSY', 'queue_status' => 'in_consultation', 'registered_at' => now()->subMinutes(30)]);
+        DB::table('queues')->insert($base + ['queue_id' => 102, 'queue_number' => 'SKIP', 'queue_status' => 'skipped', 'registered_at' => now()->subMinutes(25)]);
+        DB::table('queues')->insert($base + ['queue_id' => 103, 'queue_number' => 'TARGET', 'queue_status' => 'assigned', 'registered_at' => now()->subMinutes(10)]);
+        DB::table('consultations')->insert(['queue_id' => 101, 'user_id' => 3, 'room_id' => 1, 'consultation_status' => 'in_consultation', 'started_at' => now()->subMinutes(5)]);
+        $target = \App\Services\Clinic::estimates(DB::table('queues')->where('queue_id', 103)->get())->first();
+        $this->assertSame(1, $target->people_ahead);
+        $this->assertSame(10, $target->estimated_waiting_time);
+    }
 }

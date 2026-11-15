@@ -1,0 +1,695 @@
+{
+    "dataset": "SYNTHETIC DEVELOPMENT DATA \u2014 not clinical performance",
+    "as_of": "2026-11-15 15:00:00",
+    "seed": 20261115,
+    "counts": {
+        "users": 332,
+        "appointments": 30,
+        "queues": 320,
+        "consultations": 302,
+        "priority_training_samples": 150
+    },
+    "duration": {
+        "Dental Clinic": {
+            "samples": 100,
+            "train": 80,
+            "validation": 20,
+            "best_candidate_k": 3,
+            "selected_k": 3,
+            "knn_mae_by_k": {
+                "3": 8.3236,
+                "5": 8.8448,
+                "7": 8.4335
+            },
+            "baseline_mae": 8.4151,
+            "selected_mae": 8.32,
+            "method": "KNN regression (k=3; chronological validation)",
+            "training_end": "2026-09-09 14:21:33",
+            "validation_start": "2026-09-10 09:59:35",
+            "independent_chronological_test": {
+                "development": 80,
+                "inner_train": 64,
+                "inner_validation": 16,
+                "test": 20,
+                "selected_k": 5,
+                "method": "KNN regression (k=5; chronological validation)",
+                "mae": 8.8448,
+                "note": "Test targets never enter model selection for this evaluation; production still sees all inserted records."
+            },
+            "fewer_than_20_fallback": {
+                "samples": 19,
+                "method": "Configured average (requires 20 completed consultations)",
+                "prediction": 15,
+                "selected_mae": null
+            },
+            "runtime_combined_latest_500": {
+                "samples": 100,
+                "train": 80,
+                "validation": 20,
+                "best_candidate_k": 3,
+                "selected_k": 3,
+                "knn_mae_by_k": {
+                    "3": 8.3236,
+                    "5": 8.8448,
+                    "7": 8.4335
+                },
+                "baseline_mae": 8.4151,
+                "selected_mae": 8.32,
+                "method": "KNN regression (k=3; chronological validation)",
+                "training_end": "2026-09-09 14:21:33",
+                "validation_start": "2026-09-10 09:59:35"
+            }
+        },
+        "General Consultation": {
+            "samples": 100,
+            "train": 80,
+            "validation": 20,
+            "best_candidate_k": 7,
+            "selected_k": 7,
+            "knn_mae_by_k": {
+                "3": 9.8003,
+                "5": 9.5288,
+                "7": 9.0808
+            },
+            "baseline_mae": 9.6144,
+            "selected_mae": 9.08,
+            "method": "KNN regression (k=7; chronological validation)",
+            "training_end": "2026-08-18 16:09:52",
+            "validation_start": "2026-08-19 09:41:51",
+            "independent_chronological_test": {
+                "development": 80,
+                "inner_train": 64,
+                "inner_validation": 16,
+                "test": 20,
+                "selected_k": 5,
+                "method": "KNN regression (k=5; chronological validation)",
+                "mae": 9.5292,
+                "note": "Test targets never enter model selection for this evaluation; production still sees all inserted records."
+            },
+            "fewer_than_20_fallback": {
+                "samples": 19,
+                "method": "Configured average (requires 20 completed consultations)",
+                "prediction": 15,
+                "selected_mae": null
+            },
+            "runtime_combined_latest_500": {
+                "samples": 103,
+                "train": 82,
+                "validation": 21,
+                "best_candidate_k": 7,
+                "selected_k": 7,
+                "knn_mae_by_k": {
+                    "3": 11.0757,
+                    "5": 10.7005,
+                    "7": 10.4159
+                },
+                "baseline_mae": 11.1577,
+                "selected_mae": 10.42,
+                "method": "KNN regression (k=7; chronological validation)",
+                "training_end": "2026-08-19 11:12:09",
+                "validation_start": "2026-08-19 12:49:06"
+            }
+        },
+        "Health Screening": {
+            "samples": 100,
+            "train": 80,
+            "validation": 20,
+            "best_candidate_k": 7,
+            "selected_k": null,
+            "knn_mae_by_k": {
+                "3": 11.4892,
+                "5": 11.6088,
+                "7": 10.8996
+            },
+            "baseline_mae": 10.0425,
+            "selected_mae": 10.04,
+            "method": "Historical average (KNN did not beat validation baseline)",
+            "training_end": "2026-09-09 16:07:22",
+            "validation_start": "2026-09-10 11:17:30",
+            "independent_chronological_test": {
+                "development": 80,
+                "inner_train": 64,
+                "inner_validation": 16,
+                "test": 20,
+                "selected_k": 3,
+                "method": "KNN regression (k=3; chronological validation)",
+                "mae": 11.4885,
+                "note": "Test targets never enter model selection for this evaluation; production still sees all inserted records."
+            },
+            "fewer_than_20_fallback": {
+                "samples": 19,
+                "method": "Configured average (requires 20 completed consultations)",
+                "prediction": 15,
+                "selected_mae": null
+            },
+            "runtime_combined_latest_500": {
+                "samples": 101,
+                "train": 80,
+                "validation": 21,
+                "best_candidate_k": 7,
+                "selected_k": null,
+                "knn_mae_by_k": {
+                    "3": 12.0741,
+                    "5": 12.1229,
+                    "7": 11.5291
+                },
+                "baseline_mae": 10.7434,
+                "selected_mae": 10.74,
+                "method": "Historical average (KNN did not beat validation baseline)",
+                "training_end": "2026-09-09 16:07:22",
+                "validation_start": "2026-09-10 11:17:30"
+            }
+        }
+    },
+    "priority": {
+        "retrieved_synthetic_samples": 150,
+        "by_department": {
+            "General Consultation": {
+                "training": 40,
+                "held_out": 10,
+                "recommended": 5,
+                "correct_when_recommended": 3,
+                "abstained": 5
+            },
+            "Dental Clinic": {
+                "training": 40,
+                "held_out": 10,
+                "recommended": 9,
+                "correct_when_recommended": 4,
+                "abstained": 1
+            },
+            "Health Screening": {
+                "training": 40,
+                "held_out": 10,
+                "recommended": 9,
+                "correct_when_recommended": 4,
+                "abstained": 1
+            }
+        },
+        "totals": {
+            "training": 120,
+            "held_out": 30,
+            "recommended": 23,
+            "correct_when_recommended": 11,
+            "abstained": 7,
+            "coverage_percent": 76.67,
+            "abstention_percent": 23.33,
+            "agreement_on_recommended_percent": 47.83,
+            "correct_fraction_of_all_held_out_percent": 36.67
+        },
+        "controlled_probes": {
+            "majority": {
+                "level": 1,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.6,
+                "samples": 5
+            },
+            "disagreement": {
+                "level": null,
+                "reason": "Historical staff decisions disagree. Manual review required.",
+                "samples": 5
+            },
+            "insufficient": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 4
+            },
+            "empty_reason": {
+                "level": null,
+                "reason": "No reason for visit supplied. Staff review required.",
+                "samples": 0
+            },
+            "unrelated_reason": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 0
+            }
+        },
+        "probe_priority_unchanged": true,
+        "note": "50 examples per department, first 40 train, last 10 held out. Evaluation time equals each review timestamp; held-out labels are excluded from its training input."
+    },
+    "integrity": {
+        "completed_consultations": 300,
+        "active_queues": 20,
+        "appointments": 30,
+        "bad_historical_timestamps": 0,
+        "bad_completed_status": 0,
+        "weekend_history": 0,
+        "assignment_mismatches": 0,
+        "missing_queue_patient": 0,
+        "missing_priority_relationships": 0,
+        "priority_field_mismatches": 0,
+        "history_outside_operating_hours": 0,
+        "completed_appointment_mismatches": 0,
+        "historical_doctor_overlaps": 0,
+        "synthetic_notifications": 0,
+        "synthetic_push_devices": 0,
+        "synthetic_tokens": 0,
+        "appointment_states": {
+            "pending": 6,
+            "confirmed": 6,
+            "completed": 18
+        }
+    },
+    "workload": [
+        {
+            "queue_id": 7,
+            "synthetic": false,
+            "department_id": 3,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 0,
+            "wait_minutes": 0,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 9,
+            "synthetic": false,
+            "department_id": 2,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 41,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 310,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "waiting",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 27,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 311,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "waiting",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 11,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 312,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "waiting",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 26,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 313,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "waiting",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 53,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 314,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "waiting",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 26,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 315,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 51,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 316,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 79,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 317,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 4,
+            "wait_minutes": 56,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 318,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 77,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 319,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "verified",
+            "doctor_id": null,
+            "priority": 0,
+            "people_ahead": 4,
+            "wait_minutes": 106,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 320,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "assigned",
+            "doctor_id": 5,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 11,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 321,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 26,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 322,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 1,
+            "wait_minutes": 27,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 323,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "assigned",
+            "doctor_id": 5,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 26,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 324,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 51,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 325,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 53,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 326,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "assigned",
+            "doctor_id": 5,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 41,
+            "method": "KNN regression (k=7; chronological validation)"
+        },
+        {
+            "queue_id": 327,
+            "synthetic": true,
+            "department_id": 3,
+            "status": "assigned",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 77,
+            "method": "Historical average (KNN did not beat validation baseline)"
+        },
+        {
+            "queue_id": 328,
+            "synthetic": true,
+            "department_id": 1,
+            "status": "called",
+            "doctor_id": 7,
+            "priority": 0,
+            "people_ahead": 2,
+            "wait_minutes": 0,
+            "method": "KNN regression (k=3; chronological validation)"
+        },
+        {
+            "queue_id": 329,
+            "synthetic": true,
+            "department_id": 2,
+            "status": "in_consultation",
+            "doctor_id": 5,
+            "priority": 0,
+            "people_ahead": 3,
+            "wait_minutes": 0,
+            "method": "KNN regression (k=7; chronological validation)"
+        }
+    ],
+    "live_priority_recommendations": [
+        {
+            "queue_id": 7,
+            "result": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 1
+            }
+        },
+        {
+            "queue_id": 9,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.8,
+                "samples": 26
+            }
+        },
+        {
+            "queue_id": 315,
+            "result": {
+                "level": 1,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.6,
+                "samples": 27
+            }
+        },
+        {
+            "queue_id": 316,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 1,
+                "samples": 15
+            }
+        },
+        {
+            "queue_id": 317,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.8,
+                "samples": 26
+            }
+        },
+        {
+            "queue_id": 318,
+            "result": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 0
+            }
+        },
+        {
+            "queue_id": 319,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 1,
+                "samples": 15
+            }
+        },
+        {
+            "queue_id": 320,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.8,
+                "samples": 26
+            }
+        },
+        {
+            "queue_id": 321,
+            "result": {
+                "level": 1,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.6,
+                "samples": 27
+            }
+        },
+        {
+            "queue_id": 322,
+            "result": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 0
+            }
+        },
+        {
+            "queue_id": 323,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.8,
+                "samples": 26
+            }
+        },
+        {
+            "queue_id": 324,
+            "result": {
+                "level": 1,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.6,
+                "samples": 27
+            }
+        },
+        {
+            "queue_id": 325,
+            "result": {
+                "level": 0,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 1,
+                "samples": 15
+            }
+        },
+        {
+            "queue_id": 326,
+            "result": {
+                "level": null,
+                "reason": "Insufficient comparable staff-reviewed cases. Manual review required.",
+                "samples": 0
+            }
+        },
+        {
+            "queue_id": 327,
+            "result": {
+                "level": 1,
+                "reason": "Historical similarity recommendation only; staff clinical review and approval required.",
+                "agreement": 0.6,
+                "samples": 27
+            }
+        }
+    ],
+    "queue_order_unchanged": true,
+    "synthetic_fingerprint_unchanged": true,
+    "reports": {
+        "date_range": [
+            "2026-07-28",
+            "2026-11-15"
+        ],
+        "report_controller": {
+            "start": "2026-07-28",
+            "end": "2026-11-15",
+            "total": 328,
+            "active": 22,
+            "completed": 304,
+            "average_wait_minutes": 38,
+            "departments": [
+                {
+                    "name": "Dental Clinic",
+                    "count": 109
+                },
+                {
+                    "name": "General Consultation",
+                    "count": 111
+                },
+                {
+                    "name": "Health Screening",
+                    "count": 108
+                }
+            ],
+            "users": 380,
+            "active_departments": 4
+        },
+        "dashboard_summary": {
+            "total": 328,
+            "active": 22,
+            "completed": 304,
+            "average_wait_minutes": 38,
+            "users": 380,
+            "active_departments": 4
+        },
+        "independent_sql": {
+            "total": 328,
+            "active": "22",
+            "completed": "304",
+            "average_wait_minutes": "38.0"
+        },
+        "synthetic_only_sql": {
+            "total": 320,
+            "active": "20",
+            "completed": "300",
+            "average_wait_minutes": "38.4"
+        },
+        "department_distribution_sql": {
+            "Dental Clinic": 109,
+            "General Consultation": 111,
+            "Health Screening": 108
+        },
+        "all_metrics_match": true,
+        "ui_scope": "Existing controller payloads verified; Flutter visual rendering not executed here."
+    },
+    "preserved_old_wait_outliers": [],
+    "outbound_paused": true,
+    "backup_manifest": "C:\\Users\\Arin Ja\\FlutterProjects\\smart_queue_system\\.tmp\\sqs-ai\\backups\\20261115-160216-015f07\\manifest.json",
+    "production_algorithms_unchanged": true,
+    "limitation": "The main 80\/20 validation holdout selects k and baseline; it is not independent final test accuracy. Synthetic labels are not clinical urgency assessments."
+}
